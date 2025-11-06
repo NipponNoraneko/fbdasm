@@ -591,6 +591,7 @@
 "1284":"maybe... check high byte too",
 "1286":"less than 65535",
 "1288":" = 65535, not allowed",
+"1292":"record line number for AUTO",
 "1301":"get a char",
 "1304":"is it a space?",
 "1306":"no -\u003e stick with this char",
@@ -610,6 +611,7 @@
 "1409":"Loop back around and check the new line",
 "1423":"-\u003e rts",
 "1427":"get offset to following line",
+"1429":"record length of line to delete",
 "1448":"increment copy source",
 "1454":"increment copy dest",
 "1462":"have we reached the program end?",
@@ -617,6 +619,7 @@
 "1466":"maybe: check low byte, too",
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
+"1475":"subtract length of deleted line from prog end",
 "2159":"reset NMI sub-command",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
@@ -687,6 +690,9 @@
 "14753":"Invert the bits, so that 1 = pressed",
 "14755":"And then store them in reversed order",
 "14767":"Loop around to handle the next keyboard row",
+"15586":"set beep length short",
+"15591":"set beep length itty-bitty, teenie-weenie",
+"15626":"beep length: was set at top of fn",
 "15681":"Exit loop if we\u0027re on the topmost line",
 "15692":"Row is wrapped: loop back to preceding row",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into LineBuffer",
@@ -6036,65 +6042,7 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
-"1269":{
-"Variables":[{
-"DataDescriptor":{
-"Length":2,
-"Format":"NumericLE",
-"SubFormat":"Hex",
-"SymbolRef":null,
-"Extra":null},
-
-"Comment":"line number",
-"HasWidth":true,
-"Direction":"ReadWrite",
-"MultiMask":null,
-"Label":"vLineNum",
-"Value":160,
-"Source":"Variable",
-"Type":"ExternalAddr",
-"LabelAnno":"None"}],
-"ClearPrevious":false},
-
-"1412":{
-"Variables":[{
-"DataDescriptor":{
-"Length":1,
-"Format":"NumericLE",
-"SubFormat":"Hex",
-"SymbolRef":null,
-"Extra":null},
-
-"Comment":"offset to next line",
-"HasWidth":true,
-"Direction":"ReadWrite",
-"MultiMask":null,
-"Label":"vNextLnOff",
-"Value":60,
-"Source":"Variable",
-"Type":"ExternalAddr",
-"LabelAnno":"None"}],
-"ClearPrevious":false},
-
-"15584":{
-"Variables":[{
-"DataDescriptor":{
-"Length":1,
-"Format":"NumericLE",
-"SubFormat":"Hex",
-"SymbolRef":null,
-"Extra":null},
-
-"Comment":"How long to beep",
-"HasWidth":true,
-"Direction":"ReadWrite",
-"MultiMask":null,
-"Label":"vBeepLen",
-"Value":25,
-"Source":"Variable",
-"Type":"ExternalAddr",
-"LabelAnno":"None"}],
-"ClearPrevious":false}},
+},
 
 "Visualizations":[],
 "VisualizationAnimations":[],

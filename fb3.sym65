@@ -29,7 +29,9 @@ zpNMICMD        @       $63 ; Which command the NMI handler should execute. 1 + 
 zpOutTxtStartPos        @       $64
 zpSavedCH       @       $6B
 zpSavedCV       @       $6C
-zpLineBufIdx      @       $76 ; Current write position into LineBuffer ($500)
+zpLineBufIdx    @       $76 ; Current write position into LineBuffer ($500)
+zpLastLineNum   @       $A0     2   ; Last line number used (for AUTO)
+
 zp_nmi_some_flag        @       $AB
 zp_nmi_some_flag_1      @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
 

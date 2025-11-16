@@ -878,6 +878,8 @@
 "5163":"yes -\u003e we matched, return true",
 "7542":"divert to save screen, not prog",
 "7577":"get prog len from prog start and end",
+"7610":"always branches",
+"7623":"always branches",
 "7785":"is there an arg?",
 "7788":"no -\u003e nothing to do; return",
 "7790":"yes: expect prog name str",
@@ -910,6 +912,13 @@
 "13237":"RESUME without ERROR",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
+"13701":"space",
+"13705":"backspace (ctrl-H)",
+"13709":"insert space (ctrl-A)",
+"13713":"toggle insert/overwrite (ctrl-R)",
+"13717":"tab (ctrl-I)",
+"13721":"all other controls disable insert mode",
+"13745":"control-R",
 "13866":"always branches",
 "14129":"already at leftmost column?",
 "14131":"yes -\u003e check if we can go up a row",
@@ -1040,7 +1049,7 @@
 "BackgroundColor":0},
 
 "2413":{
-"Text":"NUL-terminate the output buffer, and wait for NMI to print it.",
+"Text":"NUL-terminate the output buffer, and wait for NMI to print it.\r\nOn exit, Z is guaranteed to be set.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1842,11 +1851,11 @@
 "LabelAnno":"None"},
 
 "14105":{
-"Label":"TB709",
+"Label":"ToggleInsertOrOverwriteMode",
 "Value":46857,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "13768":{
 "Label":"CursorToNextLineStart",
@@ -2983,11 +2992,11 @@
 "LabelAnno":"None"},
 
 "14357":{
-"Label":"TB805",
+"Label":"InsertSpaceChar",
 "Value":47109,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "14190":{
 "Label":"TB75E",
@@ -4289,6 +4298,83 @@
 "Value":36416,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2432":{
+"Label":"rts_8970",
+"Value":35184,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7636":{
+"Label":"PrintProgName",
+"Value":40388,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7599":{
+"Label":"Print_WRITING_progName",
+"Value":40351,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7612":{
+"Label":"Print_LOADING_progName",
+"Value":40364,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7625":{
+"Label":"Print_SKIP_progName",
+"Value":40377,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13690":{
+"Label":"rts_B56A",
+"Value":46442,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13695":{
+"Label":"DoCRLF",
+"Value":46447,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13701":{
+"Label":"HandleControlCHar",
+"Value":46453,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13725":{
+"Label":"leaveInsertAlone",
+"Value":46477,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13740":{
+"Label":"OutputSpace",
+"Value":46492,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13751":{
+"Label":"overwr",
+"Value":46503,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -5081,6 +5167,86 @@
 "SymbolRef":null,
 "Extra":null},
 
+"7599":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strWRITING",
+"Part":"Low"},
+
+"Extra":null},
+
+"7603":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strWRITING",
+"Part":"High"},
+
+"Extra":null},
+
+"7612":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strLOADING",
+"Part":"Low"},
+
+"Extra":null},
+
+"7616":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strLOADING",
+"Part":"High"},
+
+"Extra":null},
+
+"7625":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strSKIP",
+"Part":"Low"},
+
+"Extra":null},
+
+"7629":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strSKIP",
+"Part":"High"},
+
+"Extra":null},
+
+"7636":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"7640":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "10223":{
 "Length":3,
 "Format":"NumericLE",
@@ -5483,7 +5649,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB709",
+"Label":"ToggleInsertOrOverwriteMode",
 "Part":"Low"},
 
 "Extra":null},
@@ -5653,7 +5819,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB805",
+"Label":"InsertSpaceChar",
 "Part":"Low"},
 
 "Extra":null},
@@ -5823,6 +5989,46 @@
 "SymbolRef":{
 "Label":"NC_BufferCurLine",
 "Part":"Low"},
+
+"Extra":null},
+
+"15885":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"15889":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
+"15893":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ProgName",
+"Part":"Low"},
+
+"Extra":null},
+
+"15897":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ProgName",
+"Part":"High"},
 
 "Extra":null},
 

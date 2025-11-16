@@ -2,6 +2,7 @@ zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code
 zpVARTAB    @   $07     2       ; Ponter to variables start/program end
 zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @       $0B     2   ; Points at the next line of BASIC program after current
+zpMisc          @       $19     4   ; Used for a wide variety of things, mainly temporary pointers
 zpArgTyp        @       $27         ; Designates the type of data in zpWAccum.
 zpWAccum        @       $28     3   ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @       $2C     3   ; Like a 16-bit Data register. forms the second operand of various binary operators
@@ -18,6 +19,7 @@ zpCH    @       $48 ; Current cursor column number
 zpCV    @       $49 ; Current cursor row number
 
 zpCursTileAddr  @       $4A     2 ; PPU address of tile under cursor
+zpInsertMode    @       $4c       ; Zero = overwrite, non-zero = insert
 zpTokenizeOut   @       $4D     2
 zpPpuScreenBasePage     @       $4F ; The VRAM page used for current display screen's start
 zpOutputStr     @       $52     2
@@ -31,6 +33,7 @@ zpOutTxtStartPos        @       $64
 zpSavedCH       @       $6B
 zpSavedCV       @       $6C
 zpLineBufIdx    @       $76 ; Current write position into LineBuffer ($500)
+zpCasCksum      @       $91     2   ; Checksum for cassette data, also used for misc counting
 zpSavedTxtChar  @       $98
 zpToken         @       $99
 zpSavedTXTPTR   @       $9a     2   ; Saved val of zpTXTPTR
@@ -38,6 +41,9 @@ zpLastLineNum   @       $A0     2   ; Last line number used (for AUTO)
 
 zp_nmi_some_flag        @       $AB
 zp_nmi_some_flag_1      @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)
+
+zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
+zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
 
 zpErrCode       @       $B5
 zpVScroll0      @       $E4 ; Vertical scroll used when zpPpuScreenBasePage ($4F) is #$20; updated when $F0 is reset

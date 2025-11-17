@@ -1652,14 +1652,14 @@
 "BackgroundColor":0},
 
 "3615":{
-"Text":"This routine, together with the Add routine it wraps, is the most ridiculously overcoded and overcomplicated \"subtract two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordSubtract and checking for overflow afterward.",
+"Text":"This routine, together with the Add routine it wraps, is the most ridiculously overcoded and overcomplicated \"subtract two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordSubtract and checking for overflow afterward. Always negates the first operand (except when it\u0027s -32,768 and therefore can\u0027t be) before passing to the Add sub, and therefore always negates the result as well. Add, itself, may well negate the first operand and the result, meaning that both WAccum and the result from adc or sbc may undergo multiple negations (and even if they only undergo it once, it\u0027s unnecessary and ineffecient).",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "3772":{
-"Text":"This routine is the most ridiculously overcoded and overcomplicated \"add two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordAdd and checking for overflow afterward. And why does it insist on negating the operands and (conditionally) using sbc, instead of just using adc?",
+"Text":"This routine is the most ridiculously overcoded and overcomplicated \"add two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordAdd and checking for overflow afterward. It branches on positivity for each argument, maneuvering with negation to ensure it performs an operation on two positive operands. John Brooks (jbrooks@blueshiftinc.com) points out that this is a common strategy for multiplication and division, but quite useless for addition/subtraction. Such a waste!",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,

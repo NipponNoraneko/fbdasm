@@ -821,6 +821,12 @@
 "2749":"line doesn\u0027t wrap -\u003e done; terminate active NMICMD",
 "2751":"line wraps: copy next row on next NMI",
 "2753":"(always)",
+"3070":"is next char a comma?",
+"3072":"yes -\u003e skip first arg, handle next",
+"3074":"got line-number arg indicator byte?",
+"3076":"no -\u003e error out",
+"3102":"got line-number arg indicator byte?",
+"3104":"no -\u003e error out",
 "3621":"zpWAccum = -32768? -\u003e ensure zpWParam is 0",
 "3666":"BUG: produces OV ERROR even if WParam is zero lol",
 "3694":"strlen == 0?",
@@ -953,6 +959,15 @@
 "15692":"Row is wrapped: loop back to preceding row",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into LineBuffer",
 "15729":"Space: strip it and loop to preceding character",
+"16181":"Prog header starts with 40 high bits followed by 40 zeroes",
+"16192":"I think this is to disable NMI?",
+"16198":"Prog data starts with 20 high bits followed by 20 zeroes",
+"16214":"send 78 * 256 + 32 = 20,000 zeroes",
+"16229":"send a string of ones",
+"16236":"send a string of zeroes",
+"16252":"now send the designated data buffer",
+"16267":"and a checksum (count of the ones in all bytes)",
+"16279":"send a final \"one\" bit at the end",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
 
@@ -1645,6 +1660,48 @@
 
 "3772":{
 "Text":"This routine is the most ridiculously overcoded and overcomplicated \"add two words\" implementation I have ever laid eyes on. Could save a ton of code space by just using WordAdd and checking for overflow afterward. And why does it insist on negating the operands and (conditionally) using sbc, instead of just using adc?",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16313":{
+"Text":"Sends the shorter (higher-freq) off/on cycle, indicating a zero (reset bit)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16323":{
+"Text":"Sends the longer (lower-freq) off/on cycle, indicating a one (set bit)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16330":{
+"Text":"zpMisc+2 specifies how long to send low signal,\r\nzpMisc+3 specifies how long to send high signal",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16285":{
+"Text":"Sends a one (start bit), followed by eight bits from the accumulator, most-significant bit first.\r\n\r\nInstead of using the ASL operator, the author uses CLC and ADC to add a zero-page value to itself, doubling it each iteration.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15852":{
+"Text":"Z is set iff zpCasBufPtr has reached zpCasEndPtr, and we\u0027re done sending the buffer.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16229":{
+"Text":"After the 20,000 zeroes, we send a string of N ones and N zeroes, where N varies as an indication of what kind of data is being sent (e.g., program header, program data, background graphics...)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4350,7 +4407,7 @@
 "LabelAnno":"None"},
 
 "13701":{
-"Label":"HandleControlCHar",
+"Label":"HandleControlChar",
 "Value":46453,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4375,6 +4432,195 @@
 "Value":46503,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16214":{
+"Label":"twenThouZeroLp",
+"Value":48966,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16313":{
+"Label":"CassetteSendZero",
+"Value":49065,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16323":{
+"Label":"CassetteSendOne",
+"Value":49075,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16330":{
+"Label":"CassetteSendBit",
+"Value":49082,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16335":{
+"Label":"loLp",
+"Value":49087,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16344":{
+"Label":"hiLp",
+"Value":49096,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16236":{
+"Label":"zeroesLp",
+"Value":48988,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16229":{
+"Label":"onesLp",
+"Value":48981,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16252":{
+"Label":"sendBuffer",
+"Value":49004,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16285":{
+"Label":"CassetteSendByte",
+"Value":49037,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15845":{
+"Label":"IncrOnesCounter",
+"Value":48597,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15844":{
+"Label":"rts_BDD4",
+"Value":48596,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15852":{
+"Label":"IsCasDataDone",
+"Value":48604,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15838":{
+"Label":"IncrCasBufPtr",
+"Value":48590,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15885":{
+"Label":"CasBufSetProgHeader",
+"Value":48637,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15863":{
+"Label":"CasBufSetProgData",
+"Value":48615,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16175":{
+"Label":"CasSendProgHeader",
+"Value":48927,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16192":{
+"Label":"CasSendProgData",
+"Value":48944,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16206":{
+"Label":"CassetteSend",
+"Value":48958,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"829":{
+"Label":"StrikeTxtNextLink",
+"Value":33581,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"806":{
+"Label":"IncrementAutoLNum",
+"Value":33558,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"821":{
+"Label":"rts_8325",
+"Value":33573,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3042":{
+"Label":"rts_8BD2",
+"Value":35794,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3096":{
+"Label":"argTwo",
+"Value":35848,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3043":{
+"Label":"AUTO_errSyn",
+"Value":35795,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11300":{
+"Label":"SkipCommaOrSynErr",
+"Value":44052,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11297":{
+"Label":"SC_errSyn",
+"Value":44049,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -4832,6 +5078,13 @@
 "Label":"NC_NoCmd",
 "Part":"Low"},
 
+"Extra":null},
+
+"3070":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "3685":{
@@ -5349,6 +5602,13 @@
 "Label":"TYP_STR",
 "Part":"Low"},
 
+"Extra":null},
+
+"11303":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "12947":{
@@ -6030,6 +6290,34 @@
 "Label":"ProgName",
 "Part":"High"},
 
+"Extra":null},
+
+"16181":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16198":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16206":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"16210":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "16643":{

@@ -37,7 +37,8 @@ zpCasCksum      @       $91     2   ; Checksum for cassette data, also used for 
 zpSavedTxtChar  @       $98
 zpToken         @       $99
 zpSavedTXTPTR   @       $9a     2   ; Saved val of zpTXTPTR
-zpLastLineNum   @       $A0     2   ; Last line number used (for AUTO)
+zpNxtAutoLNum   @       $a0     2   ; Next line number to use (for AUTO)
+zAutoLNumIncr   @       $a2     2   ; How much to auto-increment each line number (from AUTO)
 
 zp_nmi_some_flag        @       $AB
 zp_nmi_some_flag_1      @       $AC ; if $AC is non-zero, $AB is set to #$FF (triggering flag check on next frame)

@@ -28,14 +28,6 @@
 #  Write up what I know so far, and the bugs I've found
 #
 #  CmdFn_LOAD
-#    $9E52 - used by both SAVE and LOAD, among others
-#     $BF1F - Sends out the progname to cassette
-#      $BDFD - inits $AD.AE to LineBuffer (which we shoved prog info into)
-#               and $AF,$B0 to ProgName (or possibly "end of the info"?)
-#     $BF30 - Sends out the proginfo (prog size, etc)
-#      $BDE7 - inits $AD.AE to contents of LineBuffer + 20.21... other
-#               stuff. Write comments to indicate what's being written, 
-#               based on what SAVE placed in those areas previously.
 
 Saving a program to cassette:
   a clear (zero) bit is sent as a single, short (hi-freq) cycle

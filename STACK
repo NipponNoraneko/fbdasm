@@ -60,12 +60,12 @@ Saving a program to cassette:
   When a program is saved, two payloads are sent: program header
   (including name, size) and tokenized program text
 
-  The program header consists of 128 bytes. The first 17 bytes are
-  the program name (up to 17 chars, plus a null terminator).
-  Bytes 18 and 19 contain the size of the tokenized program text,
-  and bytes 20 and 21 indicate where in memory the start of the program
-  was (idk if LOAD respects this). The remaining bytes are random garbage.
-
+  The program header consists of 128 bytes. The first byte (byte 0) is
+  always #$02. The next 17 bytes are the program name (up to 16 chars,
+  plus a null terminator). Bytes 18 and 19 contain the size of the
+  tokenized program text, and bytes 20 and 21 indicate where in memory
+  the start of the program was (idk if LOAD respects this). The
+  remaining bytes are random garbage.
 
 #
 

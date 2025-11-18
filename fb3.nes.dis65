@@ -1102,7 +1102,7 @@
 "BackgroundColor":0},
 
 "2621":{
-"Text":"Done priting for this frame.\r\nSave our progress, and continue next NMI",
+"Text":"Done printing for this frame.\r\nSave our progress, and continue next NMI",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1354,7 +1354,7 @@
 "BackgroundColor":0},
 
 "13796":{
-"Text":"Scrolls the screen WITHOUT clearing any lines. Unlike many other systems, Family Basic doesn\u0027t scroll by copying lines upward: the tilemap is vertically \u0027mirrored\u0027 (repeated), so we have only to adjust the PPU vertical scroll register. Very fast scrolls!\r\n\r\nFun thing to try:\r\n\r\n  10 CALL -18988:FOR P=1 TO 100:NEXT:GOTO 10\r\n\r\n(-18988 is this routine.)\r\nThen, optionally fill the screen with interesting things and then RUN. It\u0027ll scroll the screen in a cycle!\r\n",
+"Text":"Scrolls the screen WITHOUT clearing any lines. Unlike many other systems, Family Basic doesn\u0027t scroll by copying lines upward: the tilemap is vertically \u0027mirrored\u0027 (repeated), so we have only to adjust the PPU vertical scroll register. Very fast scrolls!\r\n\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,

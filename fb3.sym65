@@ -22,7 +22,7 @@ zpCursTileAddr  @       $4A     2 ; PPU address of tile under cursor
 zpInsertMode    @       $4c       ; Zero = overwrite, non-zero = insert
 zpTokenizeOut   @       $4D     2
 zpPpuScreenBasePage     @       $4F ; The VRAM page used for current display screen's start
-zpOutputStr     @       $52     2
+zpOutputStr     @       $52     2 ; Pointer to null-term'd string to copy to outTxtBuf
 zpTokTblScn     @       $54     2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @       $5a       ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @       $5b     2 ; Points to the start of the current program line (including the 3-byte preamble)

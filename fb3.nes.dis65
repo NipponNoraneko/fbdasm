@@ -765,6 +765,8 @@
 "216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
+"687":"Control-C (cancel)?",
+"689":"yes -\u003e ignore line and reprompt",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
 "1282":"no",
@@ -776,7 +778,7 @@
 "1304":"is it a space?",
 "1306":"no -\u003e stick with this char",
 "1308":"yes: get the next char",
-"1329":"useless and silly",
+"1329":"subtracting #$00... silly!",
 "1354":"delete any existing line w same #",
 "1357":"then insert ours",
 "1360":"Point zpTxtLink at program start",
@@ -918,7 +920,7 @@
 "13237":"RESUME without ERROR",
 "13239":"No BG Data",
 "13241":"Unprintable Error",
-"13701":"space",
+"13701":"is it a printable character?",
 "13705":"backspace (ctrl-H)",
 "13709":"insert space (ctrl-A)",
 "13713":"toggle insert/overwrite (ctrl-R)",
@@ -968,6 +970,7 @@
 "16252":"now send the designated data buffer",
 "16267":"and a checksum (count of the ones in all bytes)",
 "16279":"send a final \"one\" bit at the end",
+"19684":"all commands above this line take line number arguments",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
 
@@ -1702,6 +1705,13 @@
 
 "16229":{
 "Text":"After the 20,000 zeroes, we send a string of N ones and N zeroes, where N varies as an indication of what kind of data is being sent (e.g., program header, program data, background graphics...)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4605":{
+"Text":"Converts a hex string at zpTXTPTR, to a binary word in zpWAccum.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3532,7 +3542,7 @@
 "LabelAnno":"None"},
 
 "4963":{
-"Label":"TokenizeLineNumArgs",
+"Label":"StoreTokenAndHandleArgs",
 "Value":37715,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -3616,7 +3626,7 @@
 "LabelAnno":"None"},
 
 "4802":{
-"Label":"tokenizeLineNumArgs",
+"Label":"storeTokHndlArgs",
 "Value":37554,
 "Source":"User",
 "Type":"LocalOrGlobalAddr",
@@ -4407,7 +4417,7 @@
 "LabelAnno":"None"},
 
 "13701":{
-"Label":"HandleControlChar",
+"Label":"PrintOneChar",
 "Value":46453,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4421,7 +4431,7 @@
 "LabelAnno":"None"},
 
 "13740":{
-"Label":"OutputSpace",
+"Label":"OutputChar",
 "Value":46492,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4619,6 +4629,20 @@
 "11297":{
 "Label":"SC_errSyn",
 "Value":44049,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4873":{
+"Label":"TokenizeHexNum",
+"Value":37625,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4605":{
+"Label":"WordFromHex",
+"Value":37357,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"}},
@@ -4900,6 +4924,26 @@
 
 "Extra":null},
 
+"1329":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TokenizeBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"1335":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TokenizeBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "2420":{
 "Length":2,
 "Format":"NumericLE",
@@ -5080,6 +5124,26 @@
 
 "Extra":null},
 
+"2996":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"3000":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"LineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "3070":{
 "Length":2,
 "Format":"NumericLE",
@@ -5092,7 +5156,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"zpPARAM16",
+"Label":"zpWParam",
 "Part":"Low"},
 
 "Extra":null},
@@ -5122,7 +5186,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"zpPARAM16",
+"Label":"zpWParam",
 "Part":"Low"},
 
 "Extra":null},
@@ -5168,6 +5232,26 @@
 "SymbolRef":{
 "Label":"TYP_INT",
 "Part":"Low"},
+
+"Extra":null},
+
+"4715":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TokenizeBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"4719":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TokenizeBuffer",
+"Part":"High"},
 
 "Extra":null},
 
@@ -5229,6 +5313,16 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"tok_OP_MINUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"4886":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_HEX_AFTER",
 "Part":"Low"},
 
 "Extra":null},

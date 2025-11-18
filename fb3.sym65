@@ -24,7 +24,8 @@ zpTokenizeOut   @       $4D     2
 zpPpuScreenBasePage     @       $4F ; The VRAM page used for current display screen's start
 zpOutputStr     @       $52     2
 zpTokTblScn     @       $54     2 ; Used to scan thru tbl_KeywordTokens
-zpTxtLink       @       $5B     2 ; Points to the start of the current program line (including the 3-byte preamble)
+zpNewLineOffset @       $5a       ; Offset to next line for not-yet-placed, tokenized line
+zpTxtLink       @       $5b     2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpSavedRts      @       $5f     2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpOutTxtCurPos  @       $62
 zpNMICMD        @       $63 ; Which command the NMI handler should execute. 1 + the command's index in NMICMD_JumpTable.
@@ -86,7 +87,8 @@ TYP_INT = $02   ; For zpArgTyp. Integer word.
 TYP_STR = $03   ; For zpArgTyp. String.
 
 tok_LNUM_AFTER  = $0b   ; indicates a line number (word) follows this byte
-tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte
+tok_HEX_AFTER   = $11   ; indicates a number (word) follows this byte, originally hexadecimal
+tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte, originally decimal
 
 tok_GOTO    = $80
 tok_GOSUB   = $81

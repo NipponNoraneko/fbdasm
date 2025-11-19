@@ -89,7 +89,7 @@ fnKey7_DfnBuf   @       $4E0    16
 fnKey8_DfnBuf   @       $4F0    16
 
 lineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
-progName        @       $580    17  ; SAVE and LOAD put their string arg here.
+fileName        @       $580    17  ; SAVE and LOAD put their string arg here.
 
 isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.

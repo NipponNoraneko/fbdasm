@@ -888,12 +888,13 @@
 "7577":"get prog len from prog start and end",
 "7610":"always branches",
 "7623":"always branches",
+"7673":"...PRINT token??",
 "7785":"is there an arg?",
 "7788":"no -\u003e nothing to do; return",
 "7790":"yes: expect prog name str",
 "7803":"is the string empty?",
 "7806":"yes -\u003e return",
-"7812":"copy eval\u0027d str as progname",
+"7812":"copy eval\u0027d str as filename",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
@@ -1682,14 +1683,14 @@
 "BackgroundColor":0},
 
 "7778":{
-"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to progName. Otherwise, sets ProgName to 16 blanks (space characters).",
+"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to fileName. Otherwise, sets fileName to 16 blanks (space characters).",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "7834":{
-"Text":"Initialize the progName to 16 spaces, followed by the null terminator",
+"Text":"Initialize the fileName to 16 spaces, followed by the null terminator",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1703,7 +1704,7 @@
 "BackgroundColor":0},
 
 "7853":{
-"Text":"Copy progName (stored from lineBuffer + 128), to LineBuffer + 1",
+"Text":"Copy fileName (stored from lineBuffer + 128), to LineBuffer + 1",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1787,7 +1788,7 @@
 "BackgroundColor":0},
 
 "17693":{
-"Text":"BACKGROUND SCREEN HEADER FORMAT:\r\n\r\nbyte 0:        #$03\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbyte 18 - 19:  #$0001 (maybe originally was part counter? doesn\u0027t update)\r\nbytes 20 - 21: address of outTxtBuf (#$0700)\r\nbyte 22:       vScroll1\r\nbytes 23-127:  (unused) ",
+"Text":"BACKGROUND SCREEN HEADER FORMAT:\r\n\r\nbyte 0:        #$03\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbyte 18 - 19:  size of following packet\u0027s payload (always #$0100)\r\nbytes 20 - 21: address of outTxtBuf (#$0700)\r\nbyte 22:       vScroll1\r\nbytes 23-127:  (unused) ",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1795,6 +1796,13 @@
 
 "7540":{
 "Text":"BASIC PROGRAM HEADER FORMAT:\r\n\r\nbyte 0:        #$02\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbytes 18 -19:  program size in bytes\r\nbytes 20 - 21: pointer to prog start (zpTXTTAB)\r\nbytes 22-127:  (unused) ",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7656":{
+"Text":"Not in jtbl_Commands: in reality, this is just \"LOAD S\", not \"LOADS\".",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4269,7 +4277,7 @@
 "LabelAnno":"None"},
 
 "7778":{
-"Label":"GetProgNameArg",
+"Label":"GetFileNameArg",
 "Value":40530,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4283,7 +4291,7 @@
 "LabelAnno":"None"},
 
 "7834":{
-"Label":"ProgNameInit",
+"Label":"FileNameInit",
 "Value":40586,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4311,7 +4319,7 @@
 "LabelAnno":"None"},
 
 "7853":{
-"Label":"ProgNameCpyToLineBuffer",
+"Label":"FileNameCpyToLineBuffer",
 "Value":40605,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4458,28 +4466,28 @@
 "LabelAnno":"None"},
 
 "7636":{
-"Label":"PrintProgName",
+"Label":"PrintFileName",
 "Value":40388,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "7599":{
-"Label":"Print_WRITING_progName",
+"Label":"Print_WRITING_fileName",
 "Value":40351,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "7612":{
-"Label":"Print_LOADING_progName",
+"Label":"Print_LOADING_fileName",
 "Value":40364,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "7625":{
-"Label":"Print_SKIP_progName",
+"Label":"Print_SKIP_fileName",
 "Value":40377,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -4950,6 +4958,13 @@
 "17777":{
 "Label":"rts_C561",
 "Value":50529,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7656":{
+"Label":"CmdFn_LOADS",
+"Value":40408,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"}},
@@ -5916,6 +5931,13 @@
 "Label":"lineBuffer",
 "Part":"High"},
 
+"Extra":null},
+
+"7669":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "10223":{
@@ -6915,7 +6937,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"progName",
+"Label":"fileName",
 "Part":"Low"},
 
 "Extra":null},
@@ -6925,7 +6947,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"progName",
+"Label":"fileName",
 "Part":"High"},
 
 "Extra":null},

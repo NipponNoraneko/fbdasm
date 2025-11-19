@@ -70,8 +70,8 @@ zpCasBufPtr     @       $AD     2   ; Start of data to send to cassette
 zpCasEndPtr     @       $AF     2   ; End of data to send to cassette
 
 zpErrCode       @       $B5
-zpVScroll0      @       $E4 ; Vertical scroll used when zpPpuScreenBasePage ($4F) is #$20; updated when $F0 is reset
-zpVScroll1      @       $E5 ; Vertical scroll used when zpPpuScreenBasePage ($4F) is NOT #$20; updated when $F0 is set
+zpVScroll0      @       $E4 ; Vertical scroll used when SCREEN 0 is in use
+zpVScroll1      @       $E5 ; Vertical scroll used when SCREEN 1 is in use; updated when $F0 is set
 zpNmiTrampoline @       $ED 3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpSomeKindaScrollingFlagF0      @       $F0 ; Flag indicating which vertical scroll var to update.
 zpGameNum       @       $F3 ; Game number (GAME cmd)
@@ -91,8 +91,8 @@ fnKey8_DfnBuf   @       $4F0    16
 lineBuffer      @       $500    256 ; NMICMD_BufferCurLine copies the full current, potentially multi-row line to here
 progName        @       $580    17  ; SAVE and LOAD put their string arg here.
 
-isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if $4C = #$20.
-isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if $4C != #$20.
+isRowWrappedArray0      @       $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
+isRowWrappedArray1      @       $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 
 kbdDataAry @       $634    9
 unkKbdFlag      @       $63B
@@ -104,6 +104,9 @@ NC_NoCmd            = 0
 NC_FlushOutp        = 1
 NC_BufferCurLine    = 2
 NC_ClearToEndOfRow  = 4
+
+VRAM_screen0    = $2000
+VRAM_screen1    = $2400
 
 TYP_INT = $02   ; For zpArgTyp. Integer word.
 TYP_STR = $03   ; For zpArgTyp. String.

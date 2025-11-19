@@ -4645,6 +4645,13 @@
 "Value":37357,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15679":{
+"Label":"RL_handleCR",
+"Value":48431,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{

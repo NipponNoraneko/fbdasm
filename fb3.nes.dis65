@@ -4916,7 +4916,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"BasicProgram",
+"Label":"basicProgram",
 "Part":"Low"},
 
 "Extra":null},
@@ -4926,7 +4926,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"BasicProgram",
+"Label":"basicProgram",
 "Part":"Low"},
 
 "Extra":null},

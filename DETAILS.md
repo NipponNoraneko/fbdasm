@@ -1,6 +1,6 @@
 # Family BASIC Internal Details
 
-This document presents details about some of the inner workings of Family BASIC.
+This document presents details about some of the inner workings of Family BASIC. See also [BUGS](BUGS.md), for bugs and surprising code choices.
 
 ## BASIC Program In-Memory Representation
 

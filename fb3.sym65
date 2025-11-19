@@ -113,6 +113,9 @@ VRAM_screen1    = $2400
 TYP_INT = $02   ; For zpArgTyp. Integer word.
 TYP_STR = $03   ; For zpArgTyp. String.
 
+CAS_HDR_PROG   = $02 ; Identity byte in header for prog saves to cassette tape.
+CAS_HDR_SCREEN = $03 ; Identity byte in header for screen saves to cassette tape.
+
 tok_LNUM_AFTER  = $0b   ; indicates a line number (word) follows this byte
 tok_HEX_AFTER   = $11   ; indicates a number (word) follows this byte, originally hexadecimal
 tok_NUM_AFTER   = $12   ; indicates a number (word) follows this byte, originally decimal

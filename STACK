@@ -33,6 +33,6 @@ BRANCH STACK:
   $853A
    $857F
 
- Write up what I know so far, and the bugs I've found
-
  CmdFn_LOAD
+
+ Write up details about prog header contents, and details about screen saves

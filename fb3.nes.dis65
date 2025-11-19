@@ -1022,6 +1022,9 @@
 "16252":"now send the designated data buffer",
 "16267":"and a checksum (count of the ones in all bytes)",
 "16279":"send a final \"one\" bit at the end",
+"17693":"START HEADER CREATION",
+"17695":"Indicate this header precedes screen data",
+"17719":"END HEADER CREATION",
 "19684":"all commands above this line take line number arguments",
 "20321":"SPC, only allowed in PRINT",
 "20323":"TAB, only allowed in PRINT"},
@@ -1764,6 +1767,34 @@
 
 "4605":{
 "Text":"Converts a hex string at zpTXTPTR, to a binary word in zpWAccum.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7508":{
+"Text":"Not in jtbl_Commands: in reality, this is just \"SAVE S\", not \"SAVES\".",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17733":{
+"Text":"Sends the header, then a payload with one page (256 bytes) of tiles\r\nfrom screen 1.\r\n\r\nVery expensive, but can\u0027t be helped: we have to wait for a vblank before we can safely access the screen data, and I guess we can\u0027t send a second page without risking vblank ending and getting garbage data. After we send a page, we must await vblank again, and we can\u0027t do that _and_ send the cassette signals at the same time. So, individual header + payload it is.\r\n\r\nHeader is exactly the same each time.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17693":{
+"Text":"BACKGROUND SCREEN HEADER FORMAT:\r\n\r\nbyte 0:        #$03\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbyte 18 - 19:  #$0001 (maybe originally was part counter? doesn\u0027t update)\r\nbytes 20 - 21: address of outTxtBuf (#$0700)\r\nbyte 22:       vScroll1\r\nbytes 23-127:  (unused) ",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7540":{
+"Text":"BASIC PROGRAM HEADER FORMAT:\r\n\r\nbyte 0:        #$02\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbytes 18 -19:  program size in bytes\r\nbytes 20 - 21: pointer to prog start (zpTXTTAB)\r\nbytes 22-127:  (unused) ",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4879,6 +4910,48 @@
 "Value":44599,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7508":{
+"Label":"CmdFn_SAVES",
+"Value":40260,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"18059":{
+"Label":"strSAVE_OR_LOAD_Q",
+"Value":50811,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17693":{
+"Label":"SaveBackgroundMap",
+"Value":50445,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17748":{
+"Label":"cpyTiles",
+"Value":50500,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17733":{
+"Label":"sendNextPage",
+"Value":50485,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17777":{
+"Label":"rts_C561",
+"Value":50529,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -7178,6 +7251,36 @@
 
 "Extra":null},
 
+"17693":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"CAS_HDR_SCREEN",
+"Part":"Low"},
+
+"Extra":null},
+
+"17722":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"Low"},
+
+"Extra":null},
+
+"17726":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"High"},
+
+"Extra":null},
+
 "18059":{
 "Length":17,
 "Format":"StringNullTerm",
@@ -7190,6 +7293,26 @@
 "Format":"StringNullTerm",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"18111":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strSAVE_OR_LOAD_Q",
+"Part":"Low"},
+
+"Extra":null},
+
+"18115":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strSAVE_OR_LOAD_Q",
+"Part":"High"},
+
 "Extra":null},
 
 "18201":{
@@ -9982,7 +10105,29 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
-},
+"17693":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vramCpyPage",
+"Value":95,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"17778":{
+"Variables":[],
+"ClearPrevious":true}},
 
 "Visualizations":[],
 "VisualizationAnimations":[],

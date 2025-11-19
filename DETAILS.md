@@ -79,6 +79,16 @@ Although Family BASIC itself never uses [ScrollScreenUpOneRow](https://famibe.ad
 
 ### Reading Line Input from the User
 
+When the user is typing commands or lines of code in direct mode ([DirectModeLoop](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymDirectModeLoop), which uses [ReadLine](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymReadLine) to grab a line from the user), none of the text is actually being stored in a variable anywhere. It just checks whether special chars are typed and handles those, and otherwise just prints the typed character out to the screen, handling line-wraps and screen scrolling as described in the previous section.
+
+When the user types the Enter key (`#$0D`), execution goes to [RL_handleCR](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymRL_handleCR), which sets some vars up and then sets [zpNMICMD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpNMICMD) to `#$02` and calls [WaitForNmiSubcommand](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymWaitForNmiSubcommand), landing in [NMICMD_BufferCurLine](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMICMD_BufferCurLine) when the next v-blank NMI hits.
+
+Before passing control to [NMICMD_BufferCurLine](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMICMD_BufferCurLine), [RL_handleCR](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymRL_handleCR) looks up the cursor's current line number ([zpCV](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpCV)) in the wrapped-row flags array ([isRowWrappedArray0](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymisRowWrappedArray0) or [isRowWrappedArray1](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymisRowWrappedArray1), depending on `SCREEN 0` or `SCREEN 1`), and if this row was wrapped to from the previous row, it moves up a row and checks again. It repeats this check, until either it reaches a row that is the real beginning of a line, or it reaches row zero. It sets the cursor to the start of this row, and then hands off control to the NMI handler.
+
+[NMICMD_BufferCurLine](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMICMD_BufferCurLine) then copies all of the characters from the screen (the tile "name" bytes all correspond to Family BASIC's character codes (a superset of ASCII is used)) into [LineBuffer](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymLineBuffer), also checking the row-wrap array, stopping when it reaches the end of a row that didn't wrap to the next, or when 255 characters have been read (it does not indicate if it had to truncate the input line, just completes).
+
+Since the end of the final row may have held a string of space characters, [RL_handleCR](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymRL_handleCR) strips those off, and slaps a terminating null byte at the new line end.
+
 ## Magnetic Data Cassette Representation
 
 ### Overview

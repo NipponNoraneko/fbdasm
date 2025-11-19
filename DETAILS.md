@@ -178,7 +178,7 @@ The payload for the program data packet is just the entire contents of the BASIC
 
 ##### Background Screen Data Payload
 
-As previously mentioned, the data packet payload for screen graphics saves consists of one page (out of four, from `$2400` to `$27ff`) in VRAM for screen 1's nametable and attrtable. These are sent one after the other, each preceded by an identical header packet.
+As previously mentioned, the data packet payload for screen graphics saves consists of one 256-byte page (out of four, from `$2400` to `$27ff`) in VRAM for screen 1's nametable and attrtable. These are sent one after the other, each preceded by an identical header packet.
 
 This packet-splitting is extremely expensive, but can't be helped: Family BASIC has to wait for a vblank before it can safely access the screen data from the PPU, and can't send a second page without risking vblank ending and getting garbage data. After it sends a page, it must await vblank again, and can't do that *and* send out the cassette signals at the same time, meaning it must first close out the packet and stop sending for a bit, before it can safely await vblank. So, individual pages it is.
 

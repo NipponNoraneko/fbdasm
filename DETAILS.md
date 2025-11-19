@@ -101,7 +101,7 @@ Whenever data is to be sent out to the cassette recorder, it will be packaged as
  3. **the payload** - the actual datastream.
  4. **the checksum**, which is a 16-bit word count of how many one bits were in the datastream, followed by a final, single one bit.
 
-When sending a BASIC program or screen save, two separate payloads are sent in this way, back-to-back. A 128-byte header, providing such information as data size and file name, and then the actual program or screen data.
+For every chunk of actual data that is sent, two separate payloads are sent in this way, back-to-back. A 128-byte header, providing such information as data size and file name, and then the actual data. A BASIC program is sent with just one of these header/data pairs; saving the background screen requires four of these pairs, for a total of eight packets (each preceded by one of those 9.5 second, 20,000-bit sync signals!).
 
 This cassette send pattern is handled by [CassetteSend](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSend). See also [CmdFn_SAVE](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_SAVE) and [CmdFn_LOAD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_LOAD).
 
@@ -140,6 +140,41 @@ The payload is simply a stream of bytes. The header is always 128 bytes, and the
 Each byte sent consists of a "start" bit (always one), followed by the eight bits of the byte, with the most-significant bit sent first.
 
 ![A diagram of the first few bytes of data payload for a BASIC program, showing the last few bits from the announce stream, and four bytes of payload, with each start bit and each octet of content bits highlighted. The bytes shown are $13, $0A, $00, and $AB, representing the offset to the next line of BASIC code with the first byte ($13), a line number (10) with the next two bytes ($0A, $00), and the token byte for the keyword "CGEN" with the last shown byte ($AB).](images/payload.png)
+
+##### Program Header
+
+The 128-byte header sent in the packet before the one for the program code itself, has the following format:
+
+Byte   | Value
+-------|------
+0      | `#$02`
+1 - 17 | null-term'd filename (no len byte)
+18 -19 | program size in bytes
+20 - 21| pointer to prog start (`zpTXTTAB`, #$6006)
+22 -127| (unused)
+
+##### Background Screen Header
+
+The 128-byte header sent in the packet before each packet with one page of VRAM data, has the following format: 
+
+Byte   | Value
+-------|------
+0      | `#$03`
+1 - 17 | null-term'd filename (no len byte)
+18 -19 | size of next packet's payload in bytes (always `#$0100` - one page!)
+20 - 21| `#$0700`
+22     | scroll register value for scr 1
+23 -127| (unused) 
+
+##### Program Data Payload
+
+The payload for the program data packet is just the entire contents of the BASIC program.
+
+##### Background Screen Data Payload
+
+As previously mentioned, the data packet payload for screen graphics saves consists of one page (out of four, from `$2400` to `$27ff`) in VRAM for screen 1's nametable and attrtable. These are sent one after the other, each preceded by an identical header packet.
+
+This packet-splitting is extremely expensive, but can't be helped: Family BASIC has to wait for a vblank before it can safely access the screen data from the PPU, and can't send a second page without risking vblank ending and getting garbage data. After it sends a page, it must await vblank again, and can't do that *and* send out the cassette signals at the same time, meaning it must first close out the packet and stop sending for a bit, before it can safely await vblank. So, individual pages it is.
 
 #### Checksum
 

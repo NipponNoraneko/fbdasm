@@ -59,3 +59,62 @@ This is because a typo in the code that handles the `REM` statement, causes Fami
 This bug is found at [TokRemCopyToEnd](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymTokRemCopyToEnd).
 
 When I first confirmed this bug, I was shocked. Many common Japanese words would trigger this bug, and I wondered why I could turn nothing up about it in web searches. When, a little while later, I confirmed that this bug does *not* exist for the apostrophe (') shorthand, it made a little more sense. Most people use the shorthand, because it's both faster to type and more readable (the `REM` keyword is harder for your eye to "skip" when reading comments, as at first glance it can look like just another word in the comment (especially for English-language comments). It's also very likely that those who did encounter this bug, didn't know what caused it - after all, you don't see anything wrong while you're typing, only when you `LIST` your code back out, possibly after having saved and reloaded it. You would see that the comment had become corrupt, but you wouldn't really know when it got corrupted, and might not assume it had been mangled from the very beginning when you first typed it in.
+
+# Bad Code Smells
+
+## Add/Subtract
+
+[Subtract](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymSubtract), and the [Add](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymAdd) routine it wraps, is the worst implementation for a routine that subtracts two integer words, that I could possibly imagine.
+
+Below is my rough representation of the algorithm used, in Python-like pseudocode:
+
+```
+fn sub(a, b):
+    if a == -32768:
+        if b >= 0: # BUG. s/b: b > 0
+            raise ErrorOverflow
+        else:
+            return add(a, -b)
+    else:
+        # a != -32768
+        if (-a) < 0 || b < 0:
+            return -( add(-a, b) )
+        else:
+            ret = -a + b
+            if ret == -32768:
+                return ret
+            else if ret >= 0:
+                return -ret
+            else:
+                raise ErrorOverflow
+
+fn add(a, b):
+    if a < 0:
+        if b < 0:
+            # neg plus neg
+            ret = (-a) + (-b)
+            if ret == -32768:
+                return ret  # already negative 
+            else if ret < 0:
+                raise ErrorOverflow
+            else:
+                return -ret
+        else:
+            # neg plus pos
+            return -( (-a) - b )
+    else if b < 0:
+        # pos plus neg
+        return a - (-b)
+    else:
+        # pos plus pos
+        ret = acc + parm;
+        if ret < 0:
+            raise ErrorOverflow
+
+```
+
+[Add](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymAdd) isn't actually *that* bad... it just maneuvers to ensure that all operands are positive before doing an `adc` or `sbc` and then possibly negating the result so it's good at the end. As veteran 6502 hacker John Brooks pointed out when I shared this code around a 6502 coding group, this is a very common pattern for multiplication or division, but it's completely unnecessary (and pretty dang inefficient) for add/subtract.
+
+But [Subtract](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymSubtract) is just downright bizarre. It automatically negates its first operand, no matter what its original polarity is (unless it's -32,768, when it can't), before passing it on to [Add](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymAdd), and then negating the answer afterward. Since [Add](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymAdd), itself, may also need to negate that argument again to make it positive (if it was originally positive), you may well end up with multiple useless negations on the way in and the way out.
+
+I guess the point is that it negates it so that it knows it has changed the Subtract operation into an Add, so it knows it can hand off the actual operation to that routine. But it really doesn't feel like it saved much code, and again, *none* of this was ever remotely necessary.

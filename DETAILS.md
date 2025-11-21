@@ -102,12 +102,12 @@ Since the end of the final row may have held a string of space characters, [RL_h
 Data bits (one and zero) are represented as a single audio-signal cycle, of differing lengths/frequencies. Details are in the next subsection.
 
 Whenever data is to be sent out to the cassette recorder, it will be packaged as follows:
- 1. **the sync**, or "gap", a stream of 20,000 zero bits (about nine-and-a-half seconds' worth of signal). Presumably for sync, though it's way overkill.
+ 1. **the sync**, or "gap", a stream of 19,744 zero bits (a little less than 10 seconds' worth of signal). Presumably for sync, though it's way overkill.
  2. **the announce stream**, or "tape mark", an equal number of N one bits, N zero bits, and one final one bit.
  3. **the payload** - the actual datastream.
  4. **the checksum**, which is a 16-bit word count of how many one bits were in the datastream, followed by a final, single one bit.
 
-For every chunk of actual data that is sent, two separate payloads are sent in this way, back-to-back. A 128-byte header, providing such information as data size and file name, and then the actual data. A BASIC program is sent with just one of these header/data pairs; saving the background screen requires four of these pairs, for a total of eight packets (each preceded by one of those 9.5 second, 20,000-bit sync signals!).
+For every chunk of actual data that is sent, two separate payloads are sent in this way, back-to-back. A 128-byte header, providing such information as data size and file name, and then the actual data. A BASIC program is sent with just one of these header/data pairs; saving the background screen requires four of these pairs, for a total of eight packets (each preceded by one of those 10-second, 19,744-bit sync signals!).
 
 This cassette send pattern is handled by [CassetteSend](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSend). See also [CmdFn_SAVE](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_SAVE) and [CmdFn_LOAD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCmdFn_LOAD).
 
@@ -131,7 +131,7 @@ Note that the nature of this representation for bits means that one cannot meani
 
 #### Signal Sync
 
-Not much more to say about it, really. 9.5 seconds of monotonous sync signal, consisting of a stream of 20,000 zero bits. Since a BASIC program on cassette consists of two payloads, this guarantees that no matter how tiny your program, is, it will take about twenty seconds at an absolute minimum, to either save or load. Oh, your program is only 4 bytes long? Well, the header payload will add another 128 bytes... and the two sync signals will together add roughly 5kb!
+Not much more to say about it, really. Roughly 10 seconds of monotonous sync signal, consisting of a stream of 19,744 zero bits. Since a BASIC program on cassette consists of two payloads, this guarantees that no matter how tiny your program, is, it will take about twenty seconds at an absolute minimum, to either save or load. Oh, your program is only 4 bytes long? Well, the header payload will add another 128 bytes... and the two sync signals will together add roughly 5kb!
 
 #### Announce Stream
 
@@ -194,7 +194,7 @@ UglyJoe/ximwix at [famicomworld.com](https://www.famicomworld.com/forum/index.ph
 
 The formats are quite similar. Some differences are:
  - (Biggest difference) The data is sent twice on the MZ format, with an intervening 256-cycle intermission, but sent only once on Family BASIC. In [the block diagrams at sharpmz.org]([https://www.sharpmz.org/mz-700/tapeproc.htm](https://www.sharpmz.org/mz-700/tapeproc.htm#:~:text=Tape%20Format)) that show the structures for saved data, Everything after the second "L" in each of those block diagrams, does not exist on Family BASIC tape saves.
- - The MZ format uses two different lengths of **sync** signal (the MZ page calls this a "GAP"&mdash;"LGAP" or "SGAP", depending on whether it's the long, or the short variant). It uses the long one (22,000 cycles) before the header packet is sent, and the shorter one (11,000 cycles) before the data packet is sent. Family BASIC uses the same 20,000-cycle gap before each of those.
+ - The MZ format uses two different lengths of **sync** signal (the MZ page calls this a "GAP"&mdash;"LGAP" or "SGAP", depending on whether it's the long, or the short variant). It uses the long one (22,000 cycles) before the header packet is sent, and the shorter one (11,000 cycles) before the data packet is sent. Family BASIC uses the same 19,744-cycle gap before each of those.
  - When sending a single cycle to represent one bit, the MZ starts with the high period and finishes with the low, while the reverse is true for Famibe.
 
 ## BASIC Variables (TODO)

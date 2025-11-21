@@ -102,8 +102,8 @@ Since the end of the final row may have held a string of space characters, [RL_h
 Data bits (one and zero) are represented as a single audio-signal cycle, of differing lengths/frequencies. Details are in the next subsection.
 
 Whenever data is to be sent out to the cassette recorder, it will be packaged as follows:
- 1. **the sync**, a stream of 20,000 zero bits (about nine-and-a-half seconds' worth of signal). Presumably for sync, though it's way overkill.
- 2. **the announce stream**, an equal number of N one bits, N zero bits, and one final one bit.
+ 1. **the sync**, or "gap", a stream of 20,000 zero bits (about nine-and-a-half seconds' worth of signal). Presumably for sync, though it's way overkill.
+ 2. **the announce stream**, or "tape mark", an equal number of N one bits, N zero bits, and one final one bit.
  3. **the payload** - the actual datastream.
  4. **the checksum**, which is a 16-bit word count of how many one bits were in the datastream, followed by a final, single one bit.
 
@@ -187,6 +187,15 @@ This packet-splitting is extremely expensive, but can't be helped: Family BASIC 
 The checksum consists of a (possibly overflowed) 16-bit count of how many "one" bits were sent in the payload (not including start bits). This 16-bit value is sent using the same [CassetteSendByte](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymCassetteSendByte) facility used to send bytes from the payload; but the bytes of the checksum themselves are sent most-significant byte first.
 
 The data stream is finished out with a final, single "one" bit.
+
+#### Similarities to the Sharp MZ-700 Cassette Format
+
+UglyJoe/ximwix at [famicomworld.com](https://www.famicomworld.com/forum/index.php?topic=15677.msg192005#msg192005) pointed out to me that the format used by Family BASIC is extremely similar to the format used by the Sharp MZ-700, and its successors (Note: Sharp was a co-developer of Family BASIC, and the first version of it was called Playbox BASIC, and targeted at Sharp's My Computer C1 TV, which was a telivision that included a built-in, licensed Famicom system). Here's a detailed description of [the format used by the MZ series](https://www.sharpmz.org/mz-700/tapeproc.htm).
+
+The formats are quite similar. Some differences are:
+ - (Biggest difference) The data is sent twice on the MZ format, with an intervening 256-cycle intermission, but sent only once on Family BASIC. In [the block diagrams at sharpmz.org]([https://www.sharpmz.org/mz-700/tapeproc.htm](https://www.sharpmz.org/mz-700/tapeproc.htm#:~:text=Tape%20Format)) that show the structures for saved data, Everything after the second "L" in each of those block diagrams, does not exist on Family BASIC tape saves.
+ - Bits are very similarly represented, but not quite the same. The frequencies/wavelengths differ (which makes sense, because so do their CPU clockspeeds!). The MZ starts with the high period and finishes with the low, while the reverse is true for Famibe.
+ - The MZ format uses two different lengths of **sync** signal (the MZ page calls this a "GAP"&mdash;"LGAP" or "SGAP", depending on whether it's the long, or the short variant). It uses the long one (22,000 cycles) before the header packet is sent, and the shorter one (11,000 cycles) before the data packet is sent. Family BASIC uses the same 20,000-cycle gap before each of those.
 
 ## BASIC Variables (TODO)
 

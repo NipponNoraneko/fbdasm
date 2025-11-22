@@ -115,7 +115,7 @@ This cassette send pattern is handled by [CassetteSend](https://famibe.addictive
 
 #### Bit Representation
 
-Data saved on cassette ultimately boils down to two different bits, one and zero. Those bits are represented via a single signal/audio cycle, with an equal period of signal-low and signal-high. When the bit is a zero, the cycle is approximately 842 CPU cycles, or 2,125 Hz. When it's a zero, the signal cycle is roughly twice as long (half the frequency), at approximately 1,706 CPU cycles, or 1,050 Hz.
+Data saved on cassette ultimately boils down to two different bits, one and zero. Those bits are represented via a single signal/audio cycle, with an equal period of signal-low and signal-high. When the bit is a zero, the cycle is approximately 842 CPU cycles (470.45μs), or 2,125 Hz. When it's a zero, the signal cycle is roughly twice as long (half the frequency), at approximately 1,706 CPU cycles (953.19μs), or 1,050 Hz.
 
 ![diagram of a short stream of bits represented as an audio signal wave, with one cycle highlighted and labeled "1" bit, and another cycle, half the length, labeled "0" bit](images/bits.png)
 

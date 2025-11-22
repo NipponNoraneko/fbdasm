@@ -6,7 +6,7 @@ This document presents details about some of the inner workings of Family BASIC.
 
 The start of the storage area for (tokenized) BASIC program text is indicated by the variable [zpTXTTAB](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpTXTTAB) ($05.06). Family BASIC initializes this to `$6006` (in cartridge RAM, battery-backed&mdash;in this case by a pair of literal AA batteries), and never changes from that. (Family Basic v2 has it set to `$703E`, instead.) It's possible that a BASIC program might be able to modify Family BASIC's understanding of where the program starts and re-run, providing reliable space for some machine-language code to live in "LOMEM" (Note: `LOMEM` is not a keyword or special variable name used by Family BASIC).
 
-The end of the program (and start of variable data) is tracked by [zpVARTAB](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpVARTAB) ($07.$08).
+The end of the program is tracked by [zpTXTEND](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpTXTEND) ($07.$08).
 
 ### Line Linkage
 

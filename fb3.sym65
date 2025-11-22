@@ -15,17 +15,20 @@
 ;  - code labels that aren't properly full routiness in their own right.
 ; CamelCase in general. Acronyms treated like any other word (except
 ;  in some prefixes).
-; Some vars, like TXTTAB, VARTAB, TXTPTR, get all-caps. They are
+; Some zp vars, like TXTTAB, VARTAB, TXTPTR, get all-caps. They are
 ;  named bc their function is similar to same-named vars in common
-;  Microsoft BASIC implementations.
+;  Microsoft BASIC implementations. Some related names that did not exist
+;  in BASICs I'm familiar with also got all-caps.
 ; References to keywords are also ALL-CAPS.
 ; I'm not super-consistent about naming of constants. Kinda by vibe.
 
 zpTXTTAB    @   $05     2       ; Pointer to the start of the BASIC program code. Always set to $6006.
-zpVARTAB    @   $07     2       ; Ponter to variables start/program end
+zpTXTEND    @   $07     2       ; Ponter to just past the program end (zpzpTXTEND - zpTXTTAB = prog len)
 zpTXTPTR    @   $09     2       ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @       $0B     2   ; Points at the next line of BASIC program after current
 zpMisc          @       $19     4   ; Used for a wide variety of things, mainly temporary pointers
+zpVARTAB        @       $1D     2   ; Start of variable storage
+zpVAREND        @       $1F     2   ; Just past end of variable storage
 zpArgTyp        @       $27         ; Designates the type of data in zpWAccum.
 zpWAccum        @       $28     3   ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @       $2C     3   ; Like a 16-bit Data register. forms the second operand of various binary operators

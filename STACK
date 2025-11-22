@@ -34,5 +34,5 @@ BRANCH STACK:
    $857F
 
  CmdFn_LOAD
-
- Write up details about prog header contents, and details about screen saves
+    $9DD8 - LOADS
+ ,@LD_skipped

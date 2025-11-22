@@ -802,6 +802,12 @@
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
 "1475":"subtract length of deleted line from prog end",
+"2124":"write $05 to keyboard: reset row/col scanning",
+"2127":"stall 21 cycles (~12 ns)",
+"2135":"write $04: prep read for column 0 of a new row",
+"2140":"welect second col, first row",
+"2143":"read key column state",
+"2146":"mask out all but STOP key",
 "2159":"reset NMI sub-command",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
@@ -888,7 +894,9 @@
 "7577":"get prog len from prog start and end",
 "7610":"always branches",
 "7623":"always branches",
-"7673":"...PRINT token??",
+"7673":"\"LOAD?\"?... actually literally the PRINT token",
+"7675":"no -\u003e leave flag at zero",
+"7677":" = #$ff",
 "7785":"is there an arg?",
 "7788":"no -\u003e nothing to do; return",
 "7790":"yes: expect prog name str",
@@ -1014,6 +1022,49 @@
 "15692":"Row is wrapped: loop back to preceding row",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into lineBuffer",
 "15729":"Space: strip it and loop to preceding character",
+"15971":"presumably to disable NMI",
+"15978":"set up for loading a header",
+"15985":"read a bit",
+"15988":"STOP pressed? -\u003e re-enable NMI, then TP error",
+"15990":"zero bit? -\u003e Not announce mark yet, check next",
+"15992":"got a \"one\" bit, see if we get 40 total",
+"15994":"not 40 yet? get another \"one\"",
+"16000":"read a bit",
+"16003":"STOP pressed? -\u003e re-enable NMI, then TP error",
+"16005":"one bit? -\u003e Not announce mark yet, check next",
+"16007":"got a zero bit, see if we get 40 total",
+"16009":"not 40 yet? get another zero",
+"16013":"receive first (higher-order) byte for checksum",
+"16017":"finish up the zero cycle",
+"16020":"and skip the following cycle (a final \"one\")",
+"16023":"we\u0027re on low; this will skip a start bit before read",
+"16039":"verify the byte matches, rather than load",
+"16043":"not matched -\u003e TP error",
+"16045":"prep next byte save loc",
+"16048":"did we reach end?",
+"16051":"no -\u003e read next byte",
+"16061":"get first (higher-order) byte of checksum",
+"16064":"does it match our high byte?",
+"16066":"no -\u003e TP error!",
+"16068":"get second (lower-order) byte of checksum",
+"16071":"does it match our low byte?",
+"16073":"yes -\u003e re-enable NMI and return success",
+"16099":"loop while cassette signal is low",
+"16111":"loop while cassette signal is high",
+"16113":"return true/success",
+"16118":"STOP pressed? -\u003e return false",
+"16120":"we\u0027re def at start of low signal from cassette",
+"16126":"77 * 8 + 7 = 623 cycles (~348 ns)",
+"16131":"signal level to accum",
+"16133":"return true/success",
+"16135":"prepare to read 8 bits",
+"16146":"equiv: asl vZpByteVal (so why not do that?)",
+"16153":"STOPped? -\u003e return early",
+"16155":"zero? -\u003e don\u0027t modify the byte",
+"16157":"one. Stick it in the low bit.",
+"16166":"finish cycle (CassetteRcvBit will skip start bit)",
+"16169":"another opportunutiy to handle STOP",
+"16173":"return true, accum has the byte read",
 "16181":"Prog header starts with 40 high bits followed by 40 zeroes",
 "16192":"I think this is to disable NMI?",
 "16198":"Prog data starts with 20 high bits followed by 20 zeroes",
@@ -1684,14 +1735,14 @@
 "BackgroundColor":0},
 
 "7778":{
-"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it to fileName. Otherwise, sets fileName to 16 blanks (space characters).",
+"Text":"Used by SAVE, LOAD, etc. Checks if there\u0027s a string argument, and if so, copies it (temporarily) to upper half of lineBuffer. Otherwise, sets that area to 16 blanks (space characters). (It gets copied to (almost) the start of lineBuffer, later)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "7834":{
-"Text":"Initialize the fileName to 16 spaces, followed by the null terminator",
+"Text":"Initialize the temporary file name area of lineBuffer (+128) to 16 spaces, followed by the null terminator",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1705,7 +1756,7 @@
 "BackgroundColor":0},
 
 "7853":{
-"Text":"Copy fileName (stored from lineBuffer + 128), to LineBuffer + 1",
+"Text":"Copy file name (stored from lineBuffer + 128), to LineBuffer + 1",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1761,7 +1812,7 @@
 "BackgroundColor":0},
 
 "16229":{
-"Text":"After the 20,000 zeroes, we send a string of N ones and N zeroes, where N varies as an indication of what kind of data is being sent (e.g., program header, program data, background graphics...)",
+"Text":"After the (not quite) 20,000 zeroes, we send an announce string of N ones and N zeroes, where N is 40 for the header, and 20 for the packet that contains the actual payload (BASIC program code, or page of BG graphics)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1804,6 +1855,41 @@
 
 "7656":{
 "Text":"Not in jtbl_Commands: in reality, this is just \"LOAD S\", not \"LOADS\".",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16089":{
+"Text":"If the incoming cassette signal is low, skip that.\r\nIf the incoming cassete signal is high, skips THAT.\r\nWas going to call it \"CasSkipOneCycle\" - which it may do - but the way it\u0027s typically used, it will more often just skip a high signal, so the name would be misleading.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16115":{
+"Text":"Rather unintuitively, this routine with Z set if it\u0027s a \"1\" bit, and Z reset if it\u0027s a \"0\" bit.\r\n\r\nIf called when signal is low, will skip a full cycle, otherwise just skip high.\r\nIt then waits 623 cycles (~348 ns) and checks signal state (this number of cycles was chosen so that it should fall right where you could determine whether this is a long pulse or a short one, distinguishing the bit value.\r\n\r\nAlso checks for the STOP key being pressed. If pressed, aborts early with carry set; otherwisse carry will be reset.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15981":{
+"Text":"Read a header announce/tape mark\r\n(skipping everything that isn\u0027t that)\r\n\r\nString of 40 ones, first",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15996":{
+"Text":"String of 40 zeroes, next",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"16011":{
+"Text":"Header announce mark successfully read!",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4968,6 +5054,160 @@
 "Value":40408,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7682":{
+"Label":"notLOADQ",
+"Value":40434,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7650":{
+"Label":"LoadSkipFile",
+"Value":40402,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7685":{
+"Label":"LD_skipped",
+"Value":40437,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15985":{
+"Label":"lpFortyOnes",
+"Value":48737,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15981":{
+"Label":"CasRcvHdrAnn",
+"Value":48733,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15971":{
+"Label":"CasRcvHeader",
+"Value":48723,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2122":{
+"Label":"CheckForStopKey",
+"Value":34874,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16080":{
+"Label":"rtnFalse_BEC0",
+"Value":48832,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16124":{
+"Label":"waitLp",
+"Value":48876,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16089":{
+"Label":"CasSkipNextHigh",
+"Value":48841,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16101":{
+"Label":"lpWhileHi",
+"Value":48853,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16115":{
+"Label":"CassetteRcvBit",
+"Value":48867,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16075":{
+"Label":"casLdEnableNmiRetErr",
+"Value":48827,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7773":{
+"Label":"ErrorTapeRead",
+"Value":40525,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16000":{
+"Label":"lpFortyZeroes",
+"Value":48752,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16011":{
+"Label":"CasRcvJustBeforeAnnEnd",
+"Value":48763,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16135":{
+"Label":"CassetteRcvByte",
+"Value":48887,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"16143":{
+"Label":"nextBit",
+"Value":48895,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16162":{
+"Label":"zero",
+"Value":48914,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16023":{
+"Label":"rdHdrPayload",
+"Value":48775,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16039":{
+"Label":"verify",
+"Value":48791,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"16082":{
+"Label":"success",
+"Value":48834,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -6938,7 +7178,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"fileName",
+"Label":"lineBuffer",
 "Part":"Low"},
 
 "Extra":null},
@@ -6948,9 +7188,23 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"fileName",
+"Label":"lineBuffer",
 "Part":"High"},
 
+"Extra":null},
+
+"15981":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"15996":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "16181":{
@@ -10128,6 +10382,54 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
+"15971":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpLoopCtr",
+"Value":145,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"16011":{
+"Variables":[],
+"ClearPrevious":true},
+
+"16135":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpByteVal",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"16175":{
+"Variables":[],
+"ClearPrevious":true},
+
 "17693":{
 "Variables":[{
 "DataDescriptor":{
@@ -10141,7 +10443,7 @@
 "HasWidth":true,
 "Direction":"ReadWrite",
 "MultiMask":null,
-"Label":"vramCpyPage",
+"Label":"vZpVramCpyPage",
 "Value":95,
 "Source":"Variable",
 "Type":"ExternalAddr",

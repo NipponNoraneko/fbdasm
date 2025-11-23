@@ -27,11 +27,13 @@ zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zp
 zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @  $0B    2 ; Points at the next line of BASIC program after current
 zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporary pointers
+zpGpStrIdx      @  $21      ; Index for temp string storage in genPurposeBuf
 zpVARTAB        @  $1D    2 ; Start of variable storage
 zpVAREND        @  $1F    2 ; Just past end of variable storage
 zpArgTyp        @  $27    ; Designates the type of data in zpWAccum.
 zpWAccum        @  $28    3 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @  $2C    3 ; Like a 16-bit Data register. forms the second operand of various binary operators
+zpExprStkIdx    @  $30    ; Current position in exprParseStk
 zpPpuCtrlVal    @  $32
 zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
@@ -44,7 +46,7 @@ zpCursTileAddr  @  $4A    2 ; PPU address of tile under cursor
 zpInsertMode    @  $4C      ; Zero = overwrite, non-zero = insert
 zpTokenizeOut   @  $4D    2
 zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
-zpOutputStr     @  $52    2 ; Pointer to null-term'd string to copy to outTxtBuf
+zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for output
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
@@ -55,6 +57,8 @@ zpOutTxtStartPos    @  $64
 zpSavedCH       @  $6B
 zpSavedCV       @  $6C
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
+zpVarName       @  $8A    2 ; Two-letter variable name
+zpTmp90         @  $90      ; For various, temporary uses
 zpCasCksum      @  $91    2 ; Checksum for cassette data, also used for misc counting
 zpSavedTxtChar  @  $98
 zpToken         @  $99
@@ -76,8 +80,10 @@ zpCurScreenNum  @  $F0      ; the _displayed_ SCREEN (0 or 1). Kept in sync with
 zpGameNum       @  $F3      ; Game number (GAME cmd)
 
 tokenizeBuffer  @  $300   256
-strResultLen    @  $400     ; Length of the string result
-strResultPtr    @  $401   2 ; String result after evaluating formula (arg)
+exprParseStk    @  $400   128; expression evaluation stack
+;strResultLen    @  $400     ; Length of the string result
+;strResultLen    @  $400     ; Length of the string result
+;strResultPtr    @  $401   2 ; String result after evaluating formula (arg)
 fnKey1_DfnBuf   @  $480   16; Current definitions of the FN-key shortcuts, each 16 chars
 fnKey2_DfnBuf   @  $490   16
 fnKey3_DfnBuf   @  $4A0   16
@@ -92,7 +98,7 @@ isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped fro
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9 
 unkKbdFlag      @  $63B
-outTxtBuf       @  $700   256; user directive messages (at least) get writen out to here
+genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
 

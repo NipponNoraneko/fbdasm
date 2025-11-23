@@ -23,19 +23,27 @@ SEARCH STACK:
 
 BRANCH STACK:
   DefaultNmiHandler
-  A more in-depth look at what ExprUnaryOrLiteral ($A490) does
+
   DirectModeLoop
- $8334 ExecuteDirectModeLineIThink
- $97A6 second of two functions called when direct-mode line begins with number
- $84E5 first of two functions called when direct-mode line begins with number
+  $8334 ExecuteDirectModeLineIThink
+  $97A6 second of two functions called when direct-mode line begins with number
+  $84E5 first of two functions called when direct-mode line begins with number
   -> $904D
-    -> $8EF7
+  -> $8EF7
   $853A
-   $857F
+    $857F
 
-  CmdFn_LOAD
-    $9DD8 - LOADS
-  ->$C565 (LoadBackgroundMap)
-   ;$C575 left off
+  Expressions : 
+    Follow the chain back down from ExprUnaryOrLiteral
+    Figure out what exprParseBuf $400 is actually used for
+    A more in-depth look at what ExprUnaryOrLiteral ($A490) does
+    - Read what Enri's page has to say about it
 
-  Use constants for header types 2 and 3, send and rcv
+    ExprUnaryOrLiteral
+      $A52C (DoExprVarName)
+        $A57F (EvalVarName)
+       ;$A63E
+        ->$A620 (EvalArrayVar) when it's being indexed as an array
+         ;$A63D
+          ->$A61D
+            ->$A68D (EvalSingleIdxAryVar) when it's a single index

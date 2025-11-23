@@ -922,6 +922,61 @@
 "7875":"no -\u003e just report true",
 "7877":"yes: compare",
 "7879":"16 char max filename",
+"9217":"advance to next token char",
+"9220":"parse whatever\u0027s there",
+"9231":"move evaluation result into zpWAccum",
+"9233":"(result still remains on expression stack)",
+"9242":"get following atomic expression into WAccum",
+"9245":"and negate it",
+"9248":"copy result to parsed-expression stack",
+"9292":"copy literal contents into genPurposeBuf as temp str",
+"9294":"end of line? -\u003e done copying",
+"9296":"end of string literal found?",
+"9298":"yes -\u003e package up for exprParseStk",
+"9305":"32 chars reached?",
+"9307":"yes -\u003e illegal",
+"9323":"advance zpTXTPTR past the end of string literal",
+"9333":"push str len to parse stack",
+"9338":"push pointer to tmp string on parse stack",
+"9351":"update stack pointer past newly-pushed stuff",
+"9355":"update temp string index past what we copied in",
+"9357":"indicate cur expr is string",
+"9376":"is this the end of the command (\u0027\\0\u0027 or \u0027:\u0027)?",
+"9379":"yes -\u003e syntax error (we\u0027re expecting an op or atom!)",
+"9381":"have a single-digit number?",
+"9403":"no effect - just incr zpTXTPTR!",
+"9413":"punctuation or raw digits?",
+"9415":"matched -\u003e syntax error",
+"9417":"\u0027A\u0027 thru \u0027Z\u0027?",
+"9419":"yes -\u003e handle (presumed) var name",
+"9484":"move numeric literal directly onto parse stack",
+"9487":"(not including leading token byte)",
+"9498":"advance zpTXTPTR past the literal",
+"9510":"store the digit into the parse buffer",
+"9513":"and decrement to the true number value",
+"9518":"store the high byte (#$00)",
+"9524":"incr buffer index past number, and terminating null?",
+"9526":"advance to next byte of tokenized line",
+"9613":"empty the parse stack",
+"9617":"clear variable name second byte",
+"9619":"store var name first char (we already got)",
+"9621":"get next char from line",
+"9624":"is it alphanumeric?",
+"9627":"no -\u003e look into that",
+"9629":"yes, store as var name 2nd char",
+"9631":"loop over any remaining alphanumeric chars, ignoring",
+"9660":"array index?",
+"9784":"high bit = \"array\" flag?",
+"9790":"evaluate int expression for array index",
+"9798":"save away first byte of index result",
+"9802":"verify idx fits in 1 byte, and pop from parse stack",
+"9805":"only one index? -\u003e handle",
+"9986":"second index byte is #$00?",
+"9989":"no -\u003e too big! error",
+"9991":"save our backed-up stack index",
+"9996":"next char == \u0027)\u0027?",
+"9998":"no -\u003e return false",
+"10000":"yes, return true",
 "10188":" \u003c \u00270\u0027 (punctuation, or control chars)?",
 "10192":" digit?",
 "10196":" additional punctuation?",
@@ -1214,7 +1269,7 @@
 "BackgroundColor":0},
 
 "2380":{
-"Text":"Copies the null-terminated string pointed at by zpOutputStr ($52)\r\nto outTxtBuf ($700)",
+"Text":"Copies the null-terminated string pointed at by zpOutputStr ($52)\r\nto genPurposeBuf ($700), queueing for output",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1893,7 +1948,7 @@
 "BackgroundColor":0},
 
 "17693":{
-"Text":"BACKGROUND SCREEN HEADER FORMAT:\r\n\r\nbyte 0:        #$03\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbyte 18 - 19:  size of following packet\u0027s payload (always #$0100)\r\nbytes 20 - 21: address of outTxtBuf (#$0700)\r\nbyte 22:       vScroll1\r\nbytes 23-127:  (unused) ",
+"Text":"BACKGROUND SCREEN HEADER FORMAT:\r\n\r\nbyte 0:        #$03\r\nbytes 1 - 17:  null-term\u0027d filename (no len byte)\r\nbyte 18 - 19:  size of following packet\u0027s payload (always #$0100)\r\nbytes 20 - 21: address of genPurposeBuf (#$0700)\r\nbyte 22:       vScroll1\r\nbytes 23-127:  (unused) ",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -1964,6 +2019,34 @@
 
 "15924":{
 "Text":"Load a file (whether program, or bg data) from cassette (after having processed the header)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"9217":{
+"Text":"Evaluate the following unary or literal expression, and then copy the evaluated result into WAccum",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7968":{
+"Text":"Advance zpTXTPTR by 3",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"9986":{
+"Text":"Pops the evaluated array index off the parse stack, erroring if the index value exceeds one byte (too big to be an index!). Returns with carry set if and only if next token is a closing parenthesis (\u0027)\u0027)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"9807":{
+"Text":"If we reach here, there\u0027s a second index provided for this array",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -5408,6 +5491,272 @@
 "Value":50541,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9508":{
+"Label":"ParseSingleDigitNum",
+"Value":42260,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9501":{
+"Label":"SetIntTypAndSkipSpc",
+"Value":42253,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9217":{
+"Label":"EvalUnaryIntoWAccum",
+"Value":41969,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9242":{
+"Label":"DoExprNegate",
+"Value":41994,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9370":{
+"Label":"doExprNegate_A48A",
+"Value":42122,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9364":{
+"Label":"errSyn_A484",
+"Value":42116,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9261":{
+"Label":"DoExprNot",
+"Value":42013,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9367":{
+"Label":"doExprNot_A487",
+"Value":42119,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9478":{
+"Label":"ParseNumLiteral",
+"Value":42230,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7968":{
+"Label":"TxtPtrAdvThree",
+"Value":40720,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9373":{
+"Label":"txtPtrIncr_A48D",
+"Value":42125,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10465":{
+"Label":"errSyn_A8D1",
+"Value":43217,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10381":{
+"Label":"SkipRParenOrSynErr",
+"Value":43133,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10378":{
+"Label":"SkipLParenOrSynErr",
+"Value":43130,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9466":{
+"Label":"DoExprParens",
+"Value":42218,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9285":{
+"Label":"ParseStrLit",
+"Value":42037,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2376":{
+"Label":"rts_8938",
+"Value":35128,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9292":{
+"Label":"cpyLp",
+"Value":42044,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9239":{
+"Label":"errIll_A407",
+"Value":41991,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9312":{
+"Label":"afterCopy",
+"Value":42064,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9315":{
+"Label":"eol",
+"Value":42067,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9460":{
+"Label":"errSyn_A4E4",
+"Value":42212,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9532":{
+"Label":"DoExprVarName",
+"Value":42284,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9603":{
+"Label":"errSyn_A573",
+"Value":42355,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9615":{
+"Label":"EvalVarName",
+"Value":42367,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9606":{
+"Label":"EvalVarNameOrSynErr",
+"Value":42358,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9639":{
+"Label":"nonAlNum",
+"Value":42391,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9631":{
+"Label":"alNumLp",
+"Value":42383,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9657":{
+"Label":"notStr",
+"Value":42409,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9760":{
+"Label":"rts_A610",
+"Value":42512,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9770":{
+"Label":"errTypMism_A61A",
+"Value":42522,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9761":{
+"Label":"ParseIntExprOrTMErr",
+"Value":42513,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9930":{
+"Label":"errIllVal_A6BA",
+"Value":42682,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10002":{
+"Label":"retFalse",
+"Value":42754,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9986":{
+"Label":"ParsStkPopIdx",
+"Value":42738,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9933":{
+"Label":"EvalSingleIdxAryVar",
+"Value":42685,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9773":{
+"Label":"singleIdxAry",
+"Value":42525,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9776":{
+"Label":"EvalArrayVar",
+"Value":42528,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -6401,14 +6750,197 @@
 
 "Extra":null},
 
-"10223":{
-"Length":3,
+"9296":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9343":{
+"Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"strResultPtr",
+"Label":"genPurposeBuf",
+"Part":"High"},
+
+"Extra":null},
+
+"9357":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
 "Part":"Low"},
 
+"Extra":null},
+
+"9381":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"9385":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_MINUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"9389":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_NOT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9393":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_NUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"9397":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_HEX_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"9401":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_PLUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"9405":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9409":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9413":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9417":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9421":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_MOVE",
+"Part":"Low"},
+
+"Extra":null},
+
+"9425":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_ABS",
+"Part":"Low"},
+
+"Extra":null},
+
+"9429":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_XOR",
+"Part":"Low"},
+
+"Extra":null},
+
+"9501":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9639":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9646":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9650":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
+"9660":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"9996":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "10366":{
@@ -6469,6 +7001,27 @@
 "Label":"TA866",
 "Part":"Low"},
 
+"Extra":null},
+
+"10378":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"10380":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"10381":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "10683":{
@@ -10626,6 +11179,72 @@
 "Extra":"↑FB3_CHRROM.bin"}},
 
 "LvTables":{
+"9285":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSavX",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSavY",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"9364":{
+"Variables":[],
+"ClearPrevious":true},
+
+"9606":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"type of var",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpVarType",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"9986":{
+"Variables":[],
+"ClearPrevious":true},
+
 "15924":{
 "Variables":[{
 "DataDescriptor":{

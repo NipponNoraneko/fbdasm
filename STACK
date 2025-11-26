@@ -37,6 +37,8 @@ BRANCH STACK:
   Expressions : 
     Follow the chain back down from ExprUnaryOrLiteral
 
+  CmdFn_READ
+
   Document how vars are stored in VARTAB, in DETAILS.md (and BUGS.md)
 
 Arrays: DIM A$(10)

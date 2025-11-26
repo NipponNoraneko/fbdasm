@@ -19,7 +19,10 @@
 ;  named bc their function is similar to same-named vars in common
 ;  Microsoft BASIC implementations. Some related names that did not exist
 ;  in BASICs I'm familiar with also got all-caps.
-; References to keywords are also ALL-CAPS.
+; Primary references to keywords are also ALL-CAPS.
+; Trampoline routines are labeled with abbreviated destination label, +
+;  underscore and trampoline's address. Same for branched-to RTS from outside.
+;
 ; I'm not super-consistent about naming of constants. Kinda by vibe.
 
 zpFRETOP        @  $03    2 ; Pointer to just past the end of free space.
@@ -74,6 +77,8 @@ zpNmiSomeFlag1  @  $AC      ; if $AC is non-zero, $AB is set to #$FF (triggering
 zpCasBufPtr     @  $AD    2 ; Start of data to send to cassette
 zpCasEndPtr     @  $AF    2 ; End of data to send to cassette
 zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
+zpNextDataPtr   @  $B2    2 ; Pointer to first content byte of line to start search for next DATA to READ
+zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start from
 zpErrCode       @  $B5
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set

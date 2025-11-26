@@ -894,6 +894,33 @@
 "5157":"return true (zpToken has the token)",
 "5161":"did user abbreviate the keyword?",
 "5163":"yes -\u003e we matched, return true",
+"5888":"is arg designated as line number?",
+"5890":"no -\u003e error",
+"5894":"set zpLineNum = arg",
+"5903":"and find the indicated line",
+"5906":"error if it doesn\u0027t exist",
+"6068":"got arg? -\u003e handle",
+"6070":"set zpVARTAB = zpTXTEND + 1",
+"6083":"set zpVAREND = zpVARTAB + 1",
+"6099":"set bytes at both those locations to 0",
+"6107":"do the normal CLEAR stuff first, then handle arg",
+"6110":"got back from main CLEAR. Evaluate the arg.",
+"6113":"make sure it\u0027s an int",
+"6119":"arg \u003e= #$7000?",
+"6121":"yes -\u003e error. That\u0027s past available RAM.",
+"6123":"arg \u003c zpVAREND? (in the high bytes)",
+"6125":"yes -\u003e error. We\u0027re already using more space than that.",
+"6127":"arg \u003e zpVAREND? -\u003e skip next check",
+"6129":"high bytes were exactly equal",
+"6132":"check low bytes",
+"6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
+"6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
+"7011":"we know we\u0027re at line num arg: skip it",
+"7014":"check for more line num args",
+"7017":"end of cmd? -\u003e rts",
+"7019":"another line num arg?",
+"7021":"yes -\u003e skip that",
+"7023":"no -\u003e must be comma. Skip that, then arg.",
 "7196":"is next char alphabetic?",
 "7199":"no, can\u0027t be a varname then -\u003e error",
 "7211":"get next char",
@@ -996,6 +1023,13 @@
 "7875":"no -\u003e just report true",
 "7877":"yes: compare",
 "7879":"16 char max filename",
+"7908":"add 3 to found line pointer (skipping line linkage and number)",
+"7910":"and set that as next place to start DATA searches",
+"7914":"add any carry",
+"7916":"set high byte of DATA link",
+"7920":"clear char index",
+"7926":"init DATA search to begin from first line of program (past initial line)link",
+"7934":"(just above)",
 "8836":"anything in the high byte?",
 "8839":"We\u0027re looking for values that fit in a byte",
 "9217":"advance to next token char",
@@ -2307,6 +2341,27 @@
 
 "7520":{
 "Text":"Transfer vars from $7C, $7D, and $84 to the spots that FindVar uses for the search key, then call it",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7923":{
+"Text":"Reset DATA pointer to start of first BASIC line.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"5888":{
+"Text":"Verifies that token at TXTPTR is a line number, and parses it.\r\nDoes not consume it (leaves TXTPTR where it is).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7011":{
+"Text":"Skips TXTPTR past a range of line numbers, whether comma-separated,\r\nor ranged with \u0027-\u0027",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -6444,6 +6499,132 @@
 "Value":40235,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7409":{
+"Label":"DIM_InitializeArrayVar",
+"Value":40161,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6070":{
+"Label":"Clear",
+"Value":38822,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6107":{
+"Label":"ClearAndSet",
+"Value":38859,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6081":{
+"Label":"vtNoHi",
+"Value":38833,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6094":{
+"Label":"veNoHi",
+"Value":38846,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7923":{
+"Label":"RestoreFromStart",
+"Value":40675,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7916":{
+"Label":"ResFinish",
+"Value":40668,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6147":{
+"Label":"errSyn_97F3",
+"Value":38899,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6150":{
+"Label":"errIllVal_97F6",
+"Value":38902,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6136":{
+"Label":"veNotEq",
+"Value":38888,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5811":{
+"Label":"errSyn_96A3",
+"Value":38563,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5909":{
+"Label":"ErrorUndefLineNum",
+"Value":38661,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5908":{
+"Label":"rts_9704",
+"Value":38660,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5888":{
+"Label":"FindLineFromArg",
+"Value":38640,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7009":{
+"Label":"pla_rts_9B51",
+"Value":39761,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7010":{
+"Label":"rts_9B52",
+"Value":39762,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7011":{
+"Label":"SkipKnownLineNumArgs",
+"Value":39763,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7014":{
+"Label":"SkipLineNum",
+"Value":39766,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -7321,6 +7502,16 @@
 "Format":"NumericLE",
 "SubFormat":"Hex",
 "SymbolRef":null,
+"Extra":null},
+
+"5888":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
 "Extra":null},
 
 "7203":{

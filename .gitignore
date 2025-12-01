@@ -1,5 +1,6 @@
 *.nes
 *.asm
-*.html
+*.nes.html
+*.nes.txt
 *~
 *.dis65_rec

@@ -41,6 +41,7 @@ zpExprStkIdx    @  $30    ; Current position in exprParseStk
 zpPpuCtrlVal    @  $32
 zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
+zpTmp3C         @  $3C
 zpHexStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord
 zpLineNum       @  $44    2
 zpSomeRowIndicator  @  $47  ; zCV was copied to this just prior to setting zpNMICMD=2 and awaiting NMI. Other uses elsewhere.
@@ -65,7 +66,7 @@ zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)
 zpVARPTR        @  $8E    2 ; pointer to start of selected variable
-zpTmp90         @  $90      ; For various, temporary uses
+zpVarType       @  $90      ; Often indicates type of a found variable. Other misc uses also occur.
 zpCasCksum      @  $91    2 ; Checksum for cassette data, also used for misc counting
 zpSavedTxtChar  @  $98
 zpToken         @  $99
@@ -141,10 +142,11 @@ VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400
 
 ; Sprite tile attributes flags, $645.64C
-SpAtt_VFLIP        = $80       ; MOVE bit 7. RESET: flip sprite vertically(?)
-SpAtt_HFLIP        = $40       ; MOVE bit 6. RESET: flip sprite horizontally(?)
-SpAtt_BEHIND       = $20       ; MOVE bit 5. SET: behind bg; RESET: in front
-SpAtt_ANIMATE      = $10       ; MOVE bit 4. SET: sprite is animated
+SpAtt_VFLIP        = $80       ; bit 7. RESET: flip sprite vertically(?)
+SpAtt_HFLIP        = $40       ; bit 6. RESET: flip sprite horizontally(?)
+SpAtt_BEHIND       = $20       ; bit 5. SET: behind bg; RESET: in front
+SpAtt_ANIMATE      = $10       ; bit 4. SET: sprite is animated
+SpAtt_DEFMOVE      = $08       ; bit 3. SET: sprite has a MOVE defined
 
 TYP_INT         =  $02      ; For zpArgTyp. Integer word.
 TYP_STR         =  $03      ; For zpArgTyp. String.

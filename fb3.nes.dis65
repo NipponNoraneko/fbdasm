@@ -767,6 +767,13 @@
 "598":"Falls thru to next string start",
 "687":"Control-C (cancel)?",
 "689":"yes -\u003e ignore line and reprompt",
+"989":"examine string length",
+"992":"zero? -\u003e just copy the length only",
+"994":"len \u003e= 32?",
+"996":"yes -\u003e error, too long",
+"998":"save length to variable",
+"1000":"copy str content ptr into zero-page pointers for indexing",
+"1021":"set copy dest ptr to one past zpVarData (i.e. contents, not strlen)",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
 "1282":"no",
@@ -887,6 +894,11 @@
 "4047":"no borrow: perform subtract for real!",
 "4316":"\u00279\u0027 + 1",
 "4318":"better: bcs $90D3",
+"4343":"Is cur char a \u0027-\u0027?",
+"4345":"no -\u003e then it better be a string of digits. Parse them.",
+"4347":"yes, then advance TXTPTR",
+"4350":"and call ourselves recursively to get a (possibly re-negated) number",
+"4353":"negating afterward.",
 "4707":"exceeded our buffer? -\u003e error",
 "4728":"NUL? -\u003e finish up",
 "4730":"shorthand for PRINT",
@@ -1056,6 +1068,83 @@
 "7920":"clear char index",
 "7926":"init DATA search to begin from first line of program (past initial line)link",
 "7934":"(just above)",
+"7940":"have a token?",
+"7942":"just increment to skip it",
+"7944":"have a decimal number?",
+"7946":"skip it",
+"7948":"have a hex number?",
+"7950":"skip it",
+"7952":"have a line number?",
+"7954":"skip it",
+"7956":"double-quote?",
+"7958":"skip the string literal",
+"7960":"is it an alphabetic character?",
+"7963":"skip a var name",
+"7965":"everything else, skip one char",
+"7977":"restore A",
+"7985":"have double-quote?",
+"7987":"skipt it then return (we\u0027re done!)",
+"7989":"have end-of-line?",
+"7991":"no -\u003e skip char, check next",
+"7993":"yes: restore A and return",
+"7994":"we\u0027ve successfully skipped string",
+"8009":"save away current text position",
+"8012":"load up TXTPTR with where we left off from previous READs",
+"8020":"were we in the middle of a line?",
+"8022":"yes -\u003e handle",
+"8039":"adv and get char",
+"8042":"a second \u0027\\0\u0027? -\u003e we\u0027re at the prog end and out of data; error out.",
+"8044":"not \u0027\\0\u0027. Skip past \"next\" offset, and line number.",
+"8047":"go back to looking for a DATA cmd",
+"8055":"not really sure what the point of this is.",
+"8057":"just to invalidate curent value I guess?",
+"8059":"skip the DATA token we found",
+"8062":"get the type of the var we\u0027re looking for",
+"8064":"strip the array bit, if present",
+"8066":"is it a string?",
+"8068":"yes -\u003e handle that",
+"8070":"no -\u003e we\u0027re seeking ints then",
+"8073":"did we run out of data? -\u003e error out",
+"8082":"copy number from WAccum into the variable\u0027s data",
+"8089":"are we at the end of the DATA command?",
+"8092":"yes -\u003e go find next DATA stmt",
+"8097":"no: check if next char (after spaces) is a comma",
+"8099":"comma? -\u003e see if we can start from here next time",
+"8101":"not comma: error!",
+"8107":"are we at the end of the DATA cmd, after a comma (empty field)?",
+"8110":"yes -\u003e error!",
+"8112":"no: we found next READ\u0027s field to use",
+"8115":"Next READ, search for a DATA statement starting from here.",
+"8119":"Next READ, use the value we\u0027re at now.",
+"8121":"save current TXTPTR to zpNextDataPtr",
+"8127":"and restore TXTPTR to just after the READ variable",
+"8133":"comma? -\u003e handle next var",
+"8144":"got alphabetic char?",
+"8147":"no -\u003e allow the spurious trailing comma, and finish cmd",
+"8149":"yes -\u003e start over again for new variable",
+"8154":"set string length to zero",
+"8157":"set comma as end-of-string to seek",
+"8161":"we\u0027re not at the end of the command, are we?",
+"8166":"do we have a double-quote?",
+"8168":"no -\u003e skip skipping it",
+"8170":"set dbl quot as end-of-string to seek",
+"8175":"are we at end of the line?",
+"8177":"yes -\u003e store the string var",
+"8179":"EOS mark (comma or dquot)?",
+"8181":"yes -\u003e store the string var, and possibly skip a comma",
+"8183":"otherwise, copy char into tmp buffer",
+"8186":"incr string len",
+"8189":"incr TXTPTR",
+"8192":"and loop back to check that",
+"8198":"end of the command?",
+"8201":"yes -\u003e go and store string var",
+"8203":"comma?",
+"8205":"no -\u003e go and store string var",
+"8207":"yes: skip TXTPTR past comma character",
+"8210":"-\u003e go and store string var",
+"8213":"mark that we\u0027re not in the middle of a line for next READ",
+"8217":"move str info onto expression stack",
+"8232":"and call the fn that will copy that to the var",
 "8836":"anything in the high byte?",
 "8839":"We\u0027re looking for values that fit in a byte",
 "9217":"advance to next token char",
@@ -1259,6 +1348,21 @@
 "10417":"non-zero, convert to value (-1)",
 "10419":"save that value to WAccum (as word)",
 "10423":"and push to parse stack",
+"11043":"advance txtptr",
+"11046":"and skip any spaces",
+"11049":"cur char a digit?",
+"11052":"no -\u003e look for another \u0027-\u0027, \u0027+\u0027, or (especially) \u0027\u0026\u0027",
+"11054":"parse a (possibly re-negated) number",
+"11057":"and negate it, returning.",
+"11073":"cur char == \u0027-\u0027?",
+"11075":"yes -\u003e parse and negate a number",
+"11077":"cur char == \u0027+\u0027?",
+"11079":"yes -\u003e ignore, advance, and restart these checks",
+"11081":"cur char == \u0027\u0026\u0027?",
+"11085":"\u003c- it\u0027ll be positive, bc we already checked for \u0027-\u0027",
+"11088":"and therefore, if we get 32768, it\u0027s an overflow",
+"11091":"(overflow? -\u003e error)",
+"11104":"skip optional \u0027H\u0027, and parse a hex number",
 "11802":"no args -\u003e",
 "11804":"get int arg",
 "11807":" \u003c 2?",
@@ -1631,7 +1735,7 @@
 "19060":"demand it be less than 8",
 "19063":"parse \u0027)\u0027",
 "19066":"sprite #",
-"19075":"clear sprite attr flag 3 (and 4, nonexistant) (SpAtt_ANIMATE)",
+"19075":"clear sprite attr flags SpAtt_ANIMATE and SpAtt_DEFMOVE",
 "19079":"store sprite number",
 "19084":"store offset for defMovS* vars",
 "19086":"parse \u0027=\u0027",
@@ -1695,7 +1799,7 @@
 "19306":"must end with \u0027)\u0027 here",
 "19313":"center sprite in the middle of the screen",
 "19316":"(only if all 6 SPRITE arguments were provided)",
-"19324":"XXX what does this flag do",
+"19324":"indicate DEF MOVE completed",
 "19333":"parse comma",
 "19336":"is it an empty arg?",
 "19339":"yes -\u003e return with carry set",
@@ -1706,6 +1810,17 @@
 "19353":"yes -\u003e move past it, set carry",
 "19355":"no: clear carry",
 "19356":"return",
+"19395":"evaluate argument",
+"19398":"ensure it\u0027s 0 thru 7",
+"19402":"load sprite flags",
+"19405":"check if DEF MOVE was defined for this sprite",
+"19407":"no -\u003e do nothing for this arg",
+"19414":"set the SpAtt_ANIMATE flag for this move;",
+"19417":"NMI handler will start animating it",
+"19420":"end of command? -\u003e close up",
+"19422":"otherwise, we should have a comma here. Skip it.",
+"19425":"and evaluate next arg",
+"19430":"tell NMI hanlder there are animations to perform",
 "19684":"all commands above this line take line number arguments",
 "20031":"all keywords below this line are built-in functions",
 "20321":"SPC, only allowed in PRINT",
@@ -2574,7 +2689,7 @@
 "BackgroundColor":0},
 
 "10015":{
-"Text":"Finds variable record from zpVarName ($8A.8B) and vZpVarType ($90, temp use).\r\nUnlike most other routines in Family BASIC, exiting with carry set indicates success, reset indicates failure.",
+"Text":"Finds variable record from zpVarName ($8A.8B) and zpVarType ($90, temp use).\r\nUnlike most other routines in Family BASIC, exiting with carry set indicates success, reset indicates failure.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -2771,6 +2886,20 @@
 
 "18345":{
 "Text":"The ss_* tables below are sprite sheets, describing one 2x2 tilemap of a sprite for each possible facing value for a \"DEF MOVE\"-defined sprite.\r\n\r\nMost of these sheets are used for multiple actor (character) types, but the sprites listed correspond to just one specific actor. The other actors will add their value from tbl_ActorSprShtOffsets to each tile ID, to derive arrive at their own sprite tiles.\r\n\r\nIf a given facing has multiple facing frames, these are typically derived by adding 4 to each tile ID for each additional frame. However, for the up or down animations for Penguin, Mario, and Lady, actor-specific code is used to handle the second frame, and directly specify the pointer to the 2x2 tilemap to be used (a horizontal mirror of the first frame).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7937":{
+"Text":"Skips the next token.\r\n\r\nBUG: does NOT skip entire comments. The DATA token, for instance, will be recognized if it occurs within a comment (as a Japanese \"small e\" ェ)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7995":{
+"Text":"Skips over a variable name. This does not include any trailing \u0027$\u0027, just alphanumeric strings.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -7846,6 +7975,244 @@
 "Value":51660,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8062":{
+"Label":"READ_midDataStmt",
+"Value":40814,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8152":{
+"Label":"READ_seekStrings",
+"Value":40904,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4340":{
+"Label":"ParsePosOrNegDecWFromTxt",
+"Value":37092,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11043":{
+"Label":"ParseAndNegateDecWord",
+"Value":43795,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11094":{
+"Label":"errOverfl_AB46",
+"Value":43846,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11069":{
+"Label":"READ_parseNumber",
+"Value":43821,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"11066":{
+"Label":"advAndRedo",
+"Value":43818,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11109":{
+"Label":"noH",
+"Value":43861,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"11097":{
+"Label":"READ_parseHexNum",
+"Value":43849,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8104":{
+"Label":"READ_gotDataComma",
+"Value":40856,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8115":{
+"Label":"READ_setupNextDataCmdSeek",
+"Value":40867,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8119":{
+"Label":"READ_setupNextReadLoc",
+"Value":40871,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8137":{
+"Label":"rts_9FB9",
+"Value":40889,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8138":{
+"Label":"READ_gotReadComma",
+"Value":40890,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8175":{
+"Label":"seekEosLp",
+"Value":40927,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8217":{
+"Label":"READ_storeStrVar",
+"Value":40969,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8213":{
+"Label":"READ_eocStoreStrVar",
+"Value":40965,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"984":{
+"Label":"setEmptyAndRts",
+"Value":33736,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1028":{
+"Label":"cpyLp",
+"Value":33780,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1036":{
+"Label":"rts_83FC",
+"Value":33788,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"987":{
+"Label":"CpyExprStrToStrVar",
+"Value":33739,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8024":{
+"Label":"dataCmdSeekLp",
+"Value":40776,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8039":{
+"Label":"foundEol",
+"Value":40791,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8055":{
+"Label":"READ_foundDataCmd",
+"Value":40807,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7965":{
+"Label":"incrTxtPtrAndReturn",
+"Value":40717,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7981":{
+"Label":"READ_skipStrLit",
+"Value":40733,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7982":{
+"Label":"skipStrLp",
+"Value":40734,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7977":{
+"Label":"eosFnd",
+"Value":40729,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7937":{
+"Label":"SkipToken",
+"Value":40689,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7996":{
+"Label":"skipAlNumLp",
+"Value":40748,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7995":{
+"Label":"SkipVarName",
+"Value":40747,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8195":{
+"Label":"eosFnd",
+"Value":40947,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19417":{
+"Label":"skipArg",
+"Value":52169,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19428":{
+"Label":"animsOn",
+"Value":52180,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -8109,6 +8476,13 @@
 "Label":"err_ST",
 "Part":"Low"},
 
+"Extra":null},
+
+"994":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "1185":{
@@ -8527,7 +8901,24 @@
 "SymbolRef":null,
 "Extra":null},
 
+"4343":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
 "4365":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"4605":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
@@ -9041,6 +9432,60 @@
 
 "Extra":null},
 
+"7944":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_NUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"7948":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_HEX_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"7952":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"7956":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"7985":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8029":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_DATA",
+"Part":"Low"},
+
+"Extra":null},
+
 "8050":{
 "Length":2,
 "Format":"NumericLE",
@@ -9048,6 +9493,71 @@
 "SymbolRef":{
 "Label":"err_OD",
 "Part":"Low"},
+
+"Extra":null},
+
+"8066":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
+"8097":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8133":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8157":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8166":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8203":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"8222":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"Low"},
+
+"Extra":null},
+
+"8227":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
 
 "Extra":null},
 
@@ -9434,6 +9944,34 @@
 "Label":"TYP_STR",
 "Part":"Low"},
 
+"Extra":null},
+
+"11073":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"11077":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"11081":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"11102":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "11303":{
@@ -13147,6 +13685,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"19324":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SpAtt_DEFMOVE",
+"Part":"Low"},
+
+"Extra":null},
+
 "19351":{
 "Length":2,
 "Format":"NumericLE",
@@ -13159,6 +13707,26 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"19405":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SpAtt_DEFMOVE",
+"Part":"Low"},
+
+"Extra":null},
+
+"19409":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SpAtt_ANIMATE",
+"Part":"Low"},
+
 "Extra":null},
 
 "19435":{
@@ -15837,6 +16405,48 @@
 "Variables":[],
 "ClearPrevious":true},
 
+"8006":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLen",
+"Value":27,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpEOsMark",
+"Value":60,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"8238":{
+"Variables":[],
+"ClearPrevious":true},
+
 "9285":{
 "Variables":[{
 "DataDescriptor":{
@@ -15948,24 +16558,6 @@
 "MultiMask":null,
 "Label":"vZpAryNumDimens",
 "Value":116,
-"Source":"Variable",
-"Type":"ExternalAddr",
-"LabelAnno":"None"},
-
-{
-"DataDescriptor":{
-"Length":1,
-"Format":"NumericLE",
-"SubFormat":"Hex",
-"SymbolRef":null,
-"Extra":null},
-
-"Comment":"type of var",
-"HasWidth":true,
-"Direction":"ReadWrite",
-"MultiMask":null,
-"Label":"vZpVarType",
-"Value":144,
 "Source":"Variable",
 "Type":"ExternalAddr",
 "LabelAnno":"None"}],

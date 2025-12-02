@@ -7748,11 +7748,11 @@
 "LabelAnno":"None"},
 
 "18453":{
-"Label":"TC805",
+"Label":"ss_Fireball",
 "Value":51205,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18318":{
 "Label":"fftbl_OnlyHFlips_TwoFOneSt",
@@ -7783,25 +7783,25 @@
 "LabelAnno":"None"},
 
 "18399":{
-"Label":"TC7CF",
+"Label":"ss_Penguin",
 "Value":51151,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18417":{
-"Label":"TC7E1",
+"Label":"ss_StarKiller",
 "Value":51169,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18435":{
-"Label":"TC7F3",
+"Label":"ss_Laser",
 "Value":51187,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "18201":{
 "Label":"tbl_MoveTables",
@@ -12329,7 +12329,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC805",
+"Label":"ss_Fireball",
 "Part":"Low"},
 
 "Extra":null},
@@ -12419,7 +12419,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC7CF",
+"Label":"ss_Penguin",
 "Part":"Low"},
 
 "Extra":null},
@@ -12449,7 +12449,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC7E1",
+"Label":"ss_StarKiller",
 "Part":"Low"},
 
 "Extra":null},
@@ -12479,7 +12479,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TC7F3",
+"Label":"ss_Laser",
 "Part":"Low"},
 
 "Extra":null},

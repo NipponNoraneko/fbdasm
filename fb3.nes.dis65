@@ -874,6 +874,20 @@
 "3784":"yes -\u003e handle",
 "3786":"both args positive, just add",
 "3789":"and error if the result is neg",
+"3871":"is WAccum negative?",
+"3873":"yes -\u003e check WPararm",
+"3875":"else is WAccum negative?",
+"3877":"yes -\u003e expect negative result",
+"3882":"WAccum == 0?",
+"3885":"yes? -\u003e done",
+"3887":"is result negative?",
+"3889":"yes -\u003e overflow error",
+"3892":"WAccum is neg. Is Wparam also negative?",
+"3894":"yes -\u003e expect pos result",
+"3899":"WAccum == 0?",
+"3902":"yes -\u003e done",
+"3904":"is result positive?",
+"3906":"yes -\u003e overflow error",
 "3983":"start with assumption we won\u0027t negate the result",
 "3985":"is WAccum negative?",
 "3987":"no -\u003e move on to WParam",
@@ -892,6 +906,53 @@
 "4043":" that we can subtract from",
 "4045":"carry clear (borrow set)? -\u003e can\u0027t subtract, try a longer portion",
 "4047":"no borrow: perform subtract for real!",
+"4096":"args string type?",
+"4098":"yes -\u003e compare strings",
+"4100":"is A negative?",
+"4102":"yes -\u003e check B",
+"4104":"is B negative?",
+"4106":"yes -\u003e A isn\u0027t, so A \u003e B",
+"4108":"no: both are pos",
+"4110":"cmp A, B high bytes",
+"4116":"clear carry for \"less than\"",
+"4117":"indicate unequal",
+"4120":"set carry for \"greater than or equal\"",
+"4121":"indicate unequal",
+"4124":"this routine exactly identical to Cmp_LoBytes",
+"4135":"set carry for \"greater than or equal\"",
+"4136":"and load zero to signify equality",
+"4139":"is B positive?",
+"4141":"yes -\u003e A \u003c B",
+"4143":"compare A, B high bytes",
+"4147":"equal? -\u003e compare low bytes",
+"4149":"A high byte \u003e B high byte? -\u003e A \u003e B",
+"4151":"else -\u003e A \u003c B",
+"4156":"compare A, B low bytes",
+"4158":"equal? -\u003e A == B",
+"4160":"A low byte \u003e B low byte? -\u003e A \u003e B",
+"4162":"else -\u003e A \u003c B",
+"4181":"str len 1st operand",
+"4183":"len(a$) == 0? -\u003e check len(b$)",
+"4185":"store len(a$)",
+"4187":"NEVER branches - they forgot to compare len(b$) first!",
+"4189":"get len(b$) - should\u0027ve come before instr above!",
+"4191":"store it",
+"4195":"get char from a$",
+"4197":"cmp char from b$",
+"4199":"a$[i] \u003c b$[i]? -\u003e a$ \u003c b$",
+"4201":"(this and next instr should\u0027ve been single bne)",
+"4203":"not less, not eq -\u003e a$ \u003e b$",
+"4206":"bump next char to check",
+"4207":"decrement len(a$)",
+"4209":"len(a$) == 0? -\u003e check len(b$)",
+"4211":"decrement len(b$)",
+"4213":"len(b$) == 0? -\u003e a$ \u003e b$",
+"4215":"neither are zero; loop back around to check next char",
+"4218":"decrement len(b$)",
+"4220":"zero, too? -\u003e strs equal",
+"4222":";else -\u003e a$ \u003c b$",
+"4225":"str len 2nd operand",
+"4227":"len(b$) == 0? -\u003e they\u0027re both equal",
 "4316":"\u00279\u0027 + 1",
 "4318":"better: bcs $90D3",
 "4343":"Is cur char a \u0027-\u0027?",
@@ -1147,6 +1208,120 @@
 "8232":"and call the fn that will copy that to the var",
 "8836":"anything in the high byte?",
 "8839":"We\u0027re looking for values that fit in a byte",
+"8875":"process more tightly-bound operations",
+"8878":"we at an XOR token?",
+"8880":"yes -\u003e handle",
+"8882":"no: all done evaluating expressions!",
+"8883":"expect int (boolean)",
+"8886":"eval 2nd operand",
+"8889":"expect that to be an int too, and prep args",
+"8894":"XOR the low bytes",
+"8900":"XOR the high bytes",
+"8904":"replace top stack item",
+"8907":"and go evaluate any further expressions",
+"8910":"process more tightly-bound operations",
+"8913":"we at an OR token?",
+"8915":"yes -\u003e handle",
+"8917":"no OR; wind our way up to lower-precedence ops",
+"8918":"expect int (boolean)",
+"8921":"eval 2nd operand",
+"8924":"expect that to be an int too, and prep args",
+"8929":"OR the low bytes",
+"8935":"OR the high bytes",
+"8939":"replace top stack item",
+"8942":"and go check for a proceeding OR expression",
+"8945":"process more tightly-bound operations",
+"8948":"we at an AND token?",
+"8950":"yes -\u003e handle",
+"8952":"no AND; wind our way up to lower-precedence ops",
+"8953":"expect int (boolean)",
+"8956":"eval 2nd operand",
+"8959":"expect that to be an int too, and prep args",
+"8964":"AND the low bytes",
+"8970":"AND the high bytes",
+"8974":"replace top stack item",
+"8977":"and go check for a proceeding AND expression",
+"8980":"process more tightly-bound operations",
+"8983":"is the next byte a token greater or equal to \u0027\u003c\u003e\u0027?",
+"8985":"yes, check more",
+"8987":"no rel op; wind our way up to lower-precedence ops",
+"8988":"is it a token \u003e= \u0027+\u0027?",
+"8990":"yes -\u003e not a rel op",
+"8993":"subtract \u0027\u003c\u003e\u0027 tok val and multiply by 2",
+"8995":" to get an index",
+"8997":"load and push ptr to this op\u0027s handling routine",
+"9005":"also push type of 1st operand",
+"9008":"move past operator token",
+"9011":"and eval 2nd operand (as any more tightly-bound expr)",
+"9014":"pull and compare 1st operand type",
+"9015":"diff from 2nd operand\u0027s type?",
+"9017":"yes -\u003e error",
+"9019":"get args into WAccum, WParam",
+"9023":"pull handler routine and place in zpMisc",
+"9028":"execute!",
+"9031":"no matter what type args had, result is int (0 or -1)",
+"9035":"check for any more rel ops to eval",
+"9041":"process more tightly-bound operations",
+"9044":"next token == \u0027+\u0027?",
+"9046":"yes -\u003e handle add",
+"9048":"else, next token == \u0027-\u0027?",
+"9050":"yes -\u003e handle subtract",
+"9052":"no add or subtract; wind our way up to lower-precedence ops",
+"9053":"get args from stack into WAccum, WParam",
+"9056":"do the add",
+"9059":"and any other add/subtract operations that immediately follow",
+"9062":"get args from stack into WAccum, WParam",
+"9065":"do the subtract",
+"9068":"and any other add/subtract operations that immediately follow",
+"9071":"get/push arg type before evaluating 2nd arg expr",
+"9074":"move past \u0027+\u0027 or \u0027-\u0027 operator",
+"9077":"eval 2nd operand (as any more tightly-bound expr)",
+"9080":"pull type of preceding operand",
+"9081":"do operand types differ?",
+"9083":"yes -\u003e error",
+"9085":"get operands into WAccum, WParam, and return",
+"9091":"process more tightly-bound operations",
+"9094":"is the next token a MOD?",
+"9096":"yes -\u003e perform modulo op",
+"9098":"no mod; wind our way up to lower-precedence ops",
+"9099":"get/push arg type before evaluating 2nd arg expr",
+"9102":"move past MOD operator",
+"9105":"eval 2nd operand (as any more tightly-bound expr)",
+"9108":"pull type of preceding operand",
+"9109":"do operand types differ?",
+"9111":"yes -\u003e error",
+"9113":"get operands into WAccum, WParam",
+"9116":"perform modulo",
+"9119":"and any other modulo operations that immediately follow",
+"9122":"parse literal, unary, or function expr",
+"9125":"is the next token a \u0027/\u0027?",
+"9127":"yes -\u003e perform division",
+"9129":"or maybe it\u0027s a \u0027*\u0027?",
+"9131":"yes -\u003e perform multiplication",
+"9133":"no mul or div; wind our way up to lower-precedence ops",
+"9134":"get args from stack into WAccum, WParam",
+"9137":"perform the division",
+"9140":"perform any immediately following mul or div",
+"9143":"get args from stack into WAccum, WParam",
+"9146":"perform the multiplication",
+"9149":"perform any immediately following mul or div",
+"9152":"get/push arg type before evaluating 2nd arg expr",
+"9155":"move past \u0027/\u0027 operator",
+"9158":"eval 2nd operand",
+"9161":"pull 1st arg\u0027s type and compare",
+"9162":"do operand types differ?",
+"9164":"yes -\u003e error",
+"9166":"get operands into WAccum, WParam",
+"9172":"get parse stack position",
+"9174":"less than 3 from the end?",
+"9176":"yes -\u003e error... shouldn\u0027t this be out of memory,",
+"9178":" instead of illegal? also we\u0027re literally about to",
+"9179":" reduce the stack size by 3, so why do we even",
+"9180":" need this check?",
+"9181":"pull last result off of stack, and place in WParam",
+"9201":"get preceding result off expr stack, place in WAccum",
+"9204":"doesn\u0027t pull - caller will typically replace",
+"9206":" with its result",
 "9217":"advance to next token char",
 "9220":"parse whatever\u0027s there",
 "9231":"move evaluation result into zpWAccum",
@@ -1339,6 +1514,35 @@
 "10297":"is result positive?",
 "10299":"yes -\u003e leave result alone",
 "10301":"no: negate then close up",
+"10303":"compare A and B",
+"10306":"unequal? -\u003e return true",
+"10308":"load 0 (false)",
+"10310":"store acc to both bytes of WAccum",
+"10314":"and replace as result at top of expr parse stack",
+"10317":"load -1 (true)",
+"10322":"compare A and B",
+"10325":"equal? -\u003e true",
+"10327":"A \u003c B? -\u003e also true",
+"10329":"else -\u003e false",
+"10332":"compare A and B",
+"10335":"A \u003e= B? true",
+"10337":"else -\u003e false",
+"10340":"compare A and B",
+"10343":"A == B? -\u003e true",
+"10345":"else -\u003e false",
+"10348":"compare A and B",
+"10351":"A == B? -\u003e false",
+"10353":"else A \u003e= B? -\u003e true",
+"10355":"otherwise -\u003e false",
+"10358":"compare A and B",
+"10361":"A \u003c B? -\u003e true",
+"10363":"else -\u003e false",
+"10366":" \u003c\u003e",
+"10368":" \u003e=",
+"10370":" \u003c=",
+"10372":" =",
+"10374":" \u003e",
+"10376":" \u003c",
 "10401":"evaluate MOVE arg",
 "10406":"arg \u003e= 8?",
 "10408":"yes -\u003e error",
@@ -2903,6 +3107,34 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"10366":{
+"Text":"Jump table for relative/comparative operators",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4165":{
+"Text":"Compare two strings. Comments in this area refer to first operand as `a$`, 2nd as `b$`. This does not actually refer to real variable names.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4068":{
+"Text":"Exactly the same as WordSubtract. Useless duplicate routine.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"4094":{
+"Text":"Compare two operands, in WAccum and WParam. We\u0027ll refer to contents of WAccum as \"A\", and WParam as \"B\".",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -3470,154 +3702,154 @@
 "LabelAnno":"None"},
 
 "10644":{
-"Label":"OpFn_ABS",
+"Label":"FnFn_ABS",
 "Value":43396,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10808":{
-"Label":"OpFn_ASC",
+"Label":"FnFn_ASC",
 "Value":43560,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10934":{
-"Label":"OpFn_STR_STR",
+"Label":"FnFn_STR_STR",
 "Value":43686,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10543":{
-"Label":"OpFn_FRE",
+"Label":"FnFn_FRE",
 "Value":43295,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10797":{
-"Label":"OpFn_LEN",
+"Label":"FnFn_LEN",
 "Value":43549,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10627":{
-"Label":"OpFn_PEEK",
+"Label":"FnFn_PEEK",
 "Value":43379,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10701":{
-"Label":"OpFn_RND",
+"Label":"FnFn_RND",
 "Value":43453,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10668":{
-"Label":"OpFn_SGN",
+"Label":"FnFn_SGN",
 "Value":43420,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11409":{
-"Label":"OpFn_MID_STR",
+"Label":"FnFn_MID_STR",
 "Value":44161,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11592":{
-"Label":"OpFn_STICK",
+"Label":"FnFn_STICK",
 "Value":44344,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11607":{
-"Label":"OpFn_STRIG",
+"Label":"FnFn_STRIG",
 "Value":44359,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10600":{
-"Label":"OpFn_XPOS",
+"Label":"FnFn_XPOS",
 "Value":43352,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10609":{
-"Label":"OpFn_YPOS",
+"Label":"FnFn_YPOS",
 "Value":43361,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10991":{
-"Label":"OpFn_VAL",
+"Label":"FnFn_VAL",
 "Value":43743,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10563":{
-"Label":"OpFn_POS",
+"Label":"FnFn_POS",
 "Value":43315,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10486":{
-"Label":"OpFn_CSRLIN",
+"Label":"FnFn_CSRLIN",
 "Value":43238,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10898":{
-"Label":"OpFn_CHR_STR",
+"Label":"FnFn_CHR_STR",
 "Value":43650,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10982":{
-"Label":"OpFn_HEX_STR",
+"Label":"FnFn_HEX_STR",
 "Value":43734,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11112":{
-"Label":"OpFn_INKEY_STR",
+"Label":"FnFn_INKEY_STR",
 "Value":43864,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11345":{
-"Label":"OpFn_RIGHT_STR",
+"Label":"FnFn_RIGHT_STR",
 "Value":44097,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "11261":{
-"Label":"OpFn_LEFT_STR",
+"Label":"FnFn_LEFT_STR",
 "Value":44013,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10827":{
-"Label":"OpFn_SCR_STR",
+"Label":"FnFn_SCR_STR",
 "Value":43579,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -5136,46 +5368,46 @@
 "LabelAnno":"Generated"},
 
 "10303":{
-"Label":"TA82F",
+"Label":"OpFn_NotEq",
 "Value":43055,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10332":{
-"Label":"TA84C",
+"Label":"OpFn_GrEq",
 "Value":43084,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10322":{
-"Label":"TA842",
+"Label":"OpFn_LtEq",
 "Value":43074,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10340":{
-"Label":"TA854",
+"Label":"OpFn_Equal",
 "Value":43092,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10348":{
-"Label":"TA85C",
+"Label":"OpFn_GreaterThan",
 "Value":43100,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "10358":{
-"Label":"TA866",
+"Label":"OpFn_LessThan",
 "Value":43110,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "17141":{
 "Label":"TC2E5",
@@ -5269,35 +5501,35 @@
 "LabelAnno":"None"},
 
 "11199":{
-"Label":"OpFn_INSTR",
+"Label":"FnFn_INSTR",
 "Value":43951,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "19476":{
-"Label":"OpFn_CRASH",
+"Label":"FnFn_CRASH",
 "Value":52228,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10525":{
-"Label":"OpFn_ERR",
+"Label":"FnFn_ERR",
 "Value":43277,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10532":{
-"Label":"OpFn_ERL",
+"Label":"FnFn_ERL",
 "Value":43284,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10618":{
-"Label":"OpFn_VCT",
+"Label":"FnFn_VCT",
 "Value":43370,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -6893,7 +7125,7 @@
 "LabelAnno":"None"},
 
 "9038":{
-"Label":"EvalBuiltinFn",
+"Label":"JmpIndirectZpMisc",
 "Value":41790,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -7453,21 +7685,21 @@
 "LabelAnno":"None"},
 
 "10213":{
-"Label":"AddAndPushExpr",
+"Label":"AddAndReplaceExpr",
 "Value":42965,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10251":{
-"Label":"DivAndPushExpr",
+"Label":"DivAndReplaceExpr",
 "Value":43003,
 "Source":"User",
 "Type":"GlobalAddr",
 "LabelAnno":"None"},
 
 "10270":{
-"Label":"ModAndPushExpr",
+"Label":"ModAndReplaceExpr",
 "Value":43022,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -8213,6 +8445,314 @@
 "Value":52180,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9125":{
+"Label":"AgainMulDiv",
+"Value":41877,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9088":{
+"Label":"errTypeMism_A370",
+"Value":41840,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9172":{
+"Label":"PullWParamGetWAccum",
+"Value":41924,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9169":{
+"Label":"IntPullWParamGetWAccum",
+"Value":41921,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9152":{
+"Label":"prepArgs",
+"Value":41904,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10245":{
+"Label":"MulAndReplaceExpr",
+"Value":42997,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3892":{
+"Label":"wAccNeg",
+"Value":36644,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3879":{
+"Label":"mulExpectPos",
+"Value":36631,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3896":{
+"Label":"mulExpectNeg",
+"Value":36648,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3923":{
+"Label":"rts_8F43",
+"Value":36675,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3917":{
+"Label":"IsWAccumZero",
+"Value":36669,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3871":{
+"Label":"MultiplyAndCheckPosNeg",
+"Value":36623,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9094":{
+"Label":"AgainMod",
+"Value":41846,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9099":{
+"Label":"mod",
+"Value":41851,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"9044":{
+"Label":"AgainPlusMinus",
+"Value":41796,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"9071":{
+"Label":"prepArgs",
+"Value":41823,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10239":{
+"Label":"SubtractAndReplaceExpr",
+"Value":42991,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8987":{
+"Label":"rts_A30B",
+"Value":41739,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8983":{
+"Label":"AgainRelOp",
+"Value":41735,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8988":{
+"Label":"maybeRel",
+"Value":41740,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"10366":{
+"Label":"jtbl_RelOps",
+"Value":43118,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8948":{
+"Label":"AgainAnd",
+"Value":41700,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8953":{
+"Label":"and",
+"Value":41705,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8869":{
+"Label":"EnsureIntAndSkipToken",
+"Value":41621,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8913":{
+"Label":"AgainOr",
+"Value":41665,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8918":{
+"Label":"or",
+"Value":41670,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"8878":{
+"Label":"AgainXor",
+"Value":41630,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"8883":{
+"Label":"xor",
+"Value":41635,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4165":{
+"Label":"CompareStrings",
+"Value":36917,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4225":{
+"Label":"CmpStr_LenAZero",
+"Value":36977,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4135":{
+"Label":"Cmp_Equal",
+"Value":36887,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4116":{
+"Label":"Cmp_ALessThanB",
+"Value":36868,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4120":{
+"Label":"Cmp_AGreaterThanB",
+"Value":36872,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4068":{
+"Label":"WordSubtractClone",
+"Value":36820,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4195":{
+"Label":"strCmpLp",
+"Value":36947,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4206":{
+"Label":"charEq",
+"Value":36958,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4218":{
+"Label":"lenAZero",
+"Value":36970,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"4094":{
+"Label":"Compare",
+"Value":36846,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4154":{
+"Label":"Cmp_LoBytes",
+"Value":36906,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4124":{
+"Label":"Cmp_LoBytes1",
+"Value":36876,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"4139":{
+"Label":"Cmp_AIsNegative",
+"Value":36891,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10317":{
+"Label":"RelOp_ReturnTrue",
+"Value":43069,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10308":{
+"Label":"RelOp_ReturnFalse",
+"Value":43060,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10310":{
+"Label":"RelOp_RetTrueOrFalse",
+"Value":43062,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -8885,6 +9425,16 @@
 "Format":"NumericLE",
 "SubFormat":"Decimal",
 "SymbolRef":null,
+"Extra":null},
+
+"4096":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
 "Extra":null},
 
 "4312":{
@@ -9561,6 +10111,126 @@
 
 "Extra":null},
 
+"8878":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_XOR",
+"Part":"Low"},
+
+"Extra":null},
+
+"8913":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_OR",
+"Part":"Low"},
+
+"Extra":null},
+
+"8948":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_AND",
+"Part":"Low"},
+
+"Extra":null},
+
+"8983":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_NE",
+"Part":"Low"},
+
+"Extra":null},
+
+"8988":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_PLUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"8993":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_NE",
+"Part":"Low"},
+
+"Extra":null},
+
+"9031":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_INT",
+"Part":"Low"},
+
+"Extra":null},
+
+"9044":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_PLUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"9048":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_MINUS",
+"Part":"Low"},
+
+"Extra":null},
+
+"9094":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_MOD",
+"Part":"Low"},
+
+"Extra":null},
+
+"9125":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_DIV",
+"Part":"Low"},
+
+"Extra":null},
+
+"9129":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OP_MUL",
+"Part":"Low"},
+
+"Extra":null},
+
 "9296":{
 "Length":2,
 "Format":"NumericLE",
@@ -9610,7 +10280,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"tok_NOT",
+"Label":"tok_OP_NOT",
 "Part":"Low"},
 
 "Extra":null},
@@ -9698,7 +10368,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"tok_XOR",
+"Label":"tok_OP_XOR",
 "Part":"Low"},
 
 "Extra":null},
@@ -9826,7 +10496,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA82F",
+"Label":"OpFn_NotEq",
 "Part":"Low"},
 
 "Extra":null},
@@ -9836,7 +10506,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA84C",
+"Label":"OpFn_GrEq",
 "Part":"Low"},
 
 "Extra":null},
@@ -9846,7 +10516,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA842",
+"Label":"OpFn_LtEq",
 "Part":"Low"},
 
 "Extra":null},
@@ -9856,7 +10526,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA854",
+"Label":"OpFn_Equal",
 "Part":"Low"},
 
 "Extra":null},
@@ -9866,7 +10536,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA85C",
+"Label":"OpFn_GreaterThan",
 "Part":"Low"},
 
 "Extra":null},
@@ -9876,7 +10546,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA866",
+"Label":"OpFn_LessThan",
 "Part":"Low"},
 
 "Extra":null},
@@ -15924,7 +16594,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_ABS",
+"Label":"FnFn_ABS",
 "Part":"Low"},
 
 "Extra":null},
@@ -15934,7 +16604,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_ASC",
+"Label":"FnFn_ASC",
 "Part":"Low"},
 
 "Extra":null},
@@ -15944,7 +16614,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_STR_STR",
+"Label":"FnFn_STR_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -15954,7 +16624,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_FRE",
+"Label":"FnFn_FRE",
 "Part":"Low"},
 
 "Extra":null},
@@ -15964,7 +16634,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_LEN",
+"Label":"FnFn_LEN",
 "Part":"Low"},
 
 "Extra":null},
@@ -15974,7 +16644,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_PEEK",
+"Label":"FnFn_PEEK",
 "Part":"Low"},
 
 "Extra":null},
@@ -15984,7 +16654,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_RND",
+"Label":"FnFn_RND",
 "Part":"Low"},
 
 "Extra":null},
@@ -15994,7 +16664,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_SGN",
+"Label":"FnFn_SGN",
 "Part":"Low"},
 
 "Extra":null},
@@ -16024,7 +16694,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_MID_STR",
+"Label":"FnFn_MID_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16034,7 +16704,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_STICK",
+"Label":"FnFn_STICK",
 "Part":"Low"},
 
 "Extra":null},
@@ -16044,7 +16714,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_STRIG",
+"Label":"FnFn_STRIG",
 "Part":"Low"},
 
 "Extra":null},
@@ -16054,7 +16724,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_XPOS",
+"Label":"FnFn_XPOS",
 "Part":"Low"},
 
 "Extra":null},
@@ -16064,7 +16734,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_YPOS",
+"Label":"FnFn_YPOS",
 "Part":"Low"},
 
 "Extra":null},
@@ -16074,7 +16744,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_VAL",
+"Label":"FnFn_VAL",
 "Part":"Low"},
 
 "Extra":null},
@@ -16084,7 +16754,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_POS",
+"Label":"FnFn_POS",
 "Part":"Low"},
 
 "Extra":null},
@@ -16094,7 +16764,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_CSRLIN",
+"Label":"FnFn_CSRLIN",
 "Part":"Low"},
 
 "Extra":null},
@@ -16104,7 +16774,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_CHR_STR",
+"Label":"FnFn_CHR_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16114,7 +16784,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_HEX_STR",
+"Label":"FnFn_HEX_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16124,7 +16794,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_INKEY_STR",
+"Label":"FnFn_INKEY_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16134,7 +16804,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_RIGHT_STR",
+"Label":"FnFn_RIGHT_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16144,7 +16814,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_LEFT_STR",
+"Label":"FnFn_LEFT_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16154,7 +16824,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_SCR_STR",
+"Label":"FnFn_SCR_STR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16164,7 +16834,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_INSTR",
+"Label":"FnFn_INSTR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16174,7 +16844,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_CRASH",
+"Label":"FnFn_CRASH",
 "Part":"Low"},
 
 "Extra":null},
@@ -16184,7 +16854,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_ERR",
+"Label":"FnFn_ERR",
 "Part":"Low"},
 
 "Extra":null},
@@ -16194,7 +16864,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_ERL",
+"Label":"FnFn_ERL",
 "Part":"Low"},
 
 "Extra":null},
@@ -16204,7 +16874,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"OpFn_VCT",
+"Label":"FnFn_VCT",
 "Part":"Low"},
 
 "Extra":null},
@@ -16324,6 +16994,48 @@
 "ClearPrevious":false},
 
 "4013":{
+"Variables":[],
+"ClearPrevious":true},
+
+"4094":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLenA",
+"Value":74,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLenB",
+"Value":75,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"4232":{
 "Variables":[],
 "ClearPrevious":true},
 

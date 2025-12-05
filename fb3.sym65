@@ -31,6 +31,7 @@ zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zp
 zpTXTPTR        @  $09    2 ; Points at the next char of BASIC program to be processed.
 zpTxtNextLink   @  $0B    2 ; Points at the next line of BASIC program after current
 zpSavedStack    @  $17      ; Saved SP
+zpModifierKeyDn @  $18      ; Non-zero when modifier key is pressed
 zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporary pointers
 zpVARTAB        @  $1D    2 ; Start of variable storage
 zpVAREND        @  $1F    2 ; Just past end of variable storage
@@ -53,12 +54,14 @@ zpCursTileAddr  @  $4A    2 ; PPU address of tile under cursor
 zpInsertMode    @  $4C      ; Zero = overwrite, non-zero = insert
 zpTokenizePtr   @  $4D    2
 zpPpuScreenBasePage     @  $4F ; The VRAM page used for the current screen we're UPDATING (may not be the one displayed)!
+zpKanaHeld      @  $50      ; Non-zero (#$FF) if KANA key is still being held down from when it was first detected. Used to prevent rapid toggling.
 zpOutputStr     @  $52    2 ; Pointer to null-term'd string to be queued for output
 zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
 zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
+zpCursorChar    @  $61      ; The character code of the current cursor
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
 zpOutTxtStartPos    @  $64
@@ -66,6 +69,13 @@ zp66            @  $66
 zp68            @  $68
 zpSavedCH       @  $6B
 zpSavedCV       @  $6C
+zpKeyWhichKey   @  $6D      ; which key of the row in $6E was found pressed
+zpKeyWhichRow   @  $6E      ; which key matrix row/byte of key has a non-modifier key down
+zpCtrlKeyDn     @  $6F      ; Non-zero (#$FF) when control key is pressed
+zpShiftKeyDn    @  $70      ; Non-zero (#$FF) when (either) shift key is pressed
+zpGrphKeyDn     @  $71      ; Non-zero (#$FF) when GRPH key is pressed
+zpKanaFlag      @  $72      ; Non-zero (#$FF) when kana mode is active
+zpCharUnderCurs @  $73      ; The character currently under cursor
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)
@@ -96,6 +106,8 @@ zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the spri
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
 zpNmiSprTileMp  @  $DB    2 ; (NMI) Pointer to the 2x2 tilemap to display for current sprite
 zpNmiSprShtOff  @  $DD      ; (NMI) Value to add to each tile ID in a sprite sheet, to get IDs for this actor.
+zpKanaCursChr   @  $E0      ; character/tile ID to use for cursor when kana active
+zpNonKCursChr   @  $E1      ; character/tile ID to use for cursor when kana NOT active
 zpAutoEnabled   @  $E2      ; non-zero (=10) when AUTO active; zero means inactive
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
@@ -121,8 +133,7 @@ lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, pot
 ;fileName       @  $580   17; SAVE and LOAD put their string arg here.
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
-kbdDataAry      @  $634   9 
-unkKbdFlag      @  $63B
+kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
 sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 sprites. See SpAtt_* for flag values.
 defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
 defMovSActorFrm @  $6C1      ; Low nybble: sprite MOVE actor (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on

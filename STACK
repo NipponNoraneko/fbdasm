@@ -23,16 +23,23 @@ SEARCH STACK:
   ReadKeyboard
 
 BRANCH STACK:
+  ReadChar
   DefaultNmiHandler
 
   DirectModeLoop
   $8334 ExecuteDirectModeLine
     $8855 (StopIfStopKey)
+    ->$885B
+     ;$8861
+        $B945
+          from some clues in Enri, seems like it's doing something with
+          function keys?
 
-
-NAME:
+NAME/explain:
+  (ExecuteDirectModeLine stuff)
   LBB89 (table)
   L8855
+
 .
 
   BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)

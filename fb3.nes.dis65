@@ -1855,6 +1855,71 @@
 "14753":"Invert the bits, so that 1 = pressed",
 "14755":"And then store them in reversed order",
 "14767":"Loop around to handle the next keyboard row",
+"14780":"is control key down?",
+"14787":"is left-shift down?",
+"14794":"is right-shift down?",
+"14801":"is GRPH key down?",
+"14805":"if no modifiers, just map the key to a character",
+"14808":"non-null char? -\u003e",
+"14810":"null char. Set \"special key pressed\" flag to zero",
+"14813":"if modifier or kana key is down, return null",
+"14821":"else, return mapped character code",
+"14827":"set control-key, modifier-key flags",
+"14836":"mask out left-shift, control, graph keys",
+"14845":"search for other keys down",
+"14848":"key? -\u003e record and modify",
+"14852":"no keys this row? check next",
+"14854":"If we get here, no non-modifier keys were down.",
+"14859":"set shift-key, modifier-key flags",
+"14867":"set shift-key, modifier-key flags",
+"14876":"mask out right-shift (why is this only done here, and not for other modifiers?)",
+"14884":"set modifier-key, special-key flags",
+"14893":"save which key matrix row we found a key down",
+"14898":"loop over bits in row until we find which key",
+"14899":"found -\u003e translate and modify it",
+"14906":"multiply row by 8",
+"14909":"save which bit,",
+"14912":" and add that (0-7) to A",
+"14914":"X now holds a keycode",
+"14915":"is control being pressed?",
+"14917":"yes -\u003e modify",
+"14919":"else is shift being pressed?",
+"14921":"yes -\u003e modify",
+"14923":"else is GRPH key down?",
+"14925":"yes -\u003e modify",
+"14927":"else is kana mode active?",
+"14929":"yes -\u003e map",
+"14931":"else map normally",
+"14934":"was KANA key pressed?",
+"14936":"yes -\u003e check if we should handle",
+"14938":"return mapped char",
+"14941":"did we already handle kana key being pressed?",
+"14943":"yes -\u003e return null",
+"14945":"no -\u003e indicate we\u0027ve handled it",
+"14947":"activate KANA mode",
+"14950":"then return null",
+"14953":"translate key code to char code (~ASCII)",
+"14956":"is the looked-up key already a control?",
+"14958":"no -\u003e modify",
+"14960":"yes -\u003e return it unmodified",
+"14964":"subtract \u0027A\u0027-1",
+"14966":"underflow? -\u003e return null",
+"14968":"still outside range of control chars?",
+"14970":"yes -\u003e return null",
+"14972":"else: return the control char",
+"14975":"is kana flag on?",
+"14977":"yes -\u003e handle shifted kana",
+"14979":"else return shifted non-kana key",
+"14983":"is kana mode active?",
+"14985":"yes -\u003e map grph char",
+"14987":"no -\u003e return null (graph means nothing outside kana mode)",
+"15001":"was KANA key pressed while in KANA mode?",
+"15003":"no -\u003e return the mapped char",
+"15005":"did we already handle this same KANA press?",
+"15007":"yes -\u003e return null",
+"15009":"no: mark that we\u0027ve proceesed it",
+"15011":"and deactivate kana mode",
+"15014":"then return null",
 "15586":"set beep length short",
 "15591":"set beep length itty-bitty, teenie-weenie",
 "15626":"beep length: was set at top of fn",
@@ -2633,14 +2698,14 @@
 "BackgroundColor":0},
 
 "14721":{
-"Text":"                    bit: 7       0\r\nRead col 0 scan results: ---x xxx-\r\n\r\nrow 0: ]   ]   RET F8\r\n    1: ;   :   @   F7\r\n    2: K   L   O   F6\r\n    3: J   U   I   F5\r\n    4: H   G   Y   F4\r\n    5: D   R   T   F3\r\n    6: A   S   W   F2\r\n    7: CTR Q   ESC F1\r\n    8: LFT RGT UP  CLR\r\n\r\n",
+"Text":"                    bit: 7       0\r\nRead col 0 scan results: ---x xxx-\r\n\r\nrow 0: ]   [   RET F8\r\n    1: ;   :   @   F7\r\n    2: K   L   O   F6\r\n    3: J   U   I   F5\r\n    4: H   G   Y   F4\r\n    5: D   R   T   F3\r\n    6: A   S   W   F2\r\n    7: CTR Q   ESC F1\r\n    8: LFT RGT UP  CLR\r\n\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
 "BackgroundColor":0},
 
 "14742":{
-"Text":"\r\n                    bit: 7       0\r\nRead col 1 scan results: ---x xxx-\r\n\r\nrow 0: STP \\   RSH KANA\r\n    1: ^   -   /   _\r\n    2: 0   P   ,   .\r\n    3: 8   9   N   M\r\n    4: 6   7   V   B\r\n    5: 4   5   C   F\r\n    6: 3   E   Z   X\r\n    7: 2   1   GRP LSH\r\n    8: INS DEL sPC DWN\r\n\r\n",
+"Text":"\r\n                    bit: 7       0\r\nRead col 1 scan results: ---x xxx-\r\n\r\nrow 0: STP \\\\   RSH KANA\r\n    1: ^   -   /   _\r\n    2: 0   P   ,   .\r\n    3: 8   9   N   M\r\n    4: 6   7   V   B\r\n    5: 4   5   C   F\r\n    6: 3   E   Z   X\r\n    7: 2   1   GRP LSH\r\n    8: INS DEL SPC DWN\r\n\r\n",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3365,6 +3430,34 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"15033":{
+"Text":"Keymap of non-modifier keys.\r\n\r\nLooked up by 8 * BYTE_NUM + BIT_NUM where the key was found, in kbdDataAry.\r\nSee loc $B9A1 for a visual depiction of that keymap.\r\nNote that this table is the same as that depiction, except in reverse order\r\n(keys corresponding to lower-numbered bits are to the left in this table),\r\nand missing the modifier keys.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"14769":{
+"Text":"We now have in kbdDataAry:\r\n\r\nbit    7   6   5   4   3    2   1   0\r\n\r\nkbdDataAry\r\n  + 0: F8  RET [   ]   KANA RSH \\\\   STP\r\n  + 1: F7  @   :   ;   _    /   -   ^\r\n  + 2: F6  O   L   K   .    ,   P   0\r\n  + 3: F5  I   U   J   M    N   9   8\r\n  + 4: F4  Y   G   H   B    V   7   6\r\n  + 5: F3  T   R   D   F    C   5   4\r\n  + 6: F2  W   S   A   X    Z   E   3\r\n  + 7: F1  ESC Q   CTR LSH  GRP 1   2\r\n  + 8: CLR UP  RGT LFT DWN  SPC DEL INS",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15105":{
+"Text":"Keymap for shift + key.\r\nSince Family BASIC does not support lowercase, this deos not insert anything when a letter key is typed (hence all the zero values).",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"14841":{
+"Text":"Find the pressed non-modifier key, record it, and map it, modifying it as necessary by any active modifier keys. The mapped character will be returned.\r\nIf multiple non-modifier keys are pressed simultaneously, only the first found is reported.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -3491,18 +3584,18 @@
 "LabelAnno":"Generated"},
 
 "2548":{
-"Label":"T89E4",
+"Label":"NMICMD_ShowCursor",
 "Value":35300,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2562":{
-"Label":"T89F2",
+"Label":"NMICMD_HideCursor",
 "Value":35314,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "8353":{
 "Label":"TA091",
@@ -4716,18 +4809,18 @@
 "LabelAnno":"None"},
 
 "14190":{
-"Label":"TB75E",
+"Label":"ActivateKanaMode",
 "Value":46942,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "14198":{
-"Label":"TB766",
+"Label":"DeactivateKanaMode",
 "Value":46950,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "14017":{
 "Label":"TB6B1",
@@ -9396,6 +9489,258 @@
 "Value":34901,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14716":{
+"Label":"dlyLp",
+"Value":47468,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14737":{
+"Label":"dlyLp",
+"Value":47489,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14757":{
+"Label":"rvsLp",
+"Value":47509,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14841":{
+"Label":"RdKey_keyFindRecMap",
+"Value":47593,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14845":{
+"Label":"keyLp",
+"Value":47597,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14827":{
+"Label":"RdKey_handleControl",
+"Value":47579,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14833":{
+"Label":"RdKey_maskModsFindRecMap",
+"Value":47585,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14859":{
+"Label":"RdKey_handleLShift",
+"Value":47611,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14867":{
+"Label":"RdKey_handleRShift",
+"Value":47619,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14884":{
+"Label":"RdKey_handleGrph",
+"Value":47636,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14893":{
+"Label":"RdKey_keyRecMap",
+"Value":47645,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14898":{
+"Label":"findKey",
+"Value":47650,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15033":{
+"Label":"tbl_KeyMap",
+"Value":47785,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14905":{
+"Label":"RdKey_mapKey",
+"Value":47657,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14950":{
+"Label":"RdKey_returnNull",
+"Value":47702,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14953":{
+"Label":"RdKey_mapCtrlChar",
+"Value":47705,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14975":{
+"Label":"RdKey_mapShiftedChar",
+"Value":47727,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15105":{
+"Label":"tbl_ShiftedKeyMap",
+"Value":47857,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14998":{
+"Label":"RdKey_mapShiftedKanaChar",
+"Value":47750,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14983":{
+"Label":"RdKey_mapGrphModChar",
+"Value":47735,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14992":{
+"Label":"RdKey_mapKanaChar",
+"Value":47744,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15249":{
+"Label":"tbl_ShiftedKanaKeyMap",
+"Value":48001,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14988":{
+"Label":"grphOk",
+"Value":47740,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15321":{
+"Label":"tbl_GrphKeyMap",
+"Value":48073,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15177":{
+"Label":"tbl_KanaKeyMap",
+"Value":47929,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15001":{
+"Label":"kana",
+"Value":47753,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14963":{
+"Label":"notCtrlYet",
+"Value":47715,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14972":{
+"Label":"RdKey_returnAsIs",
+"Value":47724,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14204":{
+"Label":"setCurs",
+"Value":46956,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2521":{
+"Label":"NMICMD_DeactivateSubcmd",
+"Value":35273,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2536":{
+"Label":"NMICMD_GetCharUnderCursor",
+"Value":35288,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2556":{
+"Label":"setCurs",
+"Value":35308,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15016":{
+"Label":"rts_BA98",
+"Value":47768,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14941":{
+"Label":"RdKey_maybeActivateKana",
+"Value":47693,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14824":{
+"Label":"retNull",
+"Value":47576,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14813":{
+"Label":"nonNull",
+"Value":47565,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -9894,7 +10239,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T89E4",
+"Label":"NMICMD_ShowCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -9904,7 +10249,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T89F2",
+"Label":"NMICMD_HideCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -12229,7 +12574,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB75E",
+"Label":"ActivateKanaMode",
 "Part":"Low"},
 
 "Extra":null},
@@ -12239,7 +12584,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TB766",
+"Label":"DeactivateKanaMode",
 "Part":"Low"},
 
 "Extra":null},
@@ -12325,28 +12670,315 @@
 "Extra":null},
 
 "15033":{
-"Length":144,
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15041":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15049":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15057":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15065":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15073":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15081":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15089":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15097":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15105":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15113":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15121":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15129":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15137":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15145":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15153":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15161":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15169":{
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
 "15177":{
-"Length":72,
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15185":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15193":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15201":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15209":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15217":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15225":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15233":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15241":{
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
 "15249":{
-"Length":72,
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15257":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15265":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15273":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15281":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15289":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15297":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15305":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15313":{
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
 "Extra":null},
 
 "15321":{
-"Length":72,
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15329":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15337":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15345":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15353":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15361":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15369":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15377":{
+"Length":8,
+"Format":"Dense",
+"SubFormat":"None",
+"SymbolRef":null,
+"Extra":null},
+
+"15385":{
+"Length":8,
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,

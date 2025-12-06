@@ -773,7 +773,7 @@
 "678":"another CRLF",
 "681":"auto-prefix line number, if active",
 "684":"read a line of the user\u0027s input",
-"687":"Control-C (cancel)?",
+"687":"STOP typed during line input?",
 "689":"yes -\u003e ignore line and reprompt",
 "691":"point TXTPTR at lineBuffer",
 "700":"empty line?",
@@ -1845,6 +1845,34 @@
 "14180":"past last row?",
 "14182":"no -\u003e store new row and exit",
 "14184":"yes",
+"14609":"save char code that is \u003e #$F0. Might be fn key, might be graphical tile.",
+"14611":"if it\u0027s a function key, find out which.",
+"14614":"fn key? -\u003e set up reads from macro definition",
+"14616":"not a fn key, so return the char code as-is",
+"14623":"has this fn key already been processed, and just not released yet?",
+"14625":"yes -\u003e return null char",
+"14627":"save the char code as the fn key that was pressed",
+"14631":"set a counter to 4",
+"14633":"scan keyboard again",
+"14636":"is it still the same function key code?",
+"14638":"no -\u003e restart our whole key-reading thing",
+"14642":"loop until the function key has been scanned 4 times since when it was first detected",
+"14645":"subtract the #$f0, leaving 0-7",
+"14647":"multiply by 16 to get offset into fnkey defs",
+"14650":"store that offset",
+"14654":"indicate that a not-already-handled fkey was typed",
+"14658":"is the fkey definition exhausted?",
+"14661":"yes -\u003e cancel fkey and re-scan for keypress",
+"14663":"else, point offset at next char in macro dfn",
+"14666":"and return this current char from it",
+"14677":"are we typing from an fkey macro dfn?",
+"14679":"yes -\u003e type next char from that",
+"14681":"read a char from keyboard",
+"14684":"null? -\u003e finish out",
+"14686":"possible fkey?",
+"14688":"yes -\u003e investigate further",
+"14690":"else return the kbd char",
+"14693":"Mark that no fkey is currently pressed",
 "14698":"Write $05 to keyboard: reset row/col scanning",
 "14711":"Write $04: prep read for column 0 of a new row",
 "14724":"Move to occupy the low nybble",
@@ -1923,6 +1951,8 @@
 "15586":"set beep length short",
 "15591":"set beep length itty-bitty, teenie-weenie",
 "15626":"beep length: was set at top of fn",
+"15638":"set character index to start",
+"15640":"deactivate any active NMI commands",
 "15681":"Exit loop if we\u0027re on the topmost line",
 "15692":"Row is wrapped: loop back to preceding row",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into lineBuffer",
@@ -3433,7 +3463,7 @@
 "BackgroundColor":0},
 
 "15033":{
-"Text":"Keymap of non-modifier keys.\r\n\r\nLooked up by 8 * BYTE_NUM + BIT_NUM where the key was found, in kbdDataAry.\r\nSee loc $B9A1 for a visual depiction of that keymap.\r\nNote that this table is the same as that depiction, except in reverse order\r\n(keys corresponding to lower-numbered bits are to the left in this table),\r\nand missing the modifier keys.",
+"Text":"Keymap of non-modifier keys.\r\n\r\nThe four keymaps below are used to decode from a key code to a character code. tbl_KeyMap is a map of unmodified character codes (note that all the modifier keys in it are mapped to #$00); and the keymaps after that are used in various situations when the shift key or GRPH key are down, or when kana mode is activated.\r\n\r\nThe keycode is represented as 8 * BYTE_NUM + BIT_NUM where the key was found, in kbdDataAry. BYTE_NUM is stored in zpKeyWhichRow ($6E), and BIT_NUM in zpKeyWhichKey ($6D).\r\n\r\nKeycode values:\r\n\r\n          +1  +2  +3    +4  +5  +6  +7\r\n    0: STP \\\\   RSH KANA  ]   [   RET F8\r\n    8: ^   -   /   _     ;   :   @   F7\r\n   16: 0   P   ,   .     K   L   O   F6\r\n   24: 8   9   N   M     J   U   I   F5\r\n   32: 6   7   V   B     H   G   Y   F4\r\n   40: 4   5   C   F     D   R   T   F3\r\n   48: 3   E   Z   X     A   S   W   F2\r\n   56: 2   1   GRP LSH   CTR Q   ESC F1.\r\n   64: INS DEL SPC DWN   LFT RGT UP  CLR\r\n\r\nNOTE: Function keys are translated to $F0-$F7... but! other keys _also_ can translate to those values (especially from the GRPH key). Therefore, when the character code is at or above $F0, one must examine the keycode or key matrix bitmap to distinguish whether it was graphical characters, or a function key.\r\n(Note: although KANA key maps to $FF, it is never returned from ReadKeyboard; it is handled internally, and then the null character is returned.)",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -3455,6 +3485,27 @@
 
 "14841":{
 "Text":"Find the pressed non-modifier key, record it, and map it, modifying it as necessary by any active modifier keys. The mapped character will be returned.\r\nIf multiple non-modifier keys are pressed simultaneously, only the first found is reported.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15321":{
+"Text":"Only applies when kana mode is active and GRPH key is pressed",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15017":{
+"Text":"Scan through the captured keyboard matrix (kbdDataAry) for function keypresses.\r\nIf found, carry will be set, and the X register will contain (8 - fnKey). If not found, carry will be unset.\r\n\r\nExample: if the pressed function key is F8, X will be 8 - 8 = 0. If it is F1, X will be 8 - 1 = 7.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"14677":{
+"Text":"Read a keyboard character and return it. If a function key is typed, insert its macro definition one character at a time on successive calls.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -9741,6 +9792,76 @@
 "Value":47565,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14693":{
+"Label":"nullChar",
+"Value":47445,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15021":{
+"Label":"fkyLp",
+"Value":47773,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15017":{
+"Label":"GetFnKey",
+"Value":47769,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14633":{
+"Label":"lp4",
+"Value":47385,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14677":{
+"Label":"ReadKeyInsMacros",
+"Value":47429,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14656":{
+"Label":"Rkim_typeFromMacro",
+"Value":47408,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14609":{
+"Label":"Rkim_maybeFkey",
+"Value":47361,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14621":{
+"Label":"Rkim_handleFkey",
+"Value":47373,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14606":{
+"Label":"Rkim_returnNull",
+"Value":47358,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14669":{
+"Label":"Rkim_cancelFkeyAndReread",
+"Value":47421,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{

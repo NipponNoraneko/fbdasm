@@ -29,17 +29,28 @@ BRANCH STACK:
   DirectModeLoop
   $8334 ExecuteDirectModeLine
     $8855 (StopIfStopKey)
-    ->$885B
+    ->$885D
      ;$8861
         $B945
           from some clues in Enri, seems like it's doing something with
           function keys?
 
+          This calls ReadKeyboard. Why would that be needed in Stop?
+
+  $BD04 (ReadLine)
+    $BC20 (ReadChar)
+     ;$BC27 - LEFT OFF HERE
+
 NAME/explain:
   (ExecuteDirectModeLine stuff)
   LBB89 (table)
   L8855
+   $55 ($B945)
+   $66 "
 
+  (ReadChar)
+  $5e (near start, set to zero)
+  $75 (near start, cmp result of a fn call
 .
 
   BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)
@@ -47,6 +58,7 @@ NAME/explain:
   Document that NMI toggles between bg updates and sprite updates, when
    anims active, and how animation works
   Document how vars are stored in VARTAB, in DETAILS.md (and BUGS.md)
+  Document keyboard mapping, and how fn keys work with ReadChar
 
 Arrays: DIM A$(10)
 

@@ -60,22 +60,27 @@ zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
+zp5E            @  $5E
 zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpCursorChar    @  $61      ; The character code of the current cursor
 zpOutTxtCurPos  @  $62
 zpNMICMD        @  $63      ; Which command the NMI handler should execute. 1 + the command's index in jtbl_NMICMD.
 zpOutTxtStartPos    @  $64
-zp66            @  $66
-zp68            @  $68
+zpRkimMidMacro  @  $66      ; Non-zero (#$FF) if ReaKeyInsMacros ($B945) should insert next char from a fkey definition (next char is at $480 + ($67)) rather than read from keyboard.
+zpFnKeyDfnOff   @  $67      ; Offset from $480 into cur fn key definition string
+zpFnKeyHeld     @  $68      ; Non-zero ($FF) if a function key is still being held down from when it was first detected. Used to prevent continuous handling while pressed.
+zpFnKeyCode     @  $6A      ; Pressed function key (#$F0-$F7, for keys F1-F8).
 zpSavedCH       @  $6B
 zpSavedCV       @  $6C
-zpKeyWhichKey   @  $6D      ; which key of the row in $6E was found pressed
+zpKeyWhichKey   @  $6D      ; Within ReadKeyboard, which key of the row in $6E was found pressed. Outside ReadKeyboard, when the mapped char code is > #$F0, its value will often be stored here while further code determines if a function key was pressed.
 zpKeyWhichRow   @  $6E      ; which key matrix row/byte of key has a non-modifier key down
 zpCtrlKeyDn     @  $6F      ; Non-zero (#$FF) when control key is pressed
 zpShiftKeyDn    @  $70      ; Non-zero (#$FF) when (either) shift key is pressed
 zpGrphKeyDn     @  $71      ; Non-zero (#$FF) when GRPH key is pressed
 zpKanaFlag      @  $72      ; Non-zero (#$FF) when kana mode is active
 zpCharUnderCurs @  $73      ; The character currently under cursor
+zpTmp74         @  $74
+zp75            @  $75
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)

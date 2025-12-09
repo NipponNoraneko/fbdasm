@@ -140,7 +140,7 @@ zpRsmTxtThisCmd @  $F6    2 ; Saved zpTxtThisCmd for RESUME restore
 zpRsmRunTxtNxtL @  $F8    2 ; Saved zpRunTxtNxtLnk for RESUME restore
 zpRsmRunLineNum @  $FA    2 ; Saved zpRunLineNum for RESUME restore
 
-spriteDmaBuffer @  $200   256 ; Region for PPU sprite data DMA
+oamBuffer       @  $200   256 ; Region for PPU sprite data DMA
 oamSprYPos      @  $200
 oamSprTileId    @  $201
 oamSprAttr      @  $202

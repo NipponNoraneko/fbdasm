@@ -29,18 +29,7 @@ BRANCH STACK:
 
   CmdFn_RESUME
 
-  DirectModeLoop
-  $8334 ExecuteDirectModeLine
-    $8855 (StopIfStopKey)
-    ->$885D (Stop)
-        $8883 
-
-  Find all uses of zpCanResumeSt, and update comparison values to appropriate
-    flags
-
-  CmdFn_RUN
-    $B194
-   ;$B1A2 - sprite data clearing
+  CmdFn_END
 
 NAME/explain:
   (ExecuteDirectModeLine stuff)

@@ -765,7 +765,7 @@
 "216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
-"637":"store zero",
+"637":"store zero (RES_NO_ERROR)",
 "660":"restore stack ptr from zpSavedStack",
 "669":"STOPped?",
 "671":"no -\u003e skip period",
@@ -919,6 +919,8 @@
 "1475":"subtract length of deleted line from prog end",
 "1728":"flush away any variables",
 "1731":"clear various flags",
+"1743":"do we have an arg?",
+"1746":"yes -\u003e GOTO that line",
 "1748":"reset the stack pointer",
 "1753":"indicate limit of NEXT, RETURN stack searches?",
 "1755":"set TXTPTR to start of program",
@@ -946,9 +948,16 @@
 "2140":"welect second col, first row",
 "2143":"read key column state",
 "2146":"mask out all but STOP key",
-"2155":"pull return address off of stack",
+"2155":"pull return address off of stack -",
+"2156":" we\u0027re not returning!",
 "2159":"reset NMI sub-command",
 "2164":"wait until no key is actively being pressed",
+"2172":"set stopped flag",
+"2176":"are we executing in direct mode?",
+"2178":"no, low byte doesn\u0027t match -\u003e skip flag clear",
+"2182":"no, high byte doesn\u0027t match -\u003e skip flag clear",
+"2184":"nevermind, re-clear the stopped flag",
+"2195":"save current running context for later restoration via CONT cmd",
 "2386":"-\u003e rts",
 "2407":"zpOutTxtCurPos \u003c- #$FF",
 "2418":"-\u003e rts",
@@ -1247,6 +1256,12 @@
 "5710":"yes -\u003e store in the tr flag",
 "5712":"otherwise, store in the key-click flag",
 "5714":"skip next instr",
+"5851":"get offset to next line",
+"5854":"add to current line ptr",
+"5862":"and store in zpRunTxtNxtLnk",
+"5865":"save line number as current",
+"5875":"add 3 to start of the line (past offset, line num), and set that as TXTPTR",
+"5887":"get to executin\u0027!",
 "5888":"is arg designated as line number?",
 "5890":"no -\u003e error",
 "5894":"set zpFindLNum = arg",
@@ -1268,6 +1283,7 @@
 "6132":"check low bytes",
 "6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
 "6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
+"6894":"storing 0 (RES_NO_ERROR)",
 "7011":"we know we\u0027re at line num arg: skip it",
 "7014":"check for more line num args",
 "7017":"end of cmd? -\u003e rts",
@@ -1964,7 +1980,27 @@
 "12624":"yes. Copy Lady face tile (s/b $EF instead)",
 "12626":" over the remaining tiles.",
 "12635":"Finally, save whether this is a 8x8 or 16x16 actor",
-"12712":"clear sprites data",
+"12712":"clear sprites\u0027 2x2 vs 1x1 data",
+"12722":"set all actor tilemaps to empty tile",
+"12726":"8 actors * 4 tiles",
+"12926":"from 1 (RES_NO_RESUME) to 2 (RES_CAN_RESUME)",
+"12978":"are we in direct mode?",
+"12982":"low byte doesn\u0027t match -\u003e not direct",
+"12986":"yes -\u003e skip \"IN [line #]\" message",
+"12996":"queue for output: \" IN \"",
+"12999":"queue the line number",
+"13002":"print queued STOP/ERROR message",
+"13005":"beep",
+"13008":"go to command prompt",
+"13011":"get line number low byte",
+"13013":"save it away",
+"13015":"and store in WAccum",
+"13017":"ditto for high byte",
+"13023":"translate to decimal string",
+"13026":"skip leading zeroes",
+"13029":"and queue for output",
+"13032":"move cursor to start of a line (unless it is already)",
+"13047":"queue for output: \"BREAK\"",
 "13199":"NEXT without FOR",
 "13201":"Syntax Error",
 "13203":"RETURN without GOSUB",
@@ -3839,6 +3875,20 @@
 
 "12261":{
 "Text":"Not a real CmdFn. CmdFn_SPRITE when followed by OFF token.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12024":{
+"Text":"Clear all sprite tiles and attrs, move positions off-screen",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12978":{
+"Text":"Code below this line is also used by STOP",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -10615,6 +10665,97 @@
 "Value":45166,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12722":{
+"Label":"tileClrLp",
+"Value":45474,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12708":{
+"Label":"ClearSpriteData",
+"Value":45460,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12024":{
+"Label":"ClearOam",
+"Value":44776,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12028":{
+"Label":"lp",
+"Value":44780,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1766":{
+"Label":"gotoCmd_86D6",
+"Value":34518,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"5849":{
+"Label":"GoTo",
+"Value":38601,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2187":{
+"Label":"skipClear",
+"Value":34939,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12988":{
+"Label":"INmsg",
+"Value":45740,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13002":{
+"Label":"skipIN",
+"Value":45754,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"13011":{
+"Label":"prLineNum",
+"Value":45763,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12978":{
+"Label":"StopOrErr_PrintBeepExit",
+"Value":45730,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13023":{
+"Label":"QueueWordAsDecimalOutput",
+"Value":45775,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"13032":{
+"Label":"Stop_PrintBreakBeepExit",
+"Value":45784,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -11819,12 +11960,42 @@
 
 "Extra":null},
 
+"5419":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_NO_ERROR",
+"Part":"Low"},
+
+"Extra":null},
+
 "5423":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_NR",
+"Part":"Low"},
+
+"Extra":null},
+
+"5468":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_NO_RESUME",
+"Part":"Low"},
+
+"Extra":null},
+
+"5475":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_NO_RESUME",
 "Part":"Low"},
 
 "Extra":null},
@@ -11892,6 +12063,16 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_NF",
+"Part":"Low"},
+
+"Extra":null},
+
+"6917":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_NO_RESUME",
 "Part":"Low"},
 
 "Extra":null},
@@ -12827,6 +13008,16 @@
 
 "Extra":null},
 
+"12028":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"oamBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
 "12275":{
 "Length":2,
 "Format":"NumericLE",
@@ -12877,6 +13068,23 @@
 
 "Extra":null},
 
+"12720":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SPR_NullTile",
+"Part":"Low"},
+
+"Extra":null},
+
+"12726":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
 "12730":{
 "Length":2,
 "Format":"NumericLE",
@@ -12909,6 +13117,46 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"12988":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strIN",
+"Part":"Low"},
+
+"Extra":null},
+
+"12992":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strIN",
+"Part":"High"},
+
+"Extra":null},
+
+"13039":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBREAK",
+"Part":"Low"},
+
+"Extra":null},
+
+"13043":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"strBREAK",
+"Part":"High"},
+
 "Extra":null},
 
 "13053":{

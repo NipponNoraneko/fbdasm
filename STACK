@@ -23,21 +23,28 @@ SEARCH STACK:
 BRANCH STACK:
   DefaultNmiHandler
 
+  DEF SPRITE
+
+  PrintErrorAndStop
+
+  CmdFn_RESUME
+
   DirectModeLoop
   $8334 ExecuteDirectModeLine
-
-  CmdFn_DATAorREM
-
-  (ExecuteDirectModeLine)
     $8855 (StopIfStopKey)
     ->$885D (Stop)
         $8883 
 
-  that bit below CmdFn_DATAorREM that is used to jump to next line link
+  Find all uses of zpCanResumeSt, and update comparison values to appropriate
+    flags
+
   CmdFn_RUN
-  ExecuteLine
-    MaybePrintTrace
-   ;$840B
+    $B194
+   ;$B1A2 - sprite data clearing
+
+  CmdFn_DEF (SPRITE) (??)
+  CmdFn_SPRITE
+    ->$AFDC
 
 NAME/explain:
   (ExecuteDirectModeLine stuff)
@@ -45,6 +52,8 @@ NAME/explain:
   L8855
    $55 ($B945)
    $66 "
+
+  (RUN)
 .
 
   BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)

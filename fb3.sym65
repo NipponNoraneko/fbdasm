@@ -118,6 +118,8 @@ zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used
 zpNextDataPtr   @  $B2    2 ; Pointer to first content byte of line to start search for next DATA to READ
 zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start from
 zpErrCode       @  $B5
+zpUnusedErrVar  @  $B6      ; This var is only ever used in one place, where it's set to zero.
+zpErrLineNum    @  $B7    2 ; Line number where an error happened
 zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current sprite's anim frame counts, for each facing
 zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the sprite's cur facing (in high nybble)
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
@@ -129,6 +131,7 @@ zpAutoEnabled   @  $E2      ; non-zero (=10) when AUTO active; zero means inacti
 zpKeyClickFlg   @  $E3      ; non-zero = key clicks on
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
+zpCanResumeSt   @  $E7      ; #$00 - no error, #$01 - error, not resumable, #$02 - error, resumable
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
 zpNmiTrampoline @  $ED    3 ; Contains a JMP instruction to the real NMI handler. It's set to: JMP $8971
 zpCurScreenNum  @  $F0      ; the _displayed_ SCREEN (0 or 1). Kept in sync with zpPpuScreenBasePage
@@ -155,6 +158,8 @@ lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, pot
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
+kbdBuf63D       @  $63D
+someBuf680      @  $680
 sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 sprites. See SpAtt_* for flag values.
 defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
 defMovSActorFrm @  $6C1      ; Low nybble: sprite MOVE actor (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
@@ -193,6 +198,11 @@ TYP_ARRAY_FLAG  =  $80      ; Flag bit indicating array type.
 
 CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
+
+; Flags for zpCanResumeSt
+RES_NO_ERROR    = $00
+RES_NO_RESUME   = $01
+RES_CAN_RESUME  = $02
 
 err_NF          = $00       ; "NF" - NEXT without FOR
 err_SN          = $01       ; "SN" - Syntax Error

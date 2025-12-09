@@ -765,6 +765,7 @@
 "216":"JMP opcode",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
+"637":"store zero",
 "660":"restore stack ptr from zpSavedStack",
 "669":"STOPped?",
 "671":"no -\u003e skip period",
@@ -810,8 +811,37 @@
 "806":"finally, increment auto linenum for next time",
 "817":"overflowed? -\u003e deactivate AUTO and error.",
 "836":" tokenize the line",
+"841":"Set \"next line link\" to an arbitrary location that starts with zero (reads as end of program)",
 "847":"point TXTPTR at tokenizeBuffer",
 "849":" so we execute from there",
+"868":"save this spot as start of the current command",
+"879":"got null char (end of line)?",
+"880":"yes -\u003e skip to next",
+"882":"got colon?",
+"884":"yes -\u003e reset zpTxtThisCmd to here",
+"887":"print line number trace, if TRON is active",
+"891":"got apostrophe (REM)?",
+"893":"yes -\u003e skip line",
+"895":"got a command token?",
+"897":"yes -\u003e execute it",
+"899":"got an alphabetic character?",
+"902":"no -\u003e error",
+"905":"backup TXTPTR to the start of the var name",
+"909":"find or create the variable for this name",
+"912":"push the var type",
+"915":"push the var data ptr",
+"921":"demand a \u0027=\u0027 here",
+"924":"evaluate the value",
+"928":"pull var data ptr and restore",
+"934":"pull var type and restore",
+"940":"is var base type a string?",
+"942":"yes -\u003e handle as string",
+"944":"ensure value for int is int!",
+"947":"copy expression result to var data",
+"958":"continue executing successive commands",
+"975":"ensure value for string var is string!",
+"978":"copy the string value to our variable data space",
+"981":"continue executing successive commands",
 "989":"examine string length",
 "992":"zero? -\u003e just copy the length only",
 "994":"len \u003e= 32?",
@@ -820,6 +850,31 @@
 "1000":"copy str content ptr into zero-page pointers for indexing",
 "1021":"set copy dest ptr to one past zpVarData (i.e. contents, not strlen)",
 "1037":"return if trace is off, or if we\u0027re in direct mode",
+"1053":"queue a \u0027#\u0027",
+"1064":"queue the line number",
+"1073":"queue a SPACE",
+"1078":"now print the queue",
+"1082":"remove high bit from token",
+"1084":"was it a function token, rather than command token?",
+"1086":"yes -\u003e syntax error",
+"1088":"double the value (for jump table index)",
+"1090":"put address of command handler into zpMisc",
+"1101":"save stack pointer",
+"1103":"load next non-space char in A, and set Z iff end of command",
+"1106":"execute the command",
+"1109":"continue executing successive commands",
+"1121":"are we in direct mode (no line num)?",
+"1126":"yes: error",
+"1145":"replace zpTXTPTR with ptr to start of next line",
+"1153":"get offset from here to start of next line",
+"1156":"zero (last line of prog)? -\u003e completed execution",
+"1159":"add offset to current TXTPTR",
+"1161":"and store in zpRunTxtNxtLnk as ptr to start of next line",
+"1170":"save current line\u0027s line number",
+"1179":"skip TXTPTR past offset and line number",
+"1182":"and execute the first command",
+"1209":"storing zero",
+"1211":"clear error/resume flags",
 "1269":"we\u0027re about to mess with line ordering; disallow CONT",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
@@ -862,6 +917,12 @@
 "1470":"not the end-\u003e copy next byte",
 "1472":"source ptr reached end; move end back to dest ptr",
 "1475":"subtract length of deleted line from prog end",
+"1728":"flush away any variables",
+"1731":"clear various flags",
+"1748":"reset the stack pointer",
+"1753":"indicate limit of NEXT, RETURN stack searches?",
+"1755":"set TXTPTR to start of program",
+"1763":"-\u003e and execute first line",
 "2032":"point zpOutputStr at zpNumStrTmp, as source",
 "2034":" for output queuing",
 "2035":"add index to start position",
@@ -1795,6 +1856,23 @@
 "11923":"send updates, only, to scr 0.",
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
+"12251":"add \"sprites enabled\" flag to PPUMASK",
+"12258":"advance TXTPTR past ON/OFF token",
+"12263":"mask out \"sprites enabled\" flag from PPUMASK",
+"12265":"and save it",
+"12308":"get sprite num",
+"12311":"complain if not 0-7",
+"12314":"push",
+"12315":"is that all there is?",
+"12318":"yes -\u003e disable the sprite",
+"12456":"next token SPRITE?",
+"12458":"no -\u003e check if it\u0027s MOVE then (error otherwise)",
+"12460":"get the sprite number",
+"12463":"ensure it\u0027s 0-7",
+"12466":"push it",
+"12467":"skip a comma",
+"12470":"and a paren",
+"12712":"clear sprites data",
 "13199":"NEXT without FOR",
 "13201":"Syntax Error",
 "13203":"RETURN without GOSUB",
@@ -3627,6 +3705,48 @@
 
 "5685":{
 "Text":"Turn keyclicks on or off. Pulls some funny tricks to reuse the same ON/OFF check logic as CmdFn_TR (just below)",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1145":{
+"Text":"Also used by apostrophe (\u0027), and to skip the remainder of a false IF statement",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1153":{
+"Text":"Also used by RUN. Update line linkage info before running a line",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"829":{
+"Text":"This routine used to flag that we are in direct mode, and there is no line number for the executing BASIC code.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"1112":{
+"Text":"Enters DirectModeLoop. First checks if we have a resumable error AND were executing a direct command, and gives a \"NR\" (No Resume) error if so.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12249":{
+"Text":"Not a real CmdFn. CmdFn_SPRITE when followed by ON token.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12261":{
+"Text":"Not a real CmdFn. CmdFn_SPRITE when followed by OFF token.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -6493,7 +6613,7 @@
 "LabelAnno":"None"},
 
 "829":{
-"Label":"StrikeTxtNextLink",
+"Label":"StrikeRunLineNum",
 "Value":33581,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -10172,6 +10292,153 @@
 "Value":33803,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1145":{
+"Label":"ExecSkipToNextLine",
+"Value":33897,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1129":{
+"Label":"chkDirect",
+"Value":33881,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1141":{
+"Label":"notDirect",
+"Value":33893,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"964":{
+"Label":"skipToNextLine_83B4",
+"Value":33716,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1081":{
+"Label":"ExecuteCommandByToken",
+"Value":33833,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"967":{
+"Label":"execCmdByTok_83B7",
+"Value":33719,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"961":{
+"Label":"errSyntax_83B1",
+"Value":33713,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"975":{
+"Label":"ExecCmd_SetStringVar",
+"Value":33727,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1121":{
+"Label":"cfmNotDirect",
+"Value":33873,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"656":{
+"Label":"ResetStackAndDirectMode",
+"Value":33408,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1118":{
+"Label":"enterDirectMode",
+"Value":33870,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"1112":{
+"Label":"FinishExecution",
+"Value":33864,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1153":{
+"Label":"ExecuteLine",
+"Value":33905,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1211":{
+"Label":"ClearErrorFlags",
+"Value":33963,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1206":{
+"Label":"ClearStoppedTraceAndError",
+"Value":33958,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12712":{
+"Label":"sprClrLp",
+"Value":45464,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12435":{
+"Label":"DEF_maybeMove",
+"Value":45187,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12734":{
+"Label":"clrSprFacing",
+"Value":45486,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12249":{
+"Label":"CmdFn_SPRITE_ON",
+"Value":45001,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12253":{
+"Label":"savePpu",
+"Value":45005,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12261":{
+"Label":"CmdFn_SPRITE_OFF",
+"Value":45013,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -10468,6 +10735,16 @@
 "SymbolRef":null,
 "Extra":null},
 
+"940":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
 "970":{
 "Length":2,
 "Format":"NumericLE",
@@ -10490,6 +10767,16 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"1114":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"RES_CAN_RESUME",
+"Part":"Low"},
+
 "Extra":null},
 
 "1185":{
@@ -11433,6 +11720,16 @@
 
 "Extra":null},
 
+"6925":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_ERROR",
+"Part":"Low"},
+
+"Extra":null},
+
 "7203":{
 "Length":2,
 "Format":"NumericLE",
@@ -12354,6 +12651,26 @@
 
 "Extra":null},
 
+"12300":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_ON",
+"Part":"Low"},
+
+"Extra":null},
+
+"12304":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_OFF",
+"Part":"Low"},
+
+"Extra":null},
+
 "12435":{
 "Length":2,
 "Format":"NumericLE",
@@ -12370,6 +12687,23 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"tok_SPRITE",
+"Part":"Low"},
+
+"Extra":null},
+
+"12730":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"12734":{
+"Length":3,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"defMovSFacing",
 "Part":"Low"},
 
 "Extra":null},
@@ -19286,6 +19620,30 @@
 "ClearPrevious":false},
 
 "10188":{
+"Variables":[],
+"ClearPrevious":true},
+
+"12300":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpWhichSprite",
+"Value":109,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"12435":{
 "Variables":[],
 "ClearPrevious":true},
 

@@ -47,7 +47,7 @@ zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the fi
 zpTmp3C         @  $3C
 zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWOrd
 zpLineNum       @  $44    2
-zpSomeRowIndicator  @  $47  ; zCV was copied to this just prior to setting zpNMICMD=2 and awaiting NMI. Other uses elsewhere.
+zpLineStartRow  @  $47      ; the screen row at which current typed line starts (only set AFTER typing is finished)
 zpCH            @  $48      ; Current cursor column number
 zpCV            @  $49      ; Current cursor row number
 zpCursTileAddr  @  $4A    2 ; PPU address of tile under cursor
@@ -60,7 +60,7 @@ zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
 zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
-zp5E            @  $5E
+zpUnusedStopFlg @  $5E      ; Causes STOP to be returned by ReadChar when set, but is never actually set by anything AFAICT
 zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpCursorChar    @  $61      ; The character code of the current cursor
 zpOutTxtCurPos  @  $62
@@ -79,9 +79,14 @@ zpShiftKeyDn    @  $70      ; Non-zero (#$FF) when (either) shift key is pressed
 zpGrphKeyDn     @  $71      ; Non-zero (#$FF) when GRPH key is pressed
 zpKanaFlag      @  $72      ; Non-zero (#$FF) when kana mode is active
 zpCharUnderCurs @  $73      ; The character currently under cursor
-zpTmp74         @  $74
-zp75            @  $75
+zpCursFlashCtr  @  $74      ; Delay count-down for when cursor should show/hide
+zpHeldKeyChar   @  $75      ; Holds the char value of a key being held down
 zpLineBufIdx    @  $76      ; Current write position into lineBuffer ($500)
+zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat on long-press
+zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
+zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
+zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
+zp80            @  $80
 zpVarName       @  $8A    2 ; Two-letter variable name
 zpVarData       @  $8C    2 ; pointer to selected variable data (deep, if var is array)
 zpVARPTR        @  $8E    2 ; pointer to start of selected variable
@@ -114,6 +119,7 @@ zpNmiSprShtOff  @  $DD      ; (NMI) Value to add to each tile ID in a sprite she
 zpKanaCursChr   @  $E0      ; character/tile ID to use for cursor when kana active
 zpNonKCursChr   @  $E1      ; character/tile ID to use for cursor when kana NOT active
 zpAutoEnabled   @  $E2      ; non-zero (=10) when AUTO active; zero means inactive
+zpKeyClickFlg   @  $E3      ; non-zero = key clicks on
 zpVScroll0      @  $E4      ; Vertical scroll used when SCREEN 0 is displayed
 zpVScroll1      @  $E5      ; Vertical scroll used when SCREEN 1 is displayed; updated when $F0 is set
 zpHaveFNameArg  @  $EA      ; true when LOAD was given a filename arg
@@ -156,6 +162,8 @@ NC_NoCmd            = 0
 NC_FlushOutp        = 1
 NC_BufferCurLine    = 2
 NC_ClearToEndOfRow  = 4
+NC_ShowCursor       = 8
+NC_HideCursor       = 9
 NC_PpuMaskUpdate    = 11
 NC_PpuMaskClear     = 12
 

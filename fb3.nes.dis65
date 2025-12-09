@@ -1948,15 +1948,79 @@
 "15009":"no: mark that we\u0027ve proceesed it",
 "15011":"and deactivate kana mode",
 "15014":"then return null",
+"15410":"clear the STOP flag that is never set to anything else",
+"15412":"read keyboard",
+"15415":"no key? -\u003e await with cursor flash",
+"15417":"else, are we in an fkey macro read?",
+"15419":"yes -\u003e set and return key from that",
+"15421":"else, is the key we got the same one we got last read?",
+"15423":"no -\u003e new char, handle via await",
+"15425":"has this key reached the rapid-repeat phase?",
+"15427":"yes -\u003e skip the longer first wait for repeat",
+"15429":"show the cursor while we wait for keypress to exceed repeat timer",
+"15432":"read key character",
+"15435":"no key? -\u003e restart await, with flashing cursor",
+"15437":"is it the held key?",
+"15439":"no -\u003e new cbar, handle via await",
+"15441":"decrement long-wait keypress timer",
+"15443":"loop until timer expires",
+"15445":"\u003c- this is only ever #01",
+"15447":"\u003c- so this never rebranches",
+"15451":"we reached first repeat, so indicate that",
+"15453":"and click, return repeated char",
+"15478":"show cursor for a frame right before hiding again",
+"15484":"not really sure what one frame of hidden cursor accomplishes",
+"15487":"reset repeat-key settings",
+"15501":"show the cursor at current tile position",
+"15506":"set a count-down for when we should hide the cursor",
+"15508":"Read a key",
+"15511":"got one? -\u003e recheck, click, and return",
+"15515":"loop around Rkim until we get a key, or timer expires",
+"15517":"timer expired; hide the cursor",
+"15520":"check for STOP flag (no one ever sets)",
+"15522":"and return STOP char if set (never)",
+"15526":"reset count-down for when we should _show_ cursor again",
+"15528":"Read a key",
+"15531":"got one? -\u003e recheck, click, and return",
+"15535":"loop around Rkim until we get a key, or timer expires",
+"15537":"check for STOP flag (no one ever sets)",
+"15539":"and return STOP char if set (never)",
+"15541":"timer expired -\u003e loop around to show-cursor side of routine",
+"15544":"not really sure what one frame of hidden cursor accomplishes",
+"15547":"also $BC6C does this same thing already",
+"15550":"set the new char as the \"held\" char, in case it\u0027s held for repeats",
+"15552":"was a function-key macro invoked?",
+"15554":"yes -\u003e skip re-check, we\u0027d get a different char!",
+"15560":"check keyboard again",
+"15563":"was same key still held?",
+"15565":"no-\u003e start keypress check over again",
+"15569":"we set $74 to #$01 before the first dec, so this never loops",
+"15574":"is keyclick on?",
+"15576":"no -\u003e skip click",
+"15578":"make the key-click sound",
+"15581":"and return the key we got",
 "15586":"set beep length short",
 "15591":"set beep length itty-bitty, teenie-weenie",
 "15626":"beep length: was set at top of fn",
 "15638":"set character index to start",
 "15640":"deactivate any active NMI commands",
+"15660":"loop and read more chars",
+"15663":"process the control char",
+"15668":"abort line-reading",
+"15679":"get current row",
 "15681":"Exit loop if we\u0027re on the topmost line",
+"15684":"check preceding row",
+"15685":"does that row wrap to this?",
+"15688":"no -\u003e we found our line start",
+"15690":"yes; go to that row and re-check",
 "15692":"Row is wrapped: loop back to preceding row",
+"15697":"set the line row start",
 "15701":"Fetch the on-screen, possibly-wrapped line from PPU into lineBuffer",
-"15729":"Space: strip it and loop to preceding character",
+"15704":"\u003c- NMICMD_BufferCurLine always sets before deactivating",
+"15706":"\u003c- so this always branches -\u003e",
+"15720":"strip trailing spaces",
+"15732":"set null terminator where we found the first trailing space",
+"15737":"do the actual CRLF",
 "15916":"disable NMI",
 "15924":"disable NMI",
 "15935":"set up cassette loading to go where header says",
@@ -2755,13 +2819,6 @@
 "MaxWidth":80,
 "BackgroundColor":0},
 
-"15720":{
-"Text":"Loop: strip any trailing spaces from line",
-"IsFancy":true,
-"BoxMode":false,
-"MaxWidth":80,
-"BackgroundColor":0},
-
 "15902":{
 "Text":"NOTE: Vblank NMI will be DISABLED, unless the high bit is set in zpPpuCtrlVal",
 "IsFancy":true,
@@ -3506,6 +3563,20 @@
 
 "14677":{
 "Text":"Read a keyboard character and return it. If a function key is typed, insert its macro definition one character at a time on successive calls.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15487":{
+"Text":"Await keypress (may have already got one, but point is key-repeating is reset).\r\nFlashes cursor while waiting.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15408":{
+"Text":"Read a character from the keyboard.\r\n\r\nFlashes the cursor when nothing is being pressed, and handles key-repeat timings.\r\nSince it uses ReadKeyInsMacro, it will also honor F-keys.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -4986,7 +5057,7 @@
 "LabelAnno":"None"},
 
 "15731":{
-"Label":"lpOut",
+"Label":"brk",
 "Value":48483,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
@@ -9862,6 +9933,139 @@
 "Value":47421,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15405":{
+"Label":"waitNmi",
+"Value":48157,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15393":{
+"Label":"ShowCursor",
+"Value":48145,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15400":{
+"Label":"HideCursor",
+"Value":48152,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15508":{
+"Label":"showLp",
+"Value":48260,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15528":{
+"Label":"hideLp",
+"Value":48280,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15458":{
+"Label":"RdChr_RetChar",
+"Value":48210,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15456":{
+"Label":"RdChr_RetStopChar",
+"Value":48208,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15571":{
+"Label":"RC_clickAndReturnChar",
+"Value":48323,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15560":{
+"Label":"nonLp",
+"Value":48312,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15581":{
+"Label":"skpClick",
+"Value":48333,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15550":{
+"Label":"RC_recheckThenClickAndReturnChar",
+"Value":48302,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15487":{
+"Label":"RC_awaitChar",
+"Value":48239,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15484":{
+"Label":"RC_hideCursAwaitChar",
+"Value":48236,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15544":{
+"Label":"RC_hideCursAwaitChar1",
+"Value":48296,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15432":{
+"Label":"frstKeyHoldLp",
+"Value":48184,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15461":{
+"Label":"RC_shortRepeatingKey",
+"Value":48213,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15695":{
+"Label":"lineStart",
+"Value":48447,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15642":{
+"Label":"readLineChars",
+"Value":48394,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15663":{
+"Label":"RL_handleStopOrCtrlD",
+"Value":48415,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -13103,6 +13307,26 @@
 "Format":"Dense",
 "SubFormat":"None",
 "SymbolRef":null,
+"Extra":null},
+
+"15396":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_ShowCursor",
+"Part":"Low"},
+
+"Extra":null},
+
+"15403":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_HideCursor",
+"Part":"Low"},
+
 "Extra":null},
 
 "15699":{

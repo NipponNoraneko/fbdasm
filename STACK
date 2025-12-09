@@ -20,10 +20,7 @@ SEARCH STACK:
   All routines in tbl_Commands and tbl_Functions
   Any remaining fns in CtrlCharInputHandlersTbl
 
-  ReadKeyboard
-
 BRANCH STACK:
-  ReadChar
   DefaultNmiHandler
 
   DirectModeLoop
@@ -37,20 +34,12 @@ BRANCH STACK:
 
           This calls ReadKeyboard. Why would that be needed in Stop?
 
-  $BD04 (ReadLine)
-    $BC20 (ReadChar)
-     ;$BC27 - LEFT OFF HERE
-
 NAME/explain:
   (ExecuteDirectModeLine stuff)
   LBB89 (table)
   L8855
    $55 ($B945)
    $66 "
-
-  (ReadChar)
-  $5e (near start, set to zero)
-  $75 (near start, cmp result of a fn call
 .
 
   BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)

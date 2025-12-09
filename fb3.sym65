@@ -140,6 +140,11 @@ zpRsmTxtThisCmd @  $F6    2 ; Saved zpTxtThisCmd for RESUME restore
 zpRsmRunTxtNxtL @  $F8    2 ; Saved zpRunTxtNxtLnk for RESUME restore
 zpRsmRunLineNum @  $FA    2 ; Saved zpRunLineNum for RESUME restore
 
+spriteDmaBuffer @  $200   256 ; Region for PPU sprite data DMA
+oamSprYPos      @  $200
+oamSprTileId    @  $201
+oamSprAttr      @  $202
+oamSprXPos      @  $203
 tokenizeBuffer  @  $300   256
 exprParseStk    @  $400   128; expression evaluation stack
 ;strResultLen    @  $400     ; Length of the string result
@@ -158,9 +163,9 @@ lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, pot
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
-kbdBuf63D       @  $63D
-someBuf680      @  $680
+sprTwoByTwoFlags @ $63D   8  ; 1x1-tile (#$00) vs 2x2 (#$01), for each sprite/actor.
 sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 sprites. See SpAtt_* for flag values.
+sprTileMaps     @  $680   32 ; Sprite tile maps for the 8 sprites (4 tiles/spr)
 defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
 defMovSActorFrm @  $6C1      ; Low nybble: sprite MOVE actor (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
 defMovSSpdCtr   @  $6C2      ; Sprite MOVE speed counter
@@ -184,6 +189,8 @@ NC_PpuMaskClear     = 12
 
 VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400
+
+SPR_NullTile    =  $EF
 
 ; Sprite tile attributes flags, $645.64C
 SpAtt_VFLIP        = $80       ; bit 7. RESET: flip sprite vertically(?)

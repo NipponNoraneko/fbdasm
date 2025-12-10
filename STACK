@@ -7,17 +7,18 @@
 # (and not one less).
 
 SEARCH STACK:
-  
-  I think GAME codes are stored at $D400 and on. In a data pointer table at $B00B
-    Something interesting at $D000, too. a game background map, probably?
-  Any other st* to NMICMD
-  WaitForNmiSubcommand
-  All routines in tbl_Commands and tbl_Functions
-  Any remaining fns in CtrlCharInputHandlersTbl
+  any ??? or XXX comments
 
 BRANCH STACK:
 
-  jtbl_NMICMD
+  All routines in tbl_Commands and tbl_Functions
+    start with low-hanging fruit, then work back through
+
+  CmdFn_PLAY
+  NMICMD_PlayMusic
+    $A0A3 - after synching APU frame counter
+
+  Any remaining fns in jtbl_CtrlCharInputHandlers
 
 NAME/explain:
 .

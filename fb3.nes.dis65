@@ -956,7 +956,7 @@
 "2146":"mask out all but STOP key",
 "2155":"pull return address off of stack -",
 "2156":" we\u0027re not returning!",
-"2159":"reset NMI sub-command",
+"2159":"reset NMI sub-command (stopping music, etc)",
 "2164":"wait until no key is actively being pressed",
 "2172":"set stopped flag",
 "2176":"are we executing in direct mode?",
@@ -992,6 +992,8 @@
 "2616":"yes -\u003e print rest next NMI",
 "2619":"(always) loop back to output next char",
 "2681":"SPACE character",
+"2689":"deactivate command (#NC_NoCmd)",
+"2701":"pull accum (pushed by NMI_DefaultHandler)",
 "2749":"line doesn\u0027t wrap -\u003e done; terminate active NMICMD",
 "2751":"line wraps: copy next row on next NMI",
 "2753":"(always)",
@@ -1002,6 +1004,37 @@
 "2793":"go to (true) current position",
 "2804":"copy the lineBuffer back out to PPUDATA.",
 "2816":"done!",
+"2823":"set addr to PPU palette RAM + ((palette num from genPurposeBuf) * 4)",
+"2831":"write the palette color values",
+"2855":"set addr to PPU palette RAM start",
+"2865":"then to #$0000?",
+"2882":"set addr to PPU palette RAM + 16 (for sprite palettes) + ((palette num from genPurposeBuf) * 4)",
+"2894":"go to cursor",
+"2901":"put char-to-be-inserted at start of lineBuffer",
+"2903":" (set by caller)",
+"2906":"initial fake read",
+"2909":"copy char to lineBuffer",
+"2917":"loop until we reach end of row",
+"2921":"last char will be re-inserted in following line (in subsequent call)",
+"2923":"return to cursor",
+"2930":"copy chars back out to screen,",
+"2933":" with inserted char at start",
+"2936":" (everything else shifts right)",
+"2940":"loop until we reach end of row",
+"2945":"done!",
+"2948":"go to cursor position in VRAM",
+"2951":"(I think CH must be 0?)",
+"2953":"fake read",
+"2956":"get char from screen",
+"2959":"copy to line buffer",
+"2963":"loop until we reach the same position on next row",
+"2967":"next phase: copy back out to next row, on next frame",
+"2972":"move cursor down one row",
+"2974":"calculate addr for new position",
+"2977":"and go there",
+"2982":"copy from line buffer to screen",
+"2991":"copy 28 chars out (a row\u0027s worth)",
+"2993":"done!",
 "3017":"subtract 4 from end of free space",
 "3027":"and compare what\u0027s in WAccum to that",
 "3030":"less than zpFRETOP - 4? -\u003e we\u0027re fine. Return.",
@@ -1527,6 +1560,12 @@
 "8213":"mark that we\u0027re not in the middle of a line for next READ",
 "8217":"move str info onto expression stack",
 "8232":"and call the fn that will copy that to the var",
+"8353":"push X (value is 18)",
+"8355":"push Y",
+"8359":"synchronize APU frame counter",
+"8365":"pull Y",
+"8367":"pull X",
+"8369":"pull A (pushed at start of NMI_DefaultHandler)",
 "8836":"anything in the high byte?",
 "8839":"We\u0027re looking for values that fit in a byte",
 "8875":"process more tightly-bound operations",
@@ -1923,6 +1962,8 @@
 "11923":"send updates, only, to scr 0.",
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
+"12111":"-\u003e #NC_SetSprPalette",
+"12231":"-\u003e #NC_SetSprPalette",
 "12251":"add \"sprites enabled\" flag to PPUMASK",
 "12258":"advance TXTPTR past ON/OFF token",
 "12263":"mask out \"sprites enabled\" flag from PPUMASK",
@@ -2187,6 +2228,57 @@
 "14350":"and go there",
 "14353":"pull char we got from start",
 "14354":"and put it on last char of prev line",
+"14357":"save cursor pos",
+"14360":"SPACE char",
+"14362":"set as char to insert",
+"14364":"update cursor VRAM addr",
+"14369":"insert the char, shifting others right",
+"14374":"does the current row wrap to the next?",
+"14377":"no -\u003e check if we just wrapped",
+"14379":"yes: go to next row",
+"14384":"and insert the shifted-off char onto next line",
+"14390":"get the shifted-off char from this row",
+"14392":"was it a SPACE char?",
+"14394":"yes -\u003e don\u0027t need to re-insert. Restore curs, return",
+"14396":"no; gotta wrap it to next row",
+"14398":"are we on the last row?",
+"14400":"yes -\u003e got to scroll screen",
+"14402":"no, don\u0027t need to scroll",
+"14407":"\u003c- (could skip that by `cpy #ROWS-2` instead...)",
+"14408":"is next row the last one?",
+"14410":"yes -\u003e skip making room for a new row",
+"14414":"set current row for limit of down-copies",
+"14416":"start at penultimate row",
+"14420":"calc cursor VRAM addr",
+"14425":"push y pos",
+"14428":"copy this row down to next",
+"14431":"pull y pos",
+"14435":"copy \"row wrapped\" mark down one, too",
+"14442":"go up one row",
+"14446":"did we finish making room for new row?",
+"14448":"no -\u003e copy this row down, too",
+"14452":"mark that we wrapped to new row (that\u0027s how we got here!)",
+"14457":"move to new row",
+"14462":"mark that new row doesn\u0027t wrap (it\u0027s new!)",
+"14467":"mark that final row of screen also doesn\u0027t wrap (nowhere to go)",
+"14472":"push original cursor pos, and auto-insert flag",
+"14479":"\"print\" Control-E (clear to end of row)",
+"14484":"pull auto-insert flag",
+"14485":"restore it",
+"14489":"insert the shifted-off char (uh... blank row, we should directly set it instead)",
+"14496":"restore cursor pos",
+"14498":"and return",
+"14499":"push saved cursor x pos",
+"14502":"decrement cursor y pos unless at top of screen",
+"14508":"and push",
+"14509":"scroll screen up by one row",
+"14512":"set cursor to start of (new) last row",
+"14520":"recalc cursor VRAM addr",
+"14523":"insert new char (uh... new row, shouldn\u0027t we just",
+"14525":" set it directly?)",
+"14528":"set X-reg to preceding row",
+"14532":"mark that preceding row wrapped to this one",
+"14536":"restore cursor position (but up one row, bc of scroll)",
 "14609":"save char code that is \u003e #$F0. Might be fn key, might be graphical tile.",
 "14611":"if it\u0027s a function key, find out which.",
 "14614":"fn key? -\u003e set up reads from macro definition",
@@ -4043,6 +4135,27 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"2818":{
+"Text":"Sets background palette number at genPurposeBuf ($200),\r\nto values at $201-$204.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"2880":{
+"Text":"Sets sprite palette number at genPurposeBuf ($200),\r\nto values at $201-$204.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"2894":{
+"Text":"Inserts designated character into the current row, shifting all chars past the cursor, to the right by one. The char that was previously at the end of the row but shifted off, is saved for subsequent calls.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -4148,25 +4261,25 @@
 "LabelAnno":"None"},
 
 "2530":{
-"Label":"T89D2",
+"Label":"NMICMD_GetCharUnderCursor",
 "Value":35282,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2818":{
-"Label":"T8AF2",
+"Label":"NMICMD_SetBgPalette",
 "Value":35570,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2880":{
-"Label":"T8B30",
+"Label":"NMICMD_SetSprPalette",
 "Value":35632,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2548":{
 "Label":"NMICMD_ShowCursor",
@@ -4183,11 +4296,11 @@
 "LabelAnno":"None"},
 
 "8353":{
-"Label":"TA091",
+"Label":"NMICMD_PlayMusic",
 "Value":41105,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2516":{
 "Label":"NMICMD_PpuMaskUpdate",
@@ -4204,25 +4317,25 @@
 "LabelAnno":"None"},
 
 "2894":{
-"Label":"T8B3E",
+"Label":"NMICMD_InsertChar",
 "Value":35646,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2948":{
-"Label":"T8B74",
+"Label":"NMICMD_CopyRowDown_ph0",
 "Value":35700,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2972":{
-"Label":"T8B8C",
+"Label":"NMICMD_CopyRowDown_ph1",
 "Value":35724,
 "Source":"User",
 "Type":"GlobalAddr",
-"LabelAnno":"Generated"},
+"LabelAnno":"None"},
 
 "2483":{
 "Label":"jtbl_NMICMD",
@@ -10287,7 +10400,7 @@
 "LabelAnno":"None"},
 
 "2536":{
-"Label":"NMICMD_GetCharUnderCursor",
+"Label":"NmiGetCharUnderCursor",
 "Value":35288,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -11068,6 +11181,104 @@
 "Value":47061,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2828":{
+"Label":"NmiWritePalette",
+"Value":35580,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2909":{
+"Label":"cpyLp",
+"Value":35661,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2930":{
+"Label":"insCpyLp",
+"Value":35682,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2942":{
+"Label":"NmiSetVScrollAndDeactivate",
+"Value":35694,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"2956":{
+"Label":"cpyLp",
+"Value":35708,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2982":{
+"Label":"cpyLp",
+"Value":35734,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"2703":{
+"Label":"QueueOutpDeactivate",
+"Value":35455,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14364":{
+"Label":"shiftRowsLp",
+"Value":47116,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14387":{
+"Label":"restoreCursorPos_B823",
+"Value":47139,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14507":{
+"Label":"noDec",
+"Value":47259,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14390":{
+"Label":"InsSpC_checkFinalWrap",
+"Value":47142,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14499":{
+"Label":"InsSpC_scrollAndInsert",
+"Value":47251,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"14450":{
+"Label":"haveRoom",
+"Value":47202,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"14420":{
+"Label":"rowMoveLp",
+"Value":47172,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -11532,6 +11743,16 @@
 
 "Extra":null},
 
+"2157":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_NoCmd",
+"Part":"Low"},
+
+"Extra":null},
+
 "2190":{
 "Length":2,
 "Format":"NumericLE",
@@ -11617,7 +11838,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T89D2",
+"Label":"NMICMD_GetCharUnderCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -11627,7 +11848,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8AF2",
+"Label":"NMICMD_SetBgPalette",
 "Part":"Low"},
 
 "Extra":null},
@@ -11637,7 +11858,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8B30",
+"Label":"NMICMD_SetSprPalette",
 "Part":"Low"},
 
 "Extra":null},
@@ -11667,7 +11888,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"TA091",
+"Label":"NMICMD_PlayMusic",
 "Part":"Low"},
 
 "Extra":null},
@@ -11697,7 +11918,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8B3E",
+"Label":"NMICMD_InsertChar",
 "Part":"Low"},
 
 "Extra":null},
@@ -11707,7 +11928,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8B74",
+"Label":"NMICMD_CopyRowDown_ph0",
 "Part":"Low"},
 
 "Extra":null},
@@ -11717,7 +11938,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"T8B8C",
+"Label":"NMICMD_CopyRowDown_ph1",
 "Part":"Low"},
 
 "Extra":null},
@@ -11727,6 +11948,16 @@
 "Format":"NumericLE",
 "SubFormat":"Hex",
 "SymbolRef":null,
+"Extra":null},
+
+"2521":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_NoCmd",
+"Part":"Low"},
+
 "Extra":null},
 
 "2581":{
@@ -11823,6 +12054,46 @@
 "SymbolRef":{
 "Label":"COLS",
 "Part":"Low"},
+
+"Extra":null},
+
+"2818":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PPU_PALETTE_RAM",
+"Part":"High"},
+
+"Extra":null},
+
+"2855":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PPU_PALETTE_RAM",
+"Part":"High"},
+
+"Extra":null},
+
+"2860":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PPU_PALETTE_RAM",
+"Part":"Low"},
+
+"Extra":null},
+
+"2880":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"PPU_PALETTE_RAM",
+"Part":"High"},
 
 "Extra":null},
 
@@ -12900,6 +13171,36 @@
 
 "Extra":null},
 
+"8316":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PlayMusic",
+"Part":"Low"},
+
+"Extra":null},
+
+"8329":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_NoCmd",
+"Part":"Low"},
+
+"Extra":null},
+
+"8343":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_NoCmd",
+"Part":"Low"},
+
+"Extra":null},
+
 "8878":{
 "Length":2,
 "Format":"NumericLE",
@@ -13425,6 +13726,16 @@
 
 "Extra":null},
 
+"10883":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_GetCharUnderCursor",
+"Part":"Low"},
+
+"Extra":null},
+
 "11073":{
 "Length":2,
 "Format":"NumericLE",
@@ -13550,6 +13861,26 @@
 
 "Extra":null},
 
+"12105":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_SetBgPalette",
+"Part":"Low"},
+
+"Extra":null},
+
+"12223":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_SetBgPalette",
+"Part":"Low"},
+
+"Extra":null},
+
 "12275":{
 "Length":2,
 "Format":"NumericLE",
@@ -13600,6 +13931,26 @@
 
 "Extra":null},
 
+"12651":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskClear",
+"Part":"Low"},
+
+"Extra":null},
+
+"12703":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskUpdate",
+"Part":"Low"},
+
+"Extra":null},
+
 "12720":{
 "Length":2,
 "Format":"NumericLE",
@@ -13634,12 +13985,42 @@
 
 "Extra":null},
 
+"12753":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskClear",
+"Part":"Low"},
+
+"Extra":null},
+
+"12806":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskUpdate",
+"Part":"Low"},
+
+"Extra":null},
+
 "12812":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"err_NB",
+"Part":"Low"},
+
+"Extra":null},
+
+"12822":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_PpuMaskClear",
 "Part":"Low"},
 
 "Extra":null},
@@ -14188,6 +14569,26 @@
 
 "Extra":null},
 
+"13989":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_ClearToEndOfRow",
+"Part":"Low"},
+
+"Extra":null},
+
+"14023":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_ClearToEndOfRow",
+"Part":"Low"},
+
+"Extra":null},
+
 "14040":{
 "Length":2,
 "Format":"NumericLE",
@@ -14228,6 +14629,16 @@
 
 "Extra":null},
 
+"14259":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_CopyCharsLeft",
+"Part":"Low"},
+
+"Extra":null},
+
 "14264":{
 "Length":2,
 "Format":"NumericLE",
@@ -14244,6 +14655,96 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14367":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_InsertChar",
+"Part":"Low"},
+
+"Extra":null},
+
+"14398":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14408":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14416":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14426":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_CopyRowDown",
+"Part":"Low"},
+
+"Extra":null},
+
+"14465":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14487":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_InsertChar",
+"Part":"Low"},
+
+"Extra":null},
+
+"14512":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"14523":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_InsertChar",
 "Part":"Low"},
 
 "Extra":null},
@@ -14913,6 +15414,16 @@
 
 "Extra":null},
 
+"15797":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_BufferCurLine",
+"Part":"Low"},
+
+"Extra":null},
+
 "15885":{
 "Length":2,
 "Format":"NumericLE",
@@ -15299,6 +15810,16 @@
 
 "Extra":null},
 
+"17382":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_HideCursor",
+"Part":"Low"},
+
+"Extra":null},
+
 "17514":{
 "Length":2,
 "Format":"NumericLE",
@@ -15306,6 +15827,16 @@
 "SymbolRef":{
 "Label":"VRAM_screen0",
 "Part":"High"},
+
+"Extra":null},
+
+"17592":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_GetCharUnderCursor",
+"Part":"Low"},
 
 "Extra":null},
 
@@ -15325,6 +15856,16 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"ROWS",
+"Part":"Low"},
+
+"Extra":null},
+
+"17688":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_HideCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -15365,6 +15906,36 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"CAS_HDR_SCREEN",
+"Part":"Low"},
+
+"Extra":null},
+
+"17936":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_HideCursor",
+"Part":"Low"},
+
+"Extra":null},
+
+"17970":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_GetCharUnderCursor",
+"Part":"Low"},
+
+"Extra":null},
+
+"17987":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NC_HideCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -20388,6 +20959,30 @@
 "Variables":[],
 "ClearPrevious":true},
 
+"2894":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"the character to insert",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpInsChar",
+"Value":176,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"2948":{
+"Variables":[],
+"ClearPrevious":true},
+
 "3981":{
 "Variables":[{
 "DataDescriptor":{
@@ -20963,6 +21558,48 @@
 "ClearPrevious":false},
 
 "12643":{
+"Variables":[],
+"ClearPrevious":true},
+
+"14357":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpCpyLimitRow",
+"Value":145,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpInsChar",
+"Value":176,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"14606":{
 "Variables":[],
 "ClearPrevious":true},
 

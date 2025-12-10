@@ -25,6 +25,11 @@
 ;
 ; I'm not super-consistent about naming of constants. Kinda by vibe.
 
+; PPU addrs
+
+PPU_PALETTE_RAM = $3F00
+
+; Zero-page vars
 zpFRETOP        @  $03    2 ; Pointer to just past the end of free space.
 zpTXTTAB        @  $05    2 ; Pointer to the start of the BASIC program code. Always set to $6006.
 zpTXTEND        @  $07    2 ; Ponter to just past the program end (zpTXTEND - zpTXTTAB = prog len)
@@ -182,15 +187,22 @@ ROWS = 24
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
 
-NC_NoCmd            = 0
-NC_FlushOutp        = 1
-NC_BufferCurLine    = 2
-NC_CopyCharsLeft    = 3
-NC_ClearToEndOfRow  = 4
-NC_ShowCursor       = 8
-NC_HideCursor       = 9
-NC_PpuMaskUpdate    = 11
-NC_PpuMaskClear     = 12
+NC_NoCmd                = 0
+NC_FlushOutp            = 1
+NC_BufferCurLine        = 2
+NC_CopyCharsLeft        = 3
+NC_ClearToEndOfRow      = 4
+NC_GetCharUnderCursor   = 5
+NC_SetBgPalette         = 6
+NC_SetSprPalette        = 7
+NC_ShowCursor           = 8
+NC_HideCursor           = 9
+NC_PlayMusic            = 10
+NC_PpuMaskUpdate        = 11
+NC_PpuMaskClear         = 12
+NC_InsertChar           = 13
+NC_CopyRowDown          = 14
+NC_CopyRowDown_pr1      = 15
 
 VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400

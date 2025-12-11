@@ -224,6 +224,15 @@ TYP_ARRAY_FLAG  =  $80      ; Flag bit indicating array type.
 CAS_HDR_PROG    = $02       ; Identity byte in header for prog saves to cassette tape.
 CAS_HDR_SCREEN  = $03       ; Identity byte in header for screen saves to cassette tape.
 
+; DirectTheUser message index values
+DTU__ON                     = 0
+DTU__KEYBOARD_WO_SETSUZOKU  = 1
+DTU__DENGEN_WO              = 2
+DTU__BACKUP_SWITCH_WO       = 3
+DTU__OFF_NI_SHITE_KUDASAI   = 4
+DTU__NI_SHITE_KUDASAI       = 5
+DTU__SHITE_KUDASAI          = 6
+
 ; Flags for zpErrHandStat
 EH_NO_HANDLER       = $00
 EH_HANDLER_DEFINED  = $01

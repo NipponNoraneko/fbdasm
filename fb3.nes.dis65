@@ -10,7 +10,7 @@
 "EntryFlags":32702671,
 "AutoLabelStyle":"Simple",
 "AnalysisParams":{
-"AnalyzeUncategorizedData":true,
+"AnalyzeUncategorizedData":false,
 "DefaultTextScanMode":"LowHighAscii",
 "MinCharsForString":4,
 "SeekNearbyTargets":false,
@@ -763,6 +763,37 @@
 "23":"End of \"GAME 2\"",
 "25":"End of \"GAME 3\"",
 "216":"JMP opcode",
+"419":"disable sprites",
+"424":"JMP opcode?",
+"426":"idk why we\u0027re JMPing to the null byte",
+"429":" at the end of the BASIC prog, but anyway",
+"439":"clear the screen",
+"448":"LOCATE 2,4",
+"462":"print \"Please turn on the backup switch\" (in Japanese)",
+"468":"check if STOP key is pressed",
+"470":"pressed? -\u003e BASIC hot start",
+"472":"is backup switch on?",
+"475":"no -\u003e loop until it is, or until STOP key pressed",
+"477":"clear screen",
+"486":"LOCATE 5,4",
+"495":"print \"Please turn off power\" (in Japanese)",
+"501":"STOP key pressed?",
+"503":"no -\u003e just keep checking for it",
+"505":"yes -\u003e cold-start BASIC",
+"518":"save whatever\u0027s at location $6000 (cartridge RAM start)",
+"521":"try writing to it",
+"524":"do we read back the value we just wrote?",
+"527":"yes -\u003e backup switch is off",
+"529":"no: backup switch is on",
+"530":"restore original val at $6000",
+"533":"set carry (switch on)",
+"534":"and return",
+"536":"restore original val at $6000",
+"539":"clear carry (switch is off)",
+"540":"and return",
+"541":"multiply message index by 2, for table indexing",
+"543":"load the message string",
+"553":"and output it",
 "594":"Falls thru to next string start",
 "598":"Falls thru to next string start",
 "634":"clear \"stopped\" flag",
@@ -1323,6 +1354,40 @@
 "5710":"yes -\u003e store in the tr flag",
 "5712":"otherwise, store in the key-click flag",
 "5714":"skip next instr",
+"5720":"move acc value to X-reg for a bit",
+"5722":"pull return address and save it",
+"5728":"find the line number for the argument",
+"5731":"and skip TXTPTR past it",
+"5736":"push this TXTPTR addr",
+"5742":"push the current line number",
+"5748":"push the link to the following line",
+"5754":"push special #$FF00 marker indicating a GOSUB",
+"5760":"now re-push our return address, so the return still works",
+"5764":"and jump to the line in argument",
+"5772":"pull up our return address and save aside",
+"5778":"pull up next byte",
+"5779":"does it match our marker byte?",
+"5781":"no -\u003e error. Most recent stack-y thing wasn\u0027t GOSUB.",
+"5783":"next marker byte match?",
+"5784":"no -\u003e error",
+"5786":"yes: we can RETURN",
+"5787":"pull up link to next BASIC line, at time of GOSUB",
+"5789":" and set it",
+"5792":"pull up line number we GOSUB\u0027d from",
+"5793":"and set that",
+"5798":"pull BASIC program text location, and set",
+"5806":"finally, plop this routine\u0027s return address back down",
+"5810":"and return to it",
+"5814":"no args? -\u003e normal return",
+"5816":"have a linenum arg. Pull stack items, but don\u0027t restore",
+"5817":"first, pull up our own return addr",
+"5823":"did we get the GOSUB mark?",
+"5825":"no -\u003e error",
+"5827":"2nd byte of GOSUB mark?",
+"5828":"no -\u003e error",
+"5836":"pop 6 state items off the stack, ignoring them",
+"5839":"plop our return addr back down",
+"5843":"and fall through to GOTO.",
 "5851":"get offset to next line",
 "5854":"add to current line ptr",
 "5862":"and store in zpRunTxtNxtLnk",
@@ -1476,8 +1541,9 @@
 "7875":"no -\u003e just report true",
 "7877":"yes: compare",
 "7879":"16 char max filename",
+"7897":"no arg? restore from start of prog",
 "7908":"add 3 to found line pointer (skipping line linkage and number)",
-"7910":"and set that as next place to start DATA searches",
+"7910":"and set that as next place to start future DATA searches",
 "7914":"add any carry",
 "7916":"set high byte of DATA link",
 "7920":"clear char index",
@@ -4250,6 +4316,13 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"515":{
+"Text":"Checks whether the physical battery-backup switch on the back of the Family BASIC cartridge is on or off. Carry is unset while switch is off, set if on",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -4775,7 +4848,7 @@
 "LabelAnno":"None"},
 
 "415":{
-"Label":"CmdFn_SYSTEM",
+"Label":"CmdFn_SYSTEMorBACKUP",
 "Value":33167,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -11492,6 +11565,48 @@
 "Value":46775,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"5772":{
+"Label":"RETURN_noArg",
+"Value":38524,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"362":{
+"Label":"HotStart",
+"Value":33114,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"465":{
+"Label":"whileBuSwOff",
+"Value":33217,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"515":{
+"Label":"CheckBackupSwitch",
+"Value":33267,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"535":{
+"Label":"swOff",
+"Value":33287,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"498":{
+"Label":"stopLp",
+"Value":33250,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -11633,6 +11748,56 @@
 "Format":"StringNullTerm",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"450":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__BACKUP_SWITCH_WO",
+"Part":"Low"},
+
+"Extra":null},
+
+"455":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__ON",
+"Part":"Low"},
+
+"Extra":null},
+
+"460":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__NI_SHITE_KUDASAI",
+"Part":"Low"},
+
+"Extra":null},
+
+"488":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__DENGEN_WO",
+"Part":"Low"},
+
+"Extra":null},
+
+"493":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"DTU__OFF_NI_SHITE_KUDASAI",
+"Part":"Low"},
+
 "Extra":null},
 
 "556":{
@@ -20216,7 +20381,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CmdFn_SYSTEM",
+"Label":"CmdFn_SYSTEMorBACKUP",
 "Part":"Low"},
 
 "Extra":null},
@@ -20736,7 +20901,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"CmdFn_SYSTEM",
+"Label":"CmdFn_SYSTEMorBACKUP",
 "Part":"Low"},
 
 "Extra":null},

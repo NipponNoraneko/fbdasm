@@ -11,18 +11,18 @@ SEARCH STACK:
 
 BRANCH STACK:
 
-  All routines in tbl_Commands and tbl_Functions
-    start with low-hanging fruit, then work back through
-
   CmdFn_PLAY
   NMICMD_PlayMusic
     $A0A3 - after synching APU frame counter
 
-  Any remaining fns in jtbl_CtrlCharInputHandlers
+  All routines in tbl_Commands and tbl_Functions
+    start with low-hanging fruit, then work back through
+    punted:
+      LIST
 
-  ResetGraphicSettings
- ;$B681
-    $B436
+    PRINT
+
+  Done:
 
 NAME/explain:
 .

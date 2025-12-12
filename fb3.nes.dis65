@@ -1473,6 +1473,49 @@
 "7019":"another line num arg?",
 "7021":"yes -\u003e skip that",
 "7023":"no -\u003e must be comma. Skip that, then arg.",
+"7032":"LIST token?",
+"7036":"get numeric arg",
+"7039":"zero? -\u003e ill val error",
+"7043":" \u003e= 9? -\u003e ill val error",
+"7045":"push arg (fkey num)",
+"7046":"skip required comma",
+"7049":"evaluate string",
+"7052":"pull fkey num",
+"7054":"decrement (F1 -\u003e 0 index)",
+"7059":"mul by 16 for indexing macro defs",
+"7061":"did user define empty string?",
+"7064":"yes -\u003e just null terminate and return",
+"7068":"copy ptr to string contents",
+"7078":"max str len",
+"7082":"get a char from user string",
+"7084":"copy to macro definition",
+"7087":"incr src and dst",
+"7089":"one less byte of str available",
+"7092":"out of room? -\u003e finish up",
+"7096":"otherwise loop to copy next char",
+"7105":"move ptr past LIST token",
+"7118":"queue output: \u0027F\u0027",
+"7125":"queue output: fn key number",
+"7130":"queue output: SPACE char",
+"7138":"multiply fkey num by 16",
+"7140":"get char from fkey macro string",
+"7143":"null char -\u003e done printing",
+"7145":"is it a printable character?",
+"7147":"no -\u003e escape control. Example: Ctrl-M -\u003e \"(M)\"",
+"7149":"yes: queue character for printing",
+"7153":"loop until null or control",
+"7156":"push the control char",
+"7159":"queue up paren",
+"7162":"pull control char",
+"7164":"shift it into the printable region",
+"7166":"and queue to print",
+"7169":"closing paren",
+"7175":"go back to printing chars",
+"7178":"print queued chars",
+"7181":"CRLF",
+"7188":"done 8 fkeys?",
+"7190":"no -\u003e do next fkey",
+"7192":"yes: done",
 "7196":"is next char alphabetic?",
 "7199":"no, can\u0027t be a varname then -\u003e error",
 "7211":"get next char",
@@ -4413,6 +4456,13 @@
 
 "12643":{
 "Text":"Copy contents of screen 1 to screen 0.\r\nIf screen 1 is the active screen, do nothing.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"7105":{
+"Text":"Not actually found in jtbl_Commands. It\u0027s CmdFn_KEY when followed by\r\nLIST token.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -11791,6 +11841,62 @@
 "Value":48375,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7105":{
+"Label":"CmdFn_KEYLIST",
+"Value":39857,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7116":{
+"Label":"eachFKeyLp",
+"Value":39868,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7140":{
+"Label":"prKeyDefLp",
+"Value":39892,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7178":{
+"Label":"cpyDone",
+"Value":39930,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7156":{
+"Label":"escCtrl",
+"Value":39908,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7029":{
+"Label":"errIll_9B65",
+"Value":39781,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7099":{
+"Label":"KEY_nullTerminate",
+"Value":39851,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"7082":{
+"Label":"cpyLp",
+"Value":39834,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -13430,6 +13536,34 @@
 "Label":"tok_ERROR",
 "Part":"Low"},
 
+"Extra":null},
+
+"7108":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"7116":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"7157":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"7169":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
 "Extra":null},
 
 "7203":{
@@ -21884,6 +22018,86 @@
 "ClearPrevious":false},
 
 "5976":{
+"Variables":[],
+"ClearPrevious":true},
+
+"7032":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrPtr",
+"Value":25,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrAvail",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"7105":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpFKeyNum",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpFKeyDigit",
+"Value":144,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"7193":{
 "Variables":[],
 "ClearPrevious":true},
 

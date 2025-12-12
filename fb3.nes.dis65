@@ -2769,6 +2769,52 @@
 "16252":"now send the designated data buffer",
 "16267":"and a checksum (count of the ones in all bytes)",
 "16279":"send a final \"one\" bit at the end",
+"17506":"xpos += 2 (left margin)",
+"17510":"get the scroll value for the active screen",
+"17520":"divide vert. scroll amt by 8 (convert pixels to tiles)",
+"17524":"add Y pos + 3 (upper margin)",
+"17528":"modulo 30",
+"17532":"we now have Y, relative to start of screen in memory",
+"17534":"save adjusted Y",
+"17536":"strip off lowest two bits (now multiple of 4)",
+"17538":"and mul by 2 (now multiple of 8)",
+"17544":"add xpos/4",
+"17548":"add to location of start of screen 0 or 1\u0027s",
+"17550":" attribute table in VRAM (either $23C0 or $27C0)",
+"17554":"and save as the VRAM address",
+"17556":"(we have the byte addr, but which pair of bits is palette num for our quad?)",
+"17560":"((ypos / 2) mod 2) * 2 [upper vs lower half of byte]",
+"17568":"+ ((xpos / 2) mod 2) [pair of bits within that byte half]",
+"17572":"save as our bit-pair position",
+"17574":"binary 11111100, to mask out just our palette num",
+"17578":"bit position *= 2",
+"17582":"bit pos zero? -\u003e nothing to shift",
+"17584":"shift our palette-num val left one bit",
+"17587":"shift our palettes mask left one bit",
+"17589":"decrement bit position",
+"17590":"not yet at bit position? -\u003e shift left again",
+"17592":"zpPaletteNum aligned with its palette nun, and zpMisc holds aligned mask",
+"17594":"get the palettes byte at the VRAM loc we calc\u0027d",
+"17599":"and return it",
+"17628":"push cursor position to stack",
+"17632":"get 1st arg (x pos)",
+"17635":"\u003e= num screen cols?",
+"17637":"yes -\u003e error",
+"17639":"push Xpos arg",
+"17640":"get 2nd arg",
+"17646":"\u003e= num screen rows?",
+"17648":"yes -\u003e error",
+"17650":"save as cursor Y",
+"17653":"pull 1st arg (x) and set as cursor X",
+"17655":"final arg (color palette num)",
+"17661":"\u003e= 4?",
+"17663":"yes -\u003e error",
+"17665":"\u003c- redundant",
+"17667":"save palette num",
+"17676":"restore original cursor pos",
+"17682":"mask out the palette for our tile quad",
+"17684":"replace it with user-specified palette num",
+"17690":"store the new value, and end command",
 "17693":"START HEADER CREATION",
 "17695":"Indicate this header precedes screen data",
 "17719":"END HEADER CREATION",
@@ -4466,6 +4512,20 @@
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
+"BackgroundColor":0},
+
+"17626":{
+"Text":"COLOR x, y, N\r\n\r\nSelects not a color, but a palette, numbered from the currently-selectded palette set (as specified by CGSET). Associates it with the group of four (2x2) background tiles which contains the location given by x, y.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"17506":{
+"Text":"Given a screen tile position in CH, CV, and a palette num in zpPaletteNum ($9C), returns the byte value that holds palette nums for the 4x4 tiles holding that location, and an inverted mask for the palette num of the sekected 2x2 tile quad within that byte in zpMisc+1 ($1A). Also bit-shifts zpPaletteNum to align with that bit position.\r\n\r\nSee https://www.nesdev.org/wiki/PPU_attribute_tables for how palette selection for a tile quad works in the PPU.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
 "BackgroundColor":0}},
 
 "Notes":{
@@ -4599,7 +4659,7 @@
 "LabelAnno":"None"},
 
 "2562":{
-"Label":"NMICMD_HideCursor",
+"Label":"NMICMD_RestoreCharAtCursor",
 "Value":35314,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -11897,6 +11957,41 @@
 "Value":39834,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17623":{
+"Label":"errIll_C4C7",
+"Value":50375,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17534":{
+"Label":"lt30",
+"Value":50286,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17592":{
+"Label":"shiftDone",
+"Value":50344,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"17506":{
+"Label":"GetTileQuadPaletteVal",
+"Value":50258,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"17679":{
+"Label":"COLOR_SetPalette",
+"Value":50431,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -12546,7 +12641,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NMICMD_HideCursor",
+"Label":"NMICMD_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -16122,7 +16217,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NC_HideCursor",
+"Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -16538,7 +16633,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NC_HideCursor",
+"Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -16551,6 +16646,20 @@
 "Label":"VRAM_screen0",
 "Part":"High"},
 
+"Extra":null},
+
+"17528":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"17532":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
 "Extra":null},
 
 "17592":{
@@ -16588,7 +16697,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NC_HideCursor",
+"Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -16638,7 +16747,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NC_HideCursor",
+"Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},
@@ -16658,7 +16767,7 @@
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
-"Label":"NC_HideCursor",
+"Label":"NC_RestoreCharAtCursor",
 "Part":"Low"},
 
 "Extra":null},

@@ -29,7 +29,7 @@ BRANCH STACK:
       IF
       ON
     next:
-      COLOR
+      CGEN
 
     done:
 

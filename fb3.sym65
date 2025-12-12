@@ -111,6 +111,7 @@ zpTraceOnFlag   @  $97      ; Flag for whether to trace line numbers (TRON)
 zpSavedTxtChar  @  $98
 zpToken         @  $99
 zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
+zpPaletteNum    @  $9C
 zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
 zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
 zpAutoLNumIncr  @  $A2    2 ; How much to auto-increment each line number (from AUTO)
@@ -191,22 +192,22 @@ ROWS = 24
 
 basicProgram    @  $6006  ; The start of the BASIC program in memory
 
-NC_NoCmd                = 0
-NC_FlushOutp            = 1
-NC_BufferCurLine        = 2
-NC_CopyCharsLeft        = 3
-NC_ClearToEndOfRow      = 4
-NC_GetCharUnderCursor   = 5
-NC_SetBgPalette         = 6
-NC_SetSprPalette        = 7
-NC_ShowCursor           = 8
-NC_HideCursor           = 9
-NC_PlayMusic            = 10
-NC_PpuMaskUpdate        = 11
-NC_PpuMaskClear         = 12
-NC_InsertChar           = 13
-NC_CopyRowDown          = 14
-NC_CopyRowDown_pr1      = 15
+NC_NoCmd                    = 0
+NC_FlushOutp                = 1
+NC_BufferCurLine            = 2
+NC_CopyCharsLeft            = 3
+NC_ClearToEndOfRow          = 4
+NC_GetCharUnderCursor       = 5
+NC_SetBgPalette             = 6
+NC_SetSprPalette            = 7
+NC_ShowCursor               = 8
+NC_RestoreCharAtCursor      = 9
+NC_PlayMusic                = 10
+NC_PpuMaskUpdate            = 11
+NC_PpuMaskClear             = 12
+NC_InsertChar               = 13
+NC_CopyRowDown              = 14
+NC_CopyRowDown_pr1          = 15
 
 VRAM_screen0    =  $2000
 VRAM_screen1    =  $2400

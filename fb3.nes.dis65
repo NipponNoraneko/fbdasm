@@ -913,6 +913,15 @@
 "1182":"and execute the first command",
 "1209":"storing zero",
 "1211":"clear error/resume flags",
+"1222":"reset pointers to BASIC text and vars",
+"1225":"reset auto-incr and enter direct-mode prompt",
+"1231":"clear offset and line number",
+"1242":"set TXTTAB to $6006",
+"1245":"set TXTEND one byte past that ($6007)",
+"1248":"set VARTAB one past that ($6008)",
+"1251":"and VAREND one past VARTAB ($6009)",
+"1254":";set $21,$22 to byte after that (NEVER USED!)",
+"1258":"set high bytes (#$60) for all of the above",
 "1269":"we\u0027re about to mess with line ordering; disallow CONT",
 "1275":"get the typed line number",
 "1280":"line num = 65535?",
@@ -1415,6 +1424,15 @@
 "5968":"(NEVER) all zero -\u003e exit PAUSE",
 "5970":"high byte not zero, decrement and do 65k more iterations",
 "5973":" unless dec went to zero, in which case return",
+"5997":"eval arg (addr)",
+"6003":"and save it to zero page",
+"6012":"init write index to 0",
+"6014":"comma, then write val arg",
+"6019":"write val to requested addr",
+"6021":"increment addr to next byte",
+"6023":"another arg?",
+"6026":"yes -\u003e write arg to next byte",
+"6028":"no: done",
 "6068":"got arg? -\u003e handle",
 "6070":"set zpVARTAB = zpTXTEND + 1",
 "6083":"set zpVAREND = zpVARTAB + 1",
@@ -1589,6 +1607,9 @@
 "8012":"load up TXTPTR with where we left off from previous READs",
 "8020":"were we in the middle of a line?",
 "8022":"yes -\u003e handle",
+"8024":"loop until found DATA statement, or end of program",
+"8027":"end of line? set up scanning for next one",
+"8031":"got DATA? -\u003e read from it",
 "8039":"adv and get char",
 "8042":"a second \u0027\\0\u0027? -\u003e we\u0027re at the prog end and out of data; error out.",
 "8044":"not \u0027\\0\u0027. Skip past \"next\" offset, and line number.",
@@ -2953,6 +2974,20 @@
 "19422":"otherwise, we should have a comma here. Skip it.",
 "19425":"and evaluate next arg",
 "19430":"tell NMI hanlder there are animations to perform",
+"19433":"ERA mode",
+"19435":"(disable next instr)",
+"19436":"CUT mode",
+"19438":"save mode",
+"19440":"eval arg",
+"19443":"ensure it\u0027s 0-7",
+"19452":"disable animation for the sprite",
+"19455":"check ERA or CUT",
+"19457":"CUT? -\u003e skip erase",
+"19462":"any other args?",
+"19465":"no -\u003e done",
+"19467":"skip a comma",
+"19472":"and loop to start of command again",
+"19630":"move the actor\u0027s sprites off-screen so they\u0027re hidden",
 "19684":"all commands above this line take line number arguments",
 "20031":"all keywords below this line are built-in functions",
 "20293":"tok_BACKUP",
@@ -4336,6 +4371,13 @@
 
 "515":{
 "Text":"Checks whether the physical battery-backup switch on the back of the Family BASIC cartridge is on or off. Carry is unset while switch is off, set if on",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"12643":{
+"Text":"Copy contents of screen 1 to screen 0.\r\nIf screen 1 is the active screen, do nothing.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -11656,6 +11698,48 @@
 "5975":{
 "Label":"rts",
 "Value":38727,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19623":{
+"Label":"EraseSprite",
+"Value":52375,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19462":{
+"Label":"skipEra",
+"Value":52214,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19432":{
+"Label":"rts_CBD8",
+"Value":52184,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"1228":{
+"Label":"ResetTxtVarPtrs",
+"Value":33980,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"639":{
+"Label":"ResetAndEnterDirectMode",
+"Value":33391,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6014":{
+"Label":"wrLoop",
+"Value":38766,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
@@ -22489,6 +22573,30 @@
 "ClearPrevious":false},
 
 "19371":{
+"Variables":[],
+"ClearPrevious":true},
+
+"19433":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"#$FF if ERA; #$00 if CUT",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpEraOrCut",
+"Value":117,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"19476":{
 "Variables":[],
 "ClearPrevious":true}},
 

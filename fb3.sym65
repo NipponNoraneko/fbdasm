@@ -46,7 +46,9 @@ zpMisc          @  $19    4 ; Used for a wide variety of things, mainly temporar
 zpVARTAB        @  $1D    2 ; Start of variable storage
 zpVAREND        @  $1F    2 ; Just past end of variable storage
 zpGpStrIdx      @  $21      ; Index for temp string storage in genPurposeBuf
+zp22            @  $22      ; Written to once, in NEW/_Reset. Never used.
 zpStoppedFlag   @  $24      ; Non-zero if STOPped; zero otherwise.
+zpPokeAddr      @  $25    2 ; stores addr to POKE to
 zpArgTyp        @  $27    ; Designates the type of data in zpWAccum.
 zpWAccum        @  $28    4 ; Like a 16-bit Accumulator. Forms both the first operand, and the result, of various 16-bit integer operations. Or: byte Len followed by word ptr, for strings.
 zpWParam        @  $2C    3 ; Like a 16-bit Data register. forms the second operand of various binary operators
@@ -56,7 +58,8 @@ zpPpuMaskVal    @  $33
 zpMulScratch    @  $34    8 ; Used for multiplication scratch space. Only the first four are ever actually used!
 zpTmp3C         @  $3C
 zpNumStrTmp     @  $3D    5 ; Holds str output from HexStrFromWord and DecStrFromWOrd
-zpFindLNum       @  $44    2
+zpFindLNum      @  $44    2
+zpTmp46         @  $46    1 ; various miscellaneous uses
 zpLineStartRow  @  $47      ; the screen row at which current typed line starts (only set AFTER typing is finished)
 zpCH            @  $48      ; Current cursor column number
 zpCV            @  $49      ; Current cursor row number

@@ -29,9 +29,12 @@ BRANCH STACK:
       IF
       ON
     next:
-      CUT
+      VIEW
 
   Done:
+      CUT/ERA
+      NEW
+      POKE
 
 NAME/explain:
 .

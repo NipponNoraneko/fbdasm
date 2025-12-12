@@ -73,7 +73,7 @@ zpTokTblScn     @  $54    2 ; Used to scan thru tbl_KeywordTokens
 zpTxtThisCmd    @  $58    2 ; The start of the currently-running command. Restored to zpTXTPTR on RESUME or CONT.
 zpNewLineOffset @  $5A      ; Offset to next line for not-yet-placed, tokenized line
 zpTxtLink       @  $5B    2 ; Points to the start of the current program line (including the 3-byte preamble)
-zpNmiAnimSprCtr @  $5D      ; Counts how many sprites are not currently animated, and turns off zpNmiAnimate if it reaches zero
+zpNmiAnimActCtr @  $5D      ; Counts how many actors are not currently animated, and turns off zpNmiAnimate if it reaches zero
 zpUnusedStopFlg @  $5E      ; Causes STOP to be returned by ReadChar when set, but is never actually set by anything AFAICT
 zpSavedRts      @  $5F    2 ; FOR, GOSUB, other cmds pull return from stack, save here
 zpCursorChar    @  $61      ; The character code of the current cursor
@@ -114,13 +114,13 @@ zpSavedTXTPTR   @  $9A    2 ; Saved val of zpTXTPTR
 zpLoadQFlag     @  $9F      ; True if we're in "LOAD?" rather than "LOAD"
 zpNxtAutoLNum   @  $A0    2 ; Next line number to use (for AUTO)
 zpAutoLNumIncr  @  $A2    2 ; How much to auto-increment each line number (from AUTO)
-zpSprNum        @  $A4      ; Current work sprite
-zpDefMovIdx     @  $A5      ; cur sprite # times 8, for indexing defMovS* vars
-zpNmiDefMovIdx  @  $A6      ; (NMI) cur sprite # times 8, for indexing defMovS* vars
-zpNmiCurMTbl    @  $A7    2 ; (NMI) address of the mbtl for current sprite
-zpNmiSprNum     @  $A9      ; Current work sprite, used by NMI
+zpActorNum      @  $A4      ; Current work actor
+zpDefMovIdx     @  $A5      ; cur actor # times 8, for indexing defMovS* vars
+zpNmiDefMovIdx  @  $A6      ; (NMI) cur actor # times 8, for indexing defMovS* vars
+zpNmiCurMTbl    @  $A7    2 ; (NMI) address of the mbtl for current actor
+zpNmiActorNum   @  $A9      ; Current work actor, used by NMI
 zpNmiAnimNxtFr  @  $AB      ; While zpNmiAnimate is non-zero, this flag toggles every frame. Z = Handle NMI subcmds; NZ = Handle MOVEs
-zpNmiAnimate    @  $AC      ; This flag indicates that animated sprites are active (via MOVE)
+zpNmiAnimate    @  $AC      ; This flag indicates that animated characters are active (via MOVE)
 zpCasBufPtr     @  $AD    2 ; Start of data to send to cassette
 zpCasEndPtr     @  $AF    2 ; End of data to send to cassette
 zpVerfFlag      @  $B1      ; If set, VERIFIES rather than LOADs a program. Used for "LOAD?".
@@ -129,10 +129,10 @@ zpNextDataIdx   @  $B4      ; Char index into line at zpNextDataPtr to start fro
 zpErrCode       @  $B5
 zpUnusedErrVar  @  $B6      ; This var is only ever used in one place, where it's set to zero.
 zpErrLineNum    @  $B7    2 ; Line number where an error happened
-zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current sprite's anim frame counts, for each facing
-zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the sprite's cur facing (in high nybble)
+zpNmiCurFrCnts  @  $D5    2 ; (NMI) Pointer to vector being used for current actor's anim frame counts, for each facing
+zpNmiNumFrames  @  $D7      ; (NMI) Holds the number of anim frames for the actor's cur facing (in high nybble)
 zpNmiCurSprSht  @  $D9    2 ; (NMI) Pointer to sheet of sprites for each facing
-zpNmiSprTileMp  @  $DB    2 ; (NMI) Pointer to the 2x2 tilemap to display for current sprite
+zpNmiSprTileMp  @  $DB    2 ; (NMI) Pointer to the 2x2 tilemap to display for current actor
 zpNmiSprShtOff  @  $DD      ; (NMI) Value to add to each tile ID in a sprite sheet, to get IDs for this actor.
 zpKanaCursChr   @  $E0      ; character/tile ID to use for cursor when kana active
 zpNonKCursChr   @  $E1      ; character/tile ID to use for cursor when kana NOT active
@@ -173,17 +173,17 @@ lineBuffer      @  $500   256; NMICMD_BufferCurLine copies the full current, pot
 isRowWrappedArray0  @  $601 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 0.
 isRowWrappedArray1  @  $61B 24 ; Marks which visible screen rows are wrapped from previous line, if SCREEN 1.
 kbdDataAry      @  $634   9  ; Key down bitmap. See loc $B9A1 for content details
-sprTwoByTwoFlags @ $63D   8  ; 1x1-tile (#$00) vs 2x2 (#$01), for each sprite/actor.
-sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 sprites. See SpAtt_* for flag values.
-sprTileMaps     @  $680   32 ; Sprite tile maps for the 8 sprites (4 tiles/spr)
-defMovSFacing   @  $6C0      ; Sprite MOVE direction (swapped with type, relative to DEF MOVE arg order)
-defMovSActorFrm @  $6C1      ; Low nybble: sprite MOVE actor (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
-defMovSSpdCtr   @  $6C2      ; Sprite MOVE speed counter
-defMovSMotionCtr @ $6C3      ; Sprite MOVE total movement remaining
-defMovSSpeed    @  $6C4      ; Sprite MOVE total movement remaining
-defMovSMotion   @  $6C5      ; Sprite MOVE total movement remaining
-defMovSPosX     @  $6C6      ; Sprite MOVE, current X position
-defMovSPosY     @  $6C7      ; Sprite MOVE, current Y position
+sprTwoByTwoFlags @ $63D   8  ; 1x1-tile (#$00) vs 2x2 (#$01), for each actor.
+sprAttrFlags    @  $645   8  ; Sprite tile attributes for the 8 actor. See SpAtt_* for flag values.
+sprTileMaps     @  $680   32 ; Sprite tile maps for the 8 actors (4 tiles/actor)
+defMovSFacing   @  $6C0      ; Actor MOVE direction (swapped with type, relative to DEF MOVE arg order)
+defMovSActorFrm @  $6C1      ; Low nybble: MOVE character type (Mario, Lady, Star Killer, etc)A; high nybble: which frame of animation frame we're on
+defMovSSpdCtr   @  $6C2      ; Actor MOVE speed counter
+defMovSMotionCtr @ $6C3      ; Actor MOVE total movement remaining
+defMovSSpeed    @  $6C4      ; Actor MOVE total movement remaining
+defMovSMotion   @  $6C5      ; Actor MOVE total movement remaining
+defMovSPosX     @  $6C6      ; Actor MOVE, current X position
+defMovSPosY     @  $6C7      ; Actor MOVE, current Y position
 genPurposeBuf   @  $700   256; user directive messages (at least) get writen out to here
 
 COLS = 28
@@ -217,8 +217,8 @@ SPR_NullTile    =  $EF
 SpAtt_VFLIP        = $80       ; bit 7. RESET: flip sprite vertically(?)
 SpAtt_HFLIP        = $40       ; bit 6. RESET: flip sprite horizontally(?)
 SpAtt_BEHIND       = $20       ; bit 5. SET: behind bg; RESET: in front
-SpAtt_ANIMATE      = $10       ; bit 4. SET: sprite is animated
-SpAtt_DEFMOVE      = $08       ; bit 3. SET: sprite has a MOVE defined
+SpAtt_ANIMATE      = $10       ; bit 4. SET: actor is animated
+SpAtt_DEFMOVE      = $08       ; bit 3. SET: actor has a MOVE defined
 
 TYP_INT         =  $02      ; For zpArgTyp. Integer word.
 TYP_STR         =  $03      ; For zpArgTyp. String.

@@ -29,15 +29,14 @@ BRANCH STACK:
       IF
       ON
     next:
-      VIEW
+      KEY
 
-  Done:
-      CUT/ERA
-      NEW
-      POKE
+    done:
 
 NAME/explain:
 .
+
+  BAD CODE: stupid constant-space strings
 
   BUG: DEF SPRITE uses $20 (SPACE) as the id for an "empty" sprite tile, but for sprites that actually maps to Lady's face! Can't leave any sprite tiles undef'd.
 

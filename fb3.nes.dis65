@@ -1179,6 +1179,121 @@
 "3104":"no -\u003e error out",
 "3106":"copy \"line number\" as auto-increment amount",
 "3119":"done!",
+"3136":"push processor flags",
+"3137":"push accum (char at TXTPTR)",
+"3154":"pull accum",
+"3155":"pull flags",
+"3156":"no args? -\u003e stick to the defaults",
+"3158":"got comma?",
+"3160":"yes -\u003e skip 1st arg, check 2nd",
+"3162":"got line-num prefix token?",
+"3164":"no? -\u003e error",
+"3166":"yes. Skip the prefix token.",
+"3169":"get new-start line num low byte",
+"3172":"and store",
+"3174":"low byte",
+"3179":"more args?",
+"3182":"no -\u003e everything else uses defaults",
+"3184":"skip comma",
+"3187":"and spaces",
+"3190":"another comma?",
+"3192":"yes -\u003e skip 2nd arg",
+"3194":"else, line-num prefix token?",
+"3196":"no -\u003e error",
+"3198":"move past token",
+"3201":"get byte",
+"3204":"set low byte of starting (old) line number",
+"3206":"\u0027nother byte",
+"3209":"set high byte of starting (old) line number",
+"3211":"end of command?",
+"3214":"yes -\u003e leave increment amt at default of 10",
+"3216":"skip expected comma",
+"3219":"and spaces",
+"3222":"got line-num prefix token?",
+"3224":"no -\u003e error",
+"3226":"move past token byte",
+"3229":"get byte",
+"3232":"set as low byte of increment amt",
+"3234":"\u0027nother byte",
+"3237":"set as high byte of increment amt",
+"3239":"high byte nonzero? Yes -\u003e continue",
+"3241":"high byte zero. Low byte zero?",
+"3243":"yes -\u003e error. Can\u0027t have a zero increment!",
+"3249":"is new start lnum (hi byte) \u003e old start lnum (hi byte)?",
+"3251":"yes -\u003e everything\u0027s great",
+"3253":"else, is new start lnum (lo byte) \u003e= old start lnum (lo byte)?",
+"3255":"BUG! Permits high byte lower, as long as low byte is highger!",
+"3257":" This can result in repeated line numbers, and/or lower coming after higher",
+"3265":"save away curent TXTPTR",
+"3268":"go check whether new line numbers",
+"3271":" will overflow, and error if so",
+"3275":"point TXTPTR at first line of BASIC",
+"3279":"get offset to 2nd line in program",
+"3282":"BASIC program empty? -\u003e nothing to do; return",
+"3284":"skip over offset and line num",
+"3287":"get a byte of line content",
+"3290":"end of line? -\u003e advance to next",
+"3292":"got a line num prefix token?",
+"3296":"else skip this byte",
+"3299":" and check next",
+"3302":"are we at prog end?",
+"3305":"yes -\u003e done scanning for line numbers in content",
+"3313":"push TXTPTR lo, hi",
+"3319":"skip line-num prefix token byte",
+"3322":"save following line num as line-to-find",
+"3332":"find the indicated line num",
+"3335":"exact match? -\u003e leave zpTxtLink as FindLineNum set it",
+"3337":"else (not found): invalidate zpTxtLink",
+"3343":"restore TXTPTR from stack",
+"3349":"save over line-number token with line-link token,",
+"3351":" so we can scan over them again",
+"3354":" and replace with updated line number",
+"3364":"return to scanning for more line numbers",
+"3367":"set the (original) first line of renumber range",
+"3369":" as the line to search for",
+"3375":"and find it",
+"3380":"point TXTPTR at the start of the found line",
+"3386":"read the line\u0027s offset byte",
+"3389":"end of prog? -\u003e replace line links with updated line numbers",
+"3391":"push offset to next line",
+"3395":"write renumbered line number over old one",
+"3405":"pull offset to next line",
+"3407":"subtract 3 (bc we just advanced by 3)",
+"3410":"advance TXTPTR to start of next line",
+"3421":"advance next line number by increment",
+"3433":"loop around to renumber this next line",
+"3436":"point TXTPTR at start of BASIC program once again",
+"3444":"skip offset, line number",
+"3447":"get a byte from line content",
+"3450":"end of line? -\u003e scan next line",
+"3452":"got a line-link prefix byte (that we wrote earlier)?",
+"3454":"yes -\u003e replace with updated line num",
+"3456":"else, skip this byte",
+"3459":"and check the next",
+"3465":"are we at prog end?",
+"3468":"yes -\u003e restore TXTPTR, then all done",
+"3470":"skip offset and line-num bytes",
+"3473":"and return to scanning for line links to replace",
+"3480":"replace line-link token byte with line-num token",
+"3485":"read the line link into zpTxtLink",
+"3498":"invalid link (orig line num invalid)?",
+"3500":"no -\u003e safe to use real line num",
+"3502":"skip over line link",
+"3505":"and iterate to find/replace more",
+"3508":"back up a byte",
+"3509":"overwrite line link with its new number",
+"3518":"-\u003e go back to finding/replacing line links",
+"3521":"save new first line number, to \"next\" line number",
+"3529":"save old first line num of range, as line to find",
+"3537":"find it!",
+"3540":"point TXTPTR at first byte of found line (the offset to next)",
+"3548":"get the offset byte. At prog end?",
+"3551":"yes -\u003e return",
+"3554":"advance TXTPTR to start of following line",
+"3565":"advance \"next line num\" by increment amount",
+"3575":"did we overflow a new line number?",
+"3577":"yes -\u003e error",
+"3579":"else, loop back and check another line-num increment",
 "3621":"zpWAccum = -32768? -\u003e ensure zpWParam is 0",
 "3666":"BUG: produces OV ERROR even if WParam is zero lol",
 "3694":"strlen == 0?",
@@ -2274,6 +2389,17 @@
 "11923":"send updates, only, to scr 0.",
 "11928":"SCREEN 0. Save base addr high byte.",
 "11934":"Tell PPU to switch active screen to 0",
+"11976":"read arg",
+"11979":" \u003e= 8?",
+"11981":"yes -\u003e error",
+"11983":"shift the arg val left 5 places",
+"11987":"store in some handy var",
+"11989":"load PPUMASK value",
+"11991":"mask out the filter bits",
+"11993":"merge with our shifted arg",
+"11995":"save PPUMASK value",
+"11997":"and update it in the PPU",
+"12000":"done!",
 "12001":"get argument",
 "12004":" \u003e= 4?",
 "12006":"yes -\u003e error",
@@ -2472,6 +2598,41 @@
 "12712":"clear sprites\u0027 2x2 vs 1x1 data",
 "12722":"set all actor tilemaps to empty tile",
 "12726":"8 actors * 4 tiles",
+"12744":"clear vars",
+"12749":"is there room after program for bg data?",
+"12751":"no -\u003e OOM error",
+"12755":"turn off rendering",
+"12760":"point zpMisc for storing the background data",
+"12766":"set PPUADDR to SCREEN 1 in RAM",
+"12776":"faked first read",
+"12781":" # pages to copy",
+"12783":"read byte from background data",
+"12786":"write it to (battery-backed) RAM",
+"12788":"did we read a full page?",
+"12789":"no -\u003e keep copying",
+"12791":"copied page, incr write page",
+"12793":"copied four pages?",
+"12794":"no -\u003e copy next page",
+"12796":"yes: done copying",
+"12798":"save vscroll for saved screen",
+"12801":"indicate screen 1 is saved in RAM",
+"12808":"restore rendering",
+"12817":"flag indicate we have saved bg data?",
+"12820":"no? nothing to put then, is there? -\u003e error",
+"12824":"disable rendering",
+"12829":"point zpMisc at the saved bg data",
+"12837":" # pages to copy",
+"12846":"set PPUADDR to addr of SCREEN 1 data",
+"12849":"read a byte from RAM-saved BG data",
+"12851":"copy to VRAM",
+"12854":"have we copied a full page?",
+"12855":"no -\u003e copy next byte",
+"12857":"increment RAM page to read from",
+"12859":"did we copy 4 pages?",
+"12860":"no -\u003e copy next page",
+"12862":"yes, done copying",
+"12865":"restore saved vscroll",
+"12869":"(ALWAYS) -\u003e clear bgGotFlag and restore PPU rendering",
 "12871":"if the error code \u003e= ",
 "12877":"save error code for BASIC",
 "12881":"save cur line # as error line",
@@ -3313,6 +3474,18 @@
 "19465":"no -\u003e done",
 "19467":"skip a comma",
 "19472":"and loop to start of command again",
+"19580":"get actor # arg",
+"19583":"ensure \u003c 8",
+"19586":"push actor num",
+"19590":"clear actor\u0027s sprite flags (including animation)",
+"19593":"erase the sprite from screen",
+"19596":"pull actor # again",
+"19599":"multiply by 8, for indexing",
+"19603":"clear facing and position",
+"19612":"more args?",
+"19615":"no -\u003e done!",
+"19617":"more args: ensure comma first.",
+"19620":" then loop back to the top!",
 "19630":"move the actor\u0027s sprites off-screen so they\u0027re hidden",
 "19684":"all commands above this line take line number arguments",
 "20031":"all keywords below this line are built-in functions",
@@ -12481,6 +12654,230 @@
 "Value":34756,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3127":{
+"Label":"errSyn_8C27",
+"Value":35879,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3245":{
+"Label":"RENUM_checkNewGeOld",
+"Value":35997,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3184":{
+"Label":"arg2",
+"Value":35936,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3216":{
+"Label":"arg3",
+"Value":35968,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3133":{
+"Label":"errIllVal_8C2D",
+"Value":35885,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3253":{
+"Label":"cmpLo",
+"Value":36005,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3130":{
+"Label":"restoreTxtPtr_8C2A",
+"Value":35882,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3262":{
+"Label":"restoreTxtPtr_8CAE",
+"Value":36014,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3265":{
+"Label":"RENUM_argsDone",
+"Value":36017,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3582":{
+"Label":"rts_8DEE",
+"Value":36334,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3548":{
+"Label":"lnumLp",
+"Value":36300,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3583":{
+"Label":"errIllVal_8DEF",
+"Value":36335,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3521":{
+"Label":"ErrorIfNewLNumsOverflow",
+"Value":36273,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3302":{
+"Label":"advLine",
+"Value":36054,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3287":{
+"Label":"RENUM_scanCodeForLNums",
+"Value":36039,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3313":{
+"Label":"lnumTokFound",
+"Value":36065,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3343":{
+"Label":"match",
+"Value":36095,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3120":{
+"Label":"RENUM_SetCharAndIncr",
+"Value":35872,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3436":{
+"Label":"RENUM_replaceLineLinks",
+"Value":36188,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3367":{
+"Label":"RENUM_doRenum",
+"Value":36119,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3386":{
+"Label":"RENUM_renumLoop",
+"Value":36138,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3447":{
+"Label":"RENUM_linkReplLoop",
+"Value":36199,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3465":{
+"Label":"advLine",
+"Value":36217,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3476":{
+"Label":"linkFound",
+"Value":36228,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3462":{
+"Label":"restoreTxtPtr_8D76",
+"Value":36214,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"3508":{
+"Label":"writeNewLNum",
+"Value":36260,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"3502":{
+"Label":"skipLNumAndIterate",
+"Value":36254,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12741":{
+"Label":"errOOM_B1B5",
+"Value":45493,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12783":{
+"Label":"cpyLp",
+"Value":45535,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"12803":{
+"Label":"UpdateBgGotFlag",
+"Value":45555,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"12849":{
+"Label":"cpyLp",
+"Value":45601,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19579":{
+"Label":"rts_CC6B",
+"Value":52331,
+"Source":"User",
+"Type":"GlobalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -13533,6 +13930,97 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"3138":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Decimal",
+"SymbolRef":null,
+"Extra":null},
+
+"3158":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"3162":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3190":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"3194":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3222":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3292":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3349":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LLINK_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3452":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LLINK_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"3478":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
 "Extra":null},
 
 "3685":{
@@ -15439,12 +15927,62 @@
 
 "Extra":null},
 
+"12749":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bgGetRam",
+"Part":"High"},
+
+"Extra":null},
+
 "12753":{
 "Length":2,
 "Format":"NumericLE",
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_PpuMaskClear",
+"Part":"Low"},
+
+"Extra":null},
+
+"12758":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bgGetRam",
+"Part":"Low"},
+
+"Extra":null},
+
+"12762":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bgGetRam",
+"Part":"High"},
+
+"Extra":null},
+
+"12766":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"High"},
+
+"Extra":null},
+
+"12771":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
 "Part":"Low"},
 
 "Extra":null},
@@ -15475,6 +16013,46 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"NC_PpuMaskClear",
+"Part":"Low"},
+
+"Extra":null},
+
+"12827":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bgGetRam",
+"Part":"High"},
+
+"Extra":null},
+
+"12831":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"bgGetRam",
+"Part":"Low"},
+
+"Extra":null},
+
+"12839":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
+"Part":"High"},
+
+"Extra":null},
+
+"12844":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"VRAM_screen1",
 "Part":"Low"},
 
 "Extra":null},
@@ -22658,6 +23236,84 @@
 "ClearPrevious":false},
 
 "2948":{
+"Variables":[],
+"ClearPrevious":true},
+
+"3136":{
+"Variables":[{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"new starting line number",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpNewStartLNum",
+"Value":124,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"old starting line number",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpOldStartLNum",
+"Value":126,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"amount to increment each new line number by.",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpRenumIncrAmt",
+"Value":128,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"next line number to write",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpRenumNextLNum",
+"Value":132,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"3586":{
 "Variables":[],
 "ClearPrevious":true},
 

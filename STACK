@@ -35,15 +35,19 @@ BRANCH STACK:
       ON
       FIND
     next:
-      RENUM
+      ABS
 
     done:
+
+  BUG: RENUM: if it "finds" a #$0B or #$0C within a numeric constant, will it "replace" the next two bytes inappropriately?
 
   BAD CODE: stupid constant-space strings
 
   BUG: DEF SPRITE uses $20 (SPACE) as the id for an "empty" sprite tile, but for sprites that actually maps to Lady's face! Can't leave any sprite tiles undef'd.
 
-  BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!)
+  BUG: RENUM verifies that new line num (1st arg) is greater than or equal to the old line number... but permits the high byte to be lower, provided low byte is higher. RENUM 15,20 is disallowed, but RENUM 257,20 is accepted! (Categorize verification bugs) (RENUM is a v3-only command)
+
+  BUG: document that DATA token (small e) within comments is detected as DATA and handled accordingly. This is because it loops over SkipToken until it sees the DATA token, but SkipToken doesn't skip comments, just the REM or ' and each individual char after until it hits the token! (confirmed for both v2 and v3!) (categorize tokenization bugs)
 
   Document that NMI toggles between bg updates and sprite updates, when
    anims active, and how animation works

@@ -104,8 +104,6 @@ zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat o
 zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
 zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
-zp7C            @  $7C
-zp80            @  $80
 zpLNumStart     @  $86    2 ; Starting line number of a line-number range
 zpLNumEnd       @  $88    2 ; Ending line number of a line-number range
 zpVarName       @  $8A    2 ; Two-letter variable name
@@ -214,7 +212,10 @@ genPurposeBuf   @  $700   256; user directive messages (at least) get writen out
 COLS = 28
 ROWS = 24
 
+bgGotFlag       @  $6004  ; non-zero if bg data is saved at $6C00
+bgGetVScroll    @  $6005  ; saved vscroll for saved screen data
 basicProgram    @  $6006  ; The start of the BASIC program in memory
+bgGetRam        @  $6C00 1024; region to save bg data with BGGET
 memoryTop       @  $6FFF  ; What FRETOP is set to by default
 
 NC_NoCmd                    = 0
@@ -291,6 +292,7 @@ err_NB          = $14       ; "NB" - No BG Data
 err_UP          = $15       ; "UP" - Unprintable Error
 
 tok_LNUM_AFTER  = $0B       ; indicates a line number (word) follows this byte
+tok_LLINK_AFTER = $0C       ; indicates a direct link to a line follows - only used during a RENUM
 tok_HEX_AFTER   = $11       ; indicates a number (word) follows this byte, originally hexadecimal
 tok_NUM_AFTER   = $12       ; indicates a number (word) follows this byte, originally decimal
 

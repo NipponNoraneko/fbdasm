@@ -299,6 +299,7 @@ tok_LLINK_AFTER = $0C       ; indicates a direct link to a line follows - only u
 tok_HEX_AFTER   = $11       ; indicates a number (word) follows this byte, originally hexadecimal
 tok_NUM_AFTER   = $12       ; indicates a number (word) follows this byte, originally decimal
 
+TOKEN_START     = $80
 tok_GOTO        = $80
 tok_GOSUB       = $81
 tok_RUN         = $82

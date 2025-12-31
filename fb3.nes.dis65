@@ -1704,6 +1704,19 @@
 "6023":"another arg?",
 "6026":"yes -\u003e write arg to next byte",
 "6028":"no: done",
+"6029":"pull up return addr from CPU stack",
+"6031":"and skip to next line (skips colon stmts too)",
+"6034":"evaluate condition expression",
+"6043":"cond == zero? -\u003e don\u0027t evaluate THEN",
+"6045":"does the cmd end after the condition?",
+"6048":"yes -\u003e syntax error",
+"6050":"got a THEN token?",
+"6052":"yes -\u003e handle",
+"6058":"after the THEN, does the IF cmd end?",
+"6061":"yes -\u003e a very roundabout way to a syntax error...",
+"6063":"else, did we get a line number?",
+"6065":"yes -\u003e GOTO it",
+"6067":"else, return and execute following command (same as no THEN)",
 "6068":"got arg? -\u003e handle",
 "6070":"set zpVARTAB = zpTXTEND + 1",
 "6083":"set zpVAREND = zpVARTAB + 1",
@@ -1742,6 +1755,38 @@
 "6746":"done copying?",
 "6747":"no -\u003e copy next byte",
 "6749":"yes. Done!",
+"6758":"get char",
+"6760":"terminating null? -\u003e missing var after, so syntax err",
+"6762":"got terminating double-quote?",
+"6764":"yes -\u003e done",
+"6766":"else, print the char",
+"6769":"and loop around for next char in str",
+"6772":"is cmd end?",
+"6775":"yes -\u003e missing var after, so syntax err",
+"6777":"-\u003e move past closing dquot, and return to LINPUT",
+"6780":"cmd end? -\u003e syntax error",
+"6782":"got a double-quote?",
+"6789":"require following \u0027,\u0027 or \u0027;\u0027 (and then var)",
+"6797":"read the line (into lineBuffer)",
+"6800":"check for and honor STOP key occurrance during input",
+"6806":"process the following string var name",
+"6809":"get base type of var",
+"6813":"is it string?",
+"6815":"no -\u003e error",
+"6821":"get first char of input line",
+"6824":"space char?",
+"6826":"no -\u003e ",
+"6828":"yes, space",
+"6829":"just a single space is the whole string?",
+"6832":"yes -\u003e copy empty str to var",
+"6834":"no -\u003e move back to include space char in copying",
+"6835":"get char from input line",
+"6838":"end of line/str? -\u003e len is in Y reg; copy to var",
+"6840":"copy into genPurposeBuf (but never use??)",
+"6845":"-\u003e loop for next char in input line",
+"6848":"set Y as str len",
+"6853":"point str-to-copy at lineBuffer",
+"6861":"-\u003e perform the copy",
 "6867":"followed by GOTO token?",
 "6869":"no -\u003e syntax error",
 "6871":"skip past GOTO, and any spaces",
@@ -1760,6 +1805,34 @@
 "6921":"and done!",
 "6925":"followed by an ERROR token?",
 "6927":"yes -\u003e do ON ERROR",
+"6929":"else, BASIC-style switch statement. Evaluate the int expr",
+"6935":"and push next token to CPU stack",
+"6939":"was the expr zero?",
+"6942":"yes -\u003e just skip the list of line numbers, \"GOTO\" following cmd.",
+"6944":"out of line num args?",
+"6947":"yes -\u003e pull token and return",
+"6949":"did we get a line num token?",
+"6951":"no -\u003e error",
+"6953":"decrement expr value (= how many args to skip)",
+"6954":"decremented expr at zero? -\u003e go to this line",
+"6956":"else we skip this arg",
+"6959":"end of cmd?",
+"6962":"yes -\u003e done. Pull token and rts",
+"6964":"parse following comma",
+"6967":"-\u003e loop to next line-num arg",
+"6971":"got \"RESUME\" token?",
+"6973":"yes -\u003e exec RESUME cmd",
+"6976":"else, subtract token start",
+"6978":" \u003c= tok_THEN? (GOTO, GOSUB, RUN, RETURN, RESTORE, THEN)",
+"6980":"no -\u003e error (other commands disallowed)",
+"6982":"token value (- #$80) * 2 -\u003e index into commands table",
+"6987":"copy command addr to zpMisc",
+"6997":"-\u003e execute (line number at TXTPTR will be the arg)",
+"7000":"set CPU flags for whether we\u0027re at end of cmd",
+"7003":"-\u003e RESUME",
+"7006":"skip remaining line-num args",
+"7009":"pull token",
+"7010":"and return",
 "7011":"we know we\u0027re at line num arg: skip it",
 "7014":"check for more line num args",
 "7017":"end of cmd? -\u003e rts",
@@ -9625,7 +9698,7 @@
 "LabelAnno":"None"},
 
 "7014":{
-"Label":"SkipLineNum",
+"Label":"SkipLineNumArgs",
 "Value":39766,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -13850,6 +13923,104 @@
 "Value":38354,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7006":{
+"Label":"ON_skipArgsThenPlaAndRet",
+"Value":39758,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6944":{
+"Label":"argLp",
+"Value":39696,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"7000":{
+"Label":"ON_rsm",
+"Value":39752,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6970":{
+"Label":"hit",
+"Value":39722,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6029":{
+"Label":"IF_noEval",
+"Value":38781,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6058":{
+"Label":"gotThen",
+"Value":38810,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6055":{
+"Label":"goto_9797",
+"Value":38807,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6683":{
+"Label":"errSyntax_9A0B",
+"Value":39435,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6784":{
+"Label":"noStr",
+"Value":39536,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6753":{
+"Label":"LINPUT_printStr",
+"Value":39505,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6772":{
+"Label":"strDone",
+"Value":39524,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6797":{
+"Label":"noStrOrDone",
+"Value":39549,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6848":{
+"Label":"cpyVar",
+"Value":39600,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6835":{
+"Label":"countLen",
+"Value":39587,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -15661,6 +15832,16 @@
 
 "Extra":null},
 
+"6050":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_THEN",
+"Part":"Low"},
+
+"Extra":null},
+
 "6290":{
 "Length":2,
 "Format":"NumericLE",
@@ -15688,6 +15869,64 @@
 "SymbolRef":null,
 "Extra":null},
 
+"6762":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6782":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6789":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6793":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6813":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
+"6851":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"Low"},
+
+"Extra":null},
+
+"6856":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
 "6917":{
 "Length":2,
 "Format":"NumericLE",
@@ -15704,6 +15943,36 @@
 "SubFormat":"Symbol",
 "SymbolRef":{
 "Label":"tok_ERROR",
+"Part":"Low"},
+
+"Extra":null},
+
+"6949":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_LNUM_AFTER",
+"Part":"Low"},
+
+"Extra":null},
+
+"6971":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"tok_RESUME",
+"Part":"Low"},
+
+"Extra":null},
+
+"6976":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TOKEN_START",
 "Part":"Low"},
 
 "Extra":null},

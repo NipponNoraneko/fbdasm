@@ -74,6 +74,33 @@ This bug is found at [TokRemCopyToEnd](https://famibe.addictivecode.org/disassem
 
 When I first confirmed this bug, I was shocked. Many common Japanese words would trigger this bug, and I wondered why I could turn nothing up about it in web searches. When, a little while later, I confirmed that this bug does *not* exist for the apostrophe (') shorthand, it made a little more sense. Most people use the shorthand, because it's both faster to type and more readable (the `REM` keyword is harder for your eye to "skip" when reading comments, as at first glance it can look like just another word in the comment (especially for English-language comments). It's also very likely that those who did encounter this bug, didn't know what caused it - after all, you don't see anything wrong while you're typing, only when you `LIST` your code back out, possibly after having saved and reloaded it. You would see that the comment had become corrupt, but you wouldn't really know when it got corrupted, and might not assume it had been mangled from the very beginning when you first typed it in.
 
+### READ Command Confused by Katakana Small E (ェ) Within Comments
+
+If the `READ` command finds the katakana small e character (ェ) within a comment (whether `REM` or apostrophe (') comments), it will incorrectly treat that as a `DATA` statement, and whatever follows it will be interpreted as data to be read. The workaround for this is to lump your `DATA` statements together without intervening comments, and use the `RESTORE` command to explicitly direct `READ` to the start of your collection of `DATA` statements.
+
+As an example, if the following code is run:
+
+```
+10 REM フェアリー ("FAIRY")
+20 READ A$:PRINT A$
+30 END
+40 DATA LIGHTS
+```
+
+The output ought to be
+
+```
+LIGHTS
+```
+
+but will instead be
+
+```
+アリー ("FAIRY")
+```
+
+which corresponds to the text that occurs after the ェ character on line 10.
+
 # Bad Code Smells
 
 ## Add/Subtract

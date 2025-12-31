@@ -2338,6 +2338,10 @@
 "10502":"set current type as int",
 "10509":"copy 3 bytes from WAcccum over the top item of the parse stack",
 "10524":"done",
+"10527":"load last error\u0027s code into WAccum",
+"10529":"and return it via expr parse stack",
+"10534":"get line num from last err into WAccum",
+"10540":"and return it via the expr parse stack",
 "10543":"get the amount of free memory into WAccum",
 "10546":"and push that to parse stack",
 "10550":"save (FRETOP - VAREND) to WAccum",
@@ -3799,6 +3803,42 @@
 "19465":"no -\u003e done",
 "19467":"skip a comma",
 "19472":"and loop to start of command again",
+"19476":"parse left paren, and actor number",
+"19479":"\u003c- UNNECESSARY, we already have the value in both A reg and X reg.",
+"19481":"save actor num aside",
+"19486":"does actor has a DEF MOVE set?",
+"19488":"no -\u003e return -2 (as mandated by the manual)",
+"19490":"multiply by 8 to get index to DEF MOVE data",
+"19496":"grab and save actor\u0027s X pos",
+"19501":"grab and save actor\u0027s Y pos",
+"19505":"set current actor-to-check to actor #0",
+"19507":"set Y reg to num actors (for count-down)",
+"19511":"is the requested actor # same as one we\u0027re checking?",
+"19513":"yes -\u003e skip this one (can\u0027t \"crash\" with self)",
+"19515":"else, multiply check-actor # by 8 to get index",
+"19518":"get X pos",
+"19522":"subtract user-specified actor\u0027s X pos from that",
+"19524":"compare absolute value with 16",
+"19527":" \u003e= 16? -\u003e no collision. Next actor",
+"19529":"get Y pos of check-actor",
+"19533":"subtract our actor\u0027s Y pos",
+"19535":"compare absolute value with 16",
+"19538":" \u003e= 16? -\u003e no collision, check next actor",
+"19540":"-\u003e collision! Return this actor\u0027s number.",
+"19543":"incr actor-to-check\u0027s number",
+"19545":"decr Y (count-down # actors)",
+"19546":"actors remaining to check? -\u003e check next",
+"19548":"set WAccum to -1",
+"19552":"set WAccum high byte",
+"19554":"parse closing paren, return WAccum via expr parse stack",
+"19557":"set WAccum to -2",
+"19563":"(always) -\u003e parse closing paren, and return WAccum",
+"19565":"positive difference? -\u003e skip negation",
+"19567":"save original difference",
+"19569":"\u003c- could\u0027ve set this to zero, and skipped the clc/adc at end",
+"19572":"subtract difference from -1",
+"19575":"add zero so it\u0027s subtraction from zero (straight negation)",
+"19577":"have positive. Cmp with 16, and return",
 "19580":"get actor # arg",
 "19583":"ensure \u003c 8",
 "19586":"push actor num",
@@ -5286,6 +5326,13 @@
 
 "5622":{
 "Text":"Checks if the string identified by WParam is contained within the string identified by WAccum. Returns the index to the first occurrance, if found, or zero if not found.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"10590":{
+"Text":"Parses an open paren (or errors), then parses an integer and errors unless its value is in the range 0 thru 7 (inclusive - sprite actor number). The parsed value is in both A reg and X reg upon (successful) exit.",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -13686,6 +13733,55 @@
 "Value":38388,
 "Source":"User",
 "Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"10590":{
+"Label":"EvalParenZeroThruSevenOrError",
+"Value":43342,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19557":{
+"Label":"CRASH_retMinusTwo",
+"Value":52309,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19552":{
+"Label":"retMinus",
+"Value":52304,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"19509":{
+"Label":"CRASH_actorLoop",
+"Value":52261,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19543":{
+"Label":"CRASH_nextActor",
+"Value":52295,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19565":{
+"Label":"CRASH_cmpAbs16",
+"Value":52317,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"19577":{
+"Label":"pos",
+"Value":52329,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
 
 "OperandFormats":{
@@ -21386,6 +21482,33 @@
 "SymbolRef":null,
 "Extra":null},
 
+"19486":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"SpAtt_DEFMOVE",
+"Part":"Low"},
+
+"Extra":null},
+
+"19507":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"NUM_ACTORS",
+"Part":"Low"},
+
+"Extra":null},
+
+"19569":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"SignedDecimal",
+"SymbolRef":null,
+"Extra":null},
+
 "19643":{
 "Length":1,
 "Format":"NumericLE",
@@ -25556,6 +25679,26 @@
 "ClearPrevious":false},
 
 "19476":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpActorNum",
+"Value":116,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":true},
+
+"19580":{
 "Variables":[],
 "ClearPrevious":true}},
 

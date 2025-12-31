@@ -211,6 +211,7 @@ genPurposeBuf   @  $700   256; user directive messages (at least) get writen out
 
 COLS = 28
 ROWS = 24
+NUM_ACTORS = 8  ; number of animated characters ("actors") in Family BASIC
 
 STRLEN_MAX = 32
 

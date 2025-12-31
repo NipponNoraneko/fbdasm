@@ -1906,6 +1906,7 @@
 "7263":"check if we\u0027re at end of command (and then ignore result??)",
 "7266":"NOW closed paren?",
 "7268":"no -\u003e error",
+"7273":"reserve space for the new array",
 "7276":"end of cmd?",
 "7279":"yes -\u003e exit",
 "7281":"parse a separating comma",
@@ -17055,6 +17056,16 @@
 "Format":"NumericLE",
 "SubFormat":"Ascii",
 "SymbolRef":null,
+"Extra":null},
+
+"11736":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"memoryTop",
+"Part":"High"},
+
 "Extra":null},
 
 "11745":{

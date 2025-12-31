@@ -2,7 +2,9 @@
 
 This document describes a number of bugs in Family BASIC that were discovered while analyzing its disassembly. I'm sure there are more yet to be discovered.
 
-## Overflow When Subtracting Zero
+## Verification Failures
+
+### Overflow When Subtracting Zero
 
 (This bug does not exist in Family BASIC v2, only v3.)
 
@@ -19,7 +21,7 @@ This is because when Family BASIC sees that the first operand to a subtraction i
 
 The bug is in the [Sub_WAccumIs32768](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymSub_WAccumIs32768) sub, which is branched to very early on in [Subtract](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymSubtract), if `WAccum` is -32,768.
 
-## Overflow Detection for Multiplication
+### Overflow Detection for Multiplication
 
 Overflows in multiplication are not always properly detected, and are sometimes silently permitted.
 
@@ -37,7 +39,17 @@ This is because, when performing multiplication on two 16-bit integers, Family B
 
 The relevant code is the [WordMultiplyAsWord](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymWordMultiplyAsWord) subroutine. You'll need to scroll a bit to see the comment written above the sub.
 
-## REM Comments Corrupted by Katakana Small Yo (ョ)
+### RENUM Can Create Duplicate Line Numbers
+
+(The `RENUM` command is only present in Family BASIC v3.) In order to prevent the creation of duplicate line numbers, `RENUM` has a check to ensure that the starting "new" line number is always greater than the the existing number to start the renumbering at. Otherwise, if you had lines 10, 20, 30, and 40, and asked to renumber starting at 30, with the new first line-number as 10, then you'd have lines 10, 20, 10, and 20 (duplicate line numbers).
+
+But due to a bug in that check, it only winds up refusing to proceed if the low byte is higher than the start line's low byte, and not the whole number. It *does* check the high byte, but winds up throwing that part of the check away.
+
+So, while it will refuse a command like `RENUM 20, 30` (meaning, renumber from line 30, to start as line 20), it will accept `RENUM 20, 260`. If you had lines 10, 20, 260, and 270 before running that command, you'd wind up with line numbers 10, 20, 10, and 20&mdash;the check failed to do its job!
+
+## Comment Parse Bugs
+
+### REM Comments Corrupted by Katakana Small Yo (ョ)
 
 Program comments using the `REM` keyword will be corrupted if the Japanese "small yo" character (ョ) appears within it. This is a fairly common character, used in a number of words.
 

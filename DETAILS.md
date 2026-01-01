@@ -127,6 +127,25 @@ As mentioned above, it is possible for an expert programmer to replace the defau
 
 Even so, one could probably manage things like stutterless background music (if it's simple enough to fit in available memory), or additional quick little checks or adjustments to sprite behaviors beyond the basic facilities included in Family BASIC.
 
+### DEF MOVE Animations
+
+As mentioned before, [NMI_DefaultHandler](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMI_DefaultHandler) mostly acts as a dispatch, to execute requested commands involving the PPU during vertical blank, when it's safe to do things with the PPU. However, the default handler also has another responsibility: animating character sprites.
+
+If the user invokes the `MOVE` command, activating a moving-character animation, then [NMI_DefaultHandler](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMI_DefaultHandler) will begin to toggle its behavior every frame: one frame, it will run animations for all actively-moving characters, ignoring any command specified in [zpNMICMD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpNMICMD); and the next frame, it will perform any action in [zpNMICMD](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpNMICMD), ignoring animations. It will do this even if there is no command requested, so that the animation consistently takes place every other frame, maintaining a smooth experience.
+
+If all animated characters have stopped animating, the NMI handler will notice that it didn't have any animation work to do, and switch "animation mode" off, returning to full-time servicing of command requests. If a subsequent `MOVE` is enacted, then animations will be turned back on, and [NMI_DefaultHandler](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymNMI_DefaultHandler) will return to toggling between animations and commands, once again.
+
+Note that this mechanic means that actions like printing text to the screen will take twice as long to complete when sprite animations are on. However, animation speed does not change when you start printing to the screen, because it has already allocated alternate frames to that activity, even if no command action was actually being done. So animations are always kept relatively smoothm but printing can be slowed. In general, no one notices or cares if `PRINT` slows down a bit (still very fast) during an animation, but people would care a great deal if long-running BASIC commands can make your animations stutter.
+
+In this way, Family BASIC provides your BASIC games with a means for appealingly swift animations without having to resort to bespoke machine-code helper routines in your programs... though input responsiveness is still limited by how quickly the BASIC code can read inputs and trigger the animations.
+
+Note: Family BASIC's manual uses the term "animated characters" in relation to the moving objects that are managed by the `DEF MOVE`, `MOVE`, and `SPRITE` commands. The command names themselves point at the term "sprite". This disassembly refers to the same concept using the term "actors", instead. The reason is that "animated characters" is long and unweildly to use within brief comments and variable names, "character" by itself is easy to confuse with the notion of textual characters represented as bytes, and "sprite" is a term that should be reserved to the PPU's notion of a sprite, which is an 8x8-pixel tile that can be overlaid at arbitrary offsets, during screen rendering.
+
+See also:
+ - [zpNmiAnimate](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpNmiAnimate), the flag byte that determines whether the NMI handler should toggle between commands and animations, or just handle commands only.
+ - [zpNmiAnimNxtFr](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymzpNmiAnimNxtFr), which determines if the next frame will be reserved to handle animations instead of commands.
+ - [Animate](https://famibe.addictivecode.org/disassembly/fb3.nes.html#SymAnimate), the routine that handles updating the animated characters ("actors").
+
 ### Printing Program Output
 
 Most microcomputer BASIC implementations I've seen just poke values into video RAM directly within the print routines. Family BASIC can't do this, because the CPU can't access the video RAM directly, and the PPU can only do so at specific times, such as during vertical blank. So, nothing in the code for printing things to the screen can actually... print things to screen&mdash;not directly.

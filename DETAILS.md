@@ -60,7 +60,52 @@ The BASIC program (tokenzied) text resides from [zpTXTTAB](https://famibe.addict
 
 This "phantom" byte is why, at the start of BASIC, or after e.g. a `NEW` or a `CLEAR`, the first variable allocation will reduce available memory (as reported by `FRE`) by one less than subsequent allocations of the same variable type. For instance FB v3 at startup will report that there are 4,086 bytes free. If you execute a command like `A=0`, `PRINT FRE` will report 4,082 bytes, "using" 4 bytes to allocate space for the variable `A`. But if you immediately define another int variable, like `B=0`, it will report 4,077 bytes free, reducing the amount by 5 bytes this time instead of 4. This is because the first allocation got a byte "for free", overwriting the phantom byte.
 
-#### Simple Variable representation
+#### Integer Variable Representation
+
+Let's look at an example like `A=0:HI=4` when no variables were previously declared. The contents of the variables table will then look like:
+
+```
+Offset:    0  1  2  3  4  5  6  7  8  9
+Contents:  02 41 00 00 00 02 48 49 04 00
+```
+
+First, at offset 0 of the variables table, we have a type-indicator byte (`$02` for integer variables). This is followedby two bytes (offsets 1, 2) for a name (`$41`, the (hexadecimal) ASCII value of the letter 'A', followed by a null character `$00`, since this is a one-letter variable name. Finally, another pair of bytes (offsets 3, 4) provide the little-endian representation for our 16-bit signed integer value. This definition used a total of 5 bytes.
+
+This same sequence begins again at offset 5. Our "this is an integer" byte, `$02`, then two bytes for a name (`$48` and `$49`, the ASCII codes for `H` and `I`, respectively), followed by two bytes for the value. Since we're little-endian, the `$04` comes first, followed by a high byte whose value is zero.
+
+#### String Variable Representation
+
+Allocations for string variables work exactly as for integer variables, except that, instead of two bytes for a 16-bit value, 33 bytes are used to store the string contents: first a "length" byte counting how many characters are assigned, followed by up to 31 characters to form the content, and a terminating null character (value `$00`). If the length was less than 31 characters, then there will be some unused bytes following the terminating null character, so that the amount of space used for the variable contents are always 33 bytes (after the type and name bytes).
+
+Here's an example, for `A$="HELLO"`:
+
+```
+Offset:    0  1  2  3  4  5  6  7  8  9
+Contents:  03 41 00 05 48 45 4C 4C 4F 00   (26 more bytes, probably $00)
+```
+
+As before, we start off with a type-indicator byte, which is `$03` for string-type variables. Next comes two bytes for a name (these bytes will be the same as for `A=0` earlier&mdash;the `$` suffix is not included, as it is implied by the type-indicator byte). Then, at offset 3, we have a `$05`, because the word "HELLO" contains 5 characters. offsets 4 through 8 contain the ASCII values for each letter of the word "HELLO", and then offset 9 is the terminating null character (`$00`). Since only 5 out of the 31 available characters have been used, there will then be another 26 unused bytes after the terminating null. These are typically initialized to zeroes, but it makes no difference if they aren't.
+
+#### Single-Dimension Array Variable Representation
+
+Family BASIC supports one-dimensional and two-dimensional array types (no other dimensions). Here's an example of something like `DIM A(3):FOR I=1 TO 3:A(I)=I:NEXT`:
+
+```
+Offset:    0  1  2  3  4  5  6  7  8  9  10 11 12
+Contents:  82 41 00 00 03 00 00 01 00 02 00 03 00
+```
+
+As always, we begin at offset 0 with a type indicator byte. The type indicator value of an array variable is the same as the indicator value for the type of its elements, but with the high bit set (`+$80`). Since this is an array of ints, we have `$02` (int type) + `$80` (array type flag) = `$82`.
+
+Next comes the name. Since we chose `A` once again, these next two bytes should be quite familiar at this point.
+
+Offset 3 indicates whether this is a single-dimensional (`$00`) or two-dimensional (`$01`) array.
+
+Offset 4 identifies the maximum allowed index value for this array. We went with `DIM A(3)`, and so offset 4 gets a `$03`. Since arrays in Family BASIC start at index 0, this means we have a 4-element array.
+
+Offset 5 through 12 are the four pairs of bytes that comprise the 16-bit values for our four elements. We only explicitly set values for elements 1-3; but element 0 was default-initialized to 0, so it works out.
+
+If we had declared an array of strings, then instead of 4 * 2 = 8 bytes starting at offset 5 for the elements' content, we'd see 4 * 33 = 132 bytes, where each string element gets a byte for length, a byte for a null terminator, and space for up to 31 characters. Whether it's an int or a string, the representation will always be the same as when it's a single, simple var, except 3 bytes less since it doesn't need to separately record a type, nor a name.
 
 ## The NMI Dispatch
 

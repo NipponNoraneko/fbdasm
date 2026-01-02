@@ -104,6 +104,8 @@ zpKyRptLongCtr  @  $77      ; Key-repeat: delay count-down to first key repeat o
 zpKyNotRpt      @  $78      ; Key-repeat: #$01 = waiting on first key repeat, #$00 = on subsequent repeats
 zpKyRptShtCtr   @  $79      ; Key-repeat: delay count-down for repeating key past the first, longer pause.
 zpKeyRepeating  @  $7B      ; Key-repeat: #$FF = key is actively repeating, #$00 = key not repeating
+zp7E            @  $7E
+zp80            @  $80
 zpLNumStart     @  $86    2 ; Starting line number of a line-number range
 zpLNumEnd       @  $88    2 ; Ending line number of a line-number range
 zpVarName       @  $8A    2 ; Two-letter variable name

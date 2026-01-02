@@ -1082,7 +1082,7 @@
 "2407":"zpOutTxtCurPos \u003c- #$FF",
 "2418":"-\u003e rts",
 "2420":" -\u003e NMICMD_FlushQueuedOutput",
-"2424":"null-terminate (fall through)",
+"2424":"reset output to go to start of buffer (after we\u0027ve printed it) (fall through!)",
 "2439":"Trigger DMA transfer of CPU page $02 to VRAM page $00",
 "2444":"are we running animations this frame?",
 "2446":"yes -\u003e go animate",
@@ -1733,6 +1733,68 @@
 "6132":"check low bytes",
 "6134":"arg \u003c zpVAREND? -\u003e error. Below already-used space",
 "6136":"we\u0027re good: set the end of BASIC \"Free space\" to the arg.",
+"6476":"end of cmd? -\u003e error",
+"6478":"got a double-quote?",
+"6480":"no -\u003e skip handling it then",
+"6482":"else, print the string",
+"6485":"got following comma?",
+"6487":"yes -\u003e skip printing question mark",
+"6489":"else got semicolon?",
+"6491":"no -\u003e error",
+"6495":"print \u0027?\u0027",
+"6498":"save current cursor position at start of input",
+"6506":"read the input line from user",
+"6509":"honor stop key if it\u0027s pressed",
+"6518":"does our notion of starting row match the input buffer routine\u0027s?",
+"6520":"yes -\u003e only have to deal with the one line",
+"6522":"no: screen scrolled since we started typing",
+"6527":"vZpSkipChars += COLS",
+"6529":" (for each line we scrolled)",
+"6531":"(always) -\u003e check if we scrolled another line, too",
+"6538":"also skip the number of chars up until",
+"6540":" the column input started at.",
+"6543":"find (or create) the variable named next (after optional string literal)",
+"6546":"save current TXTPTR",
+"6551":"skip the determined # of chars at start of lineBuffer",
+"6555":"and point TXTPTR at it",
+"6557":"get the type of the variable we parsed",
+"6559":"(basic type, if array)",
+"6561":"string type?",
+"6563":"yes -\u003e handle string",
+"6565":"no, parse a number",
+"6568":"save current TXTPTR",
+"6570":" so it gets restored when we loop back around",
+"6576":"save parsed number into variable",
+"6583":"restore TXTPTR to point at INPUT args again",
+"6589":"got a comma?",
+"6591":"no -\u003e done with INPUT",
+"6593":" (doesn\u0027t check if there\u0027s leftover data in the string!)",
+"6596":"yes. Save TXTPTR to just-past the comma",
+"6599":"point TXTPTR back into the input string again",
+"6611":"is next char of string a comma?",
+"6613":"no -\u003e print question mark and return to evaluating BASIC",
+"6615":"move past the string\u0027s comma",
+"6617":"return TXTPTR to BASIC so we can parse var name",
+"6620":"-\u003e and loop back around to assign stuff to that next var",
+"6623":"restore TXTPTR to point into BASIC program again",
+"6626":"print question mark, and return",
+"6629":"skip leading spaces in input string",
+"6634":"initialize str len for str var arg",
+"6636":"init Y reg",
+"6637":"init X reg",
+"6638":"read a char from input string",
+"6640":"end of string? -\u003e copy to var",
+"6644":"comma? -\u003e also copy out var",
+"6646":"else store in genPurposeBuf",
+"6649":"advance string length",
+"6651":"advance to next char in input str",
+"6652":"and in genPurposeBuf",
+"6655":"loop for next character in input line",
+"6658":"set copied string in genPurposeBuf",
+"6660":" as top of expr stack",
+"6673":"...and then copy the string on stack, into the INPUT var",
+"6678":"move input string past string we processed",
+"6680":"-\u003e see if there are more INPUT args",
 "6686":"evaluate variable name",
 "6691":"push base type of var",
 "6694":"push pointer to variable data",
@@ -1763,7 +1825,7 @@
 "6769":"and loop around for next char in str",
 "6772":"is cmd end?",
 "6775":"yes -\u003e missing var after, so syntax err",
-"6777":"-\u003e move past closing dquot, and return to LINPUT",
+"6777":"-\u003e move past closing dquot, and return to INPUT/LINPUT",
 "6780":"cmd end? -\u003e syntax error",
 "6782":"got a double-quote?",
 "6789":"require following \u0027,\u0027 or \u0027;\u0027 (and then var)",
@@ -3488,6 +3550,38 @@
 "15720":"strip trailing spaces",
 "15732":"set null terminator where we found the first trailing space",
 "15737":"do the actual CRLF",
+"15740":"get curent row",
+"15742":"top row? -\u003e skip next bit",
+"15747":"else, disconnect this row from the preceding one (if it was wrapped, make it... not)",
+"15752":"reset line bufer",
+"15754":"deactivate any active NMI command",
+"15756":"read a character",
+"15759":"is it carriage-return (Enter)?",
+"15761":"yes -\u003e finish up",
+"15767":"is it STOP, or Ctrl-D?",
+"15769":"yes -\u003e handle it",
+"15771":"otherwise print the char to screen and advance",
+"15774":"-\u003e loop back to read next character",
+"15777":"get current row #",
+"15779":"first row of screen? doesn\u0027t wrap -\u003e proceed",
+"15783":"else, does the preceding row wrap to this one?",
+"15786":"yes -\u003e proceed",
+"15788":"else go up one row",
+"15790":"and repeat the check",
+"15793":"we\u0027re at the starting row for the line input",
+"15795":"save it as such",
+"15799":"copy this line (this row and any it wraps to) into lineBuffer",
+"15802":"did NMICMD_BufferCurLine set $64 to non-zero? (always true)",
+"15804":"(always) -\u003e remove trailing spaces",
+"15806":"(never): delete final buffered character",
+"15816":"work from end of lineBuffer, back toward its start",
+"15818":"back up by one character",
+"15820":"at start of line? -\u003e done backing up",
+"15822":"get the char",
+"15825":"is it a space?",
+"15827":"yes -\u003e loop back around until we get non-space",
+"15832":"null-terminate at this spot (removing the spaces)",
+"15835":"-\u003e move cursor to following line, and return",
 "15916":"disable NMI",
 "15924":"disable NMI",
 "15935":"set up cassette loading to go where header says",
@@ -5440,6 +5534,20 @@
 
 "2004":{
 "Text":"Pause listing (within LIST or FIND) if the Escape key is pressed.\r\nHonor STOP key if that\u0027s pressed.",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15777":{
+"Text":"Does basically same thing as RL_handleCR, not sure why we need another sub\r\nto do the same thing. Slurps the user-typed input into lineBuffer, and removes trailing spaces.\r\n",
+"IsFancy":true,
+"BoxMode":false,
+"MaxWidth":80,
+"BackgroundColor":0},
+
+"15816":{
+"Text":"remove trailing spaces from lineBuffer",
 "IsFancy":true,
 "BoxMode":false,
 "MaxWidth":80,
@@ -8096,7 +8204,7 @@
 "LabelAnno":"None"},
 
 "2432":{
-"Label":"rts_8970",
+"Label":"rts",
 "Value":35184,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
@@ -13990,7 +14098,7 @@
 "LabelAnno":"None"},
 
 "6753":{
-"Label":"LINPUT_printStr",
+"Label":"INPUT_printStr",
 "Value":39505,
 "Source":"User",
 "Type":"GlobalAddr",
@@ -14020,6 +14128,146 @@
 "6835":{
 "Label":"countLen",
 "Value":39587,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6473":{
+"Label":"errSyntasx_9939",
+"Value":39225,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6498":{
+"Label":"skipQMark",
+"Value":39250,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6493":{
+"Label":"prQMark",
+"Value":39245,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15750":{
+"Label":"topRow",
+"Value":48502,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15756":{
+"Label":"rdLp",
+"Value":48508,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15740":{
+"Label":"INPUT_readLine",
+"Value":48492,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"15793":{
+"Label":"recordInpLine",
+"Value":48545,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15816":{
+"Label":"remTrailSpc",
+"Value":48568,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15818":{
+"Label":"remLp",
+"Value":48570,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15829":{
+"Label":"lpDone",
+"Value":48581,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"15777":{
+"Label":"INPUT_RL_handleCR",
+"Value":48529,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6533":{
+"Label":"atStartRow",
+"Value":39285,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6516":{
+"Label":"adjForScrlLp",
+"Value":39268,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6629":{
+"Label":"INPUT_stringVar",
+"Value":39381,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6540":{
+"Label":"INPUT_getVar",
+"Value":39292,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6472":{
+"Label":"rts_9938",
+"Value":39224,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6623":{
+"Label":"restoreAndPrQMark",
+"Value":39375,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6583":{
+"Label":"INPUT_checkNextArg",
+"Value":39335,
+"Source":"User",
+"Type":"GlobalAddr",
+"LabelAnno":"None"},
+
+"6658":{
+"Label":"cpyStrVar",
+"Value":39410,
+"Source":"User",
+"Type":"NonUniqueLocalAddr",
+"LabelAnno":"None"},
+
+"6638":{
+"Label":"cpyGenPBufLp",
+"Value":39390,
 "Source":"User",
 "Type":"NonUniqueLocalAddr",
 "LabelAnno":"None"}},
@@ -15850,6 +16098,115 @@
 "SymbolRef":{
 "Label":"err_NF",
 "Part":"Low"},
+
+"Extra":null},
+
+"6478":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6485":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6489":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6493":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6525":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"COLS",
+"Part":"Low"},
+
+"Extra":null},
+
+"6553":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
+"6561":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"TYP_STR",
+"Part":"Low"},
+
+"Extra":null},
+
+"6589":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6603":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"lineBuffer",
+"Part":"High"},
+
+"Extra":null},
+
+"6611":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6642":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Ascii",
+"SymbolRef":null,
+"Extra":null},
+
+"6663":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"Low"},
+
+"Extra":null},
+
+"6668":{
+"Length":2,
+"Format":"NumericLE",
+"SubFormat":"Symbol",
+"SymbolRef":{
+"Label":"genPurposeBuf",
+"Part":"High"},
 
 "Extra":null},
 
@@ -24967,6 +25324,84 @@
 "ClearPrevious":false},
 
 "5976":{
+"Variables":[],
+"ClearPrevious":true},
+
+"6476":{
+"Variables":[{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStrLen",
+"Value":27,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpSkipChars",
+"Value":82,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStartCV",
+"Value":126,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"},
+
+{
+"DataDescriptor":{
+"Length":1,
+"Format":"NumericLE",
+"SubFormat":"Hex",
+"SymbolRef":null,
+"Extra":null},
+
+"Comment":"",
+"HasWidth":true,
+"Direction":"ReadWrite",
+"MultiMask":null,
+"Label":"vZpStartCH",
+"Value":128,
+"Source":"Variable",
+"Type":"ExternalAddr",
+"LabelAnno":"None"}],
+"ClearPrevious":false},
+
+"6683":{
 "Variables":[],
 "ClearPrevious":true},
 

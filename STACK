@@ -29,8 +29,10 @@ BRANCH STACK:
       PRINT
       FOR
       NEXT
-      INPUT
 
     done:
 
+  Separate DETAILS.md into separate documents, and stick 'em all in a
+    docs/ directory, along with BUGS.md.
   Document keyboard mapping, and how fn keys work with ReadChar
+  Document more details about animations, vis-a-vis sprite sheets, etc?
